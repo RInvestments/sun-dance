@@ -1,0 +1,105 @@
+Agriculture - Farming
+Automotive - Auto & Commercial Vehicle Parts
+Automotive - Automobiles
+Automotive - Commercial Vehicles
+Automotive - Tires
+Basic Materials/Resources - Aluminum
+Basic Materials/Resources - Coal
+Basic Materials/Resources - Commodity Chemicals
+Basic Materials/Resources - Forestry & Wood Products
+Basic Materials/Resources - General Mining
+Basic Materials/Resources - Gold
+Basic Materials/Resources - Iron/Steel
+Basic Materials/Resources - Non-Ferrous Metals
+Basic Materials/Resources - Paper/Pulp
+Basic Materials/Resources - Precious Metals
+Basic Materials/Resources - Specialty Chemicals
+Business/Consumer Services - Accounting
+Business/Consumer Services - Advertising/Marketing/Public Relations
+Business/Consumer Services - Computer Services
+Business/Consumer Services - Consumer Services
+Business/Consumer Services - Diversified Business Services
+Business/Consumer Services - Diversified Holding Companies
+Business/Consumer Services - Employment/Training Services
+Business/Consumer Services - Environment/Waste Management
+Business/Consumer Services - General Services
+Business/Consumer Services - Technical Services
+Companies on the Energy Service - Electric Utilities
+Companies on the Energy Service - Gas Utilities
+Companies on the Energy Service - Major Oil & Gas
+Companies on the Energy Service - Multiutilities
+Companies on the Energy Service - Oil Extraction
+Companies on the Energy Service - Oil & Gas Products/Services
+Companies on the Energy Service - Pipeline Transportation
+Companies on the Energy Service - Renewable Energy Generation
+Companies on the Energy Service - Water Utilities
+Consumer Goods - Alcoholic Beverages/Drinks
+Consumer Goods - Audio/Video Equipment
+Consumer Goods - Clothing
+Consumer Goods - Food Products
+Consumer Goods - Footwear
+Consumer Goods - Furniture
+Consumer Goods - Housewares
+Consumer Goods - Leisure Goods
+Consumer Goods - Non-Alcoholic Beverages/Drinks
+Consumer Goods - Nondurable Household Products
+Consumer Goods - Personal Care Products/Appliances
+Consumer Goods - Sports Goods
+Consumer Goods - Tobacco
+Consumer Goods - Toys & Games
+Financial Services - Banking
+Financial Services - Consumer Finance
+Financial Services - Finance Companies
+Financial Services - Full-Line Insurance
+Financial Services - Investment Advisors
+Financial Services - Life Insurance
+Financial Services - Major International Banks
+Financial Services - Mortgages
+Financial Services - Non-Life Insurance
+Financial Services - Reinsurance
+Financial Services - Securities
+Health Care/Life Sciences - Biotechnology
+Health Care/Life Sciences - Healthcare Provision
+Health Care/Life Sciences - Medical Equipment/Supplies
+Health Care/Life Sciences - Pharmaceuticals
+Industrial Goods - Aerospace Products/Parts
+Industrial Goods - Containers/Packaging
+Industrial Goods - Industrial Electronics
+Industrial Goods - Industrial Machinery
+Industrial Goods - Industrial Products
+Industrial Goods - Mobile Machinery
+Industrial Goods - Precision Products
+Industrials - Industrial Machinery
+Leisure/Arts/Hospitality - Gambling Industries
+Leisure/Arts/Hospitality - Hotels
+Leisure/Arts/Hospitality - Recreational Services
+Leisure/Arts/Hospitality - Restaurants
+Leisure/Arts/Hospitality - Tourism
+Media/Entertainment - Broadcasting
+Media/Entertainment - Motion Picture/Sound Recording
+Media/Entertainment - Printing
+Media/Entertainment - Publishing
+Real Estate/Construction - Building Materials/Products
+Real Estate/Construction - Construction
+Real Estate/Construction - Real Estate Agents/Brokers
+Real Estate/Construction - Real Estate Developers
+Retail/Wholesale - Clothing Retail
+Retail/Wholesale - Drug Retail
+Retail/Wholesale - Food Retail
+Retail/Wholesale - Home Goods Retail
+Retail/Wholesale - Mixed Retailing
+Retail/Wholesale - Specialty Retail
+Retail/Wholesale - Wholesalers
+Technology - Computers/Consumer Electronics
+Technology - Internet/Online
+Technology - Networking
+Technology - Semiconductors
+Technology - Software
+Telecommunication Services - Wired Telecommunications Services
+Telecommunication Services - Wireless Telecommunications Services
+Transportation/Logistics - Air Freight
+Transportation/Logistics - Passenger Airlines
+Transportation/Logistics - Passenger Transport, Other
+Transportation/Logistics - Railroads
+Transportation/Logistics - Transportation Services
+Transportation/Logistics - Water Transport/Shipping
