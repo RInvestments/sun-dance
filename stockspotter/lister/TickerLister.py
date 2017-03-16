@@ -21,16 +21,37 @@ tcolor = tcol
 TickerPoint = collections.namedtuple( 'TickerPoint', 'name ticker')
 
 class TickerLister:
-    def __init__(self):
-        d=0
+    def __init__(self, lists_db):
+        self.lists_db = lists_db
+        self._printer( "Set lists_db : %s" %(lists_db))
+
+
+    def _printer( self, txt ):
+        print tcol.OKBLUE, 'TickerLister :', tcol.ENDC, txt
+
+    def _debug( self, txt, lvl=0 ):
+        """ """
+        to_print = []
+        if lvl in to_print:
+            print tcol.OKBLUE, 'TickerLister(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+
+    def _error( self, txt ):
+        """ """
+        print tcol.FAIL, 'TickerLister(Error) :', tcol.ENDC, txt
+
+    def _report_time( self, txt ):
+        print tcol.OKBLUE, 'TickerLister(time) :', tcol.ENDC, txt
 
     ########### Full HKEX List ###############
-    def list_full_hkex(self):
-        # html = open( 'equities_data/eisdeqty.htm', 'r').read()
+    def list_full_hkex(self, use_cached=True ):
+        if use_cached:
+            self._debug( 'Retrive from cache : ',self.lists_db+'/eisdeqty.htm' )
+            html = open( self.lists_db+'/eisdeqty.htm', 'r').read()
+        else:
+            # Read URL
+            self._debug( 'Download : http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm' )
+            html = urllib2.urlopen('http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm').read()  # List of securities
 
-
-        # Read URL
-        html = urllib2.urlopen('http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm').read()  # List of securities
 
 
         soup = BeautifulSoup(html, 'lxml')

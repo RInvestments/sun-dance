@@ -28,22 +28,23 @@ class SourceHKEXProfile:
 
     def _debug( self, txt, lvl=0 ):
         """ """
-        to_print = []
+        to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'SourceWSJ(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            print tcol.OKBLUE, 'SourceHKEXProfile(Debug=%2d) :' %(lvl), tcol.ENDC, txt
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceWSJ(Error) :', tcol.ENDC, txt
+        print tcol.FAIL, 'SourceHKEXProfile(Error) :', tcol.ENDC, txt
 
     def _report_time( self, txt ):
         print tcol.OKBLUE, 'SourceHKEXProfile(time) :', tcol.ENDC, txt
 
 
-    def __init__(self, ticker, stock_prefix):
+    def __init__(self, ticker, stock_prefix, verbosity=0):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
+        self.verbosity = range(verbosity)
 
         self.ticker = ticker
         self.stock_prefix = stock_prefix
@@ -90,8 +91,18 @@ class SourceHKEXProfile:
             self._debug( 'Loaded into self.raw_html_str' )
             return True
         else:
-            self._printer( 'raw file does not exists : '+raw_fname)
+            self._error( 'raw file does not exists : '+raw_fname)
             return False
+
+    def _rm_if_exists(self, file_path):
+        if os.path.exists(file_path):
+            self._debug( 'rm ', file_path )
+            os.remove( file_path )
+            return True
+        else:
+            self._debug( 'Attempted to remove non-existant raw file : ', file_path)
+            return False
+
 
     def parse(self, delete_raw=False):
         """ Parse the raw string with BeautifulSoup
@@ -101,10 +112,11 @@ class SourceHKEXProfile:
         """
 
         if self.raw_html_str is None:
-            self._load_raw_file()
+            status = self._load_raw_file()
             # self._printer( 'self.raw_html_str is None. You should call the function load_file() \
             # before calling the parse() function' )
-            # return False
+            if status == False:
+                return False
 
         startTime = time.time()
         soup = BeautifulSoup(str(self.raw_html_str), 'lxml')
@@ -144,7 +156,7 @@ class SourceHKEXProfile:
         # Delete raw html file (~55Kb each)
         if delete_raw == True:
             self._debug( 'rm '+self.priv_dir+'/profile_page_e.html' )
-            os.remove( self.priv_dir+'/profile_page_e.html' )
+            self._rm_if_exists( self.priv_dir+'/profile_page_e.html' )
 
         self._report_time( 'Parsed in %2.4f sec' %(time.time()-startTime) )
 

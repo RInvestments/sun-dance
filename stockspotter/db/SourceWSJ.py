@@ -37,7 +37,7 @@ class SourceWSJ:
 
     def _debug( self, txt, lvl=0 ):
         """ """
-        to_print = []
+        to_print = self.verbosity
         if lvl in to_print:
             print tcol.OKBLUE, 'SourceWSJ(Debug=%2d) :' %(lvl), tcol.ENDC, txt
 
@@ -78,19 +78,31 @@ class SourceWSJ:
             self._debug( 'Loaded into `raw_html_str`' )
             return raw_html_str
         else:
-            self._printer( 'raw file does not exists : '+raw_fname)
+            self._error( 'raw file does not exists : '+raw_fname)
             return None
 
-    def __init__(self, ticker, stock_prefix):
+    def _rm_if_exists(self, file_path):
+        if os.path.exists(file_path):
+            self._debug( 'rm ', file_path )
+            os.remove( file_path )
+            return True
+        else:
+            self._debug( 'Attempted to remove non-existant raw file : ', file_path)
+            return False
+
+    def __init__(self, ticker, stock_prefix, verbosity=0):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
+        self.verbosity = range(verbosity)
 
         # print 'constructor'
         self.ticker = ticker
         self.stock_prefix = stock_prefix
         self.priv_dir = stock_prefix + '/wsj/'
         self.raw_html_str = None
+
+
 
         self._debug( 'setting ticker : '+ ticker )
         self._debug( 'setting stock_prefix : '+ stock_prefix )
@@ -135,19 +147,19 @@ class SourceWSJ:
         else:
             self._download_and_save( url_wsj_profile, self.priv_dir+'wsj_profile.html')
 
-        if skip_if_exist and os.path.exists(self.priv_dir+'income_statement.html'):
+        if skip_if_exist and os.path.exists(self.priv_dir+'income_statement.html') and os.path.exists(self.priv_dir+'income_statement_q.html'):
             self._debug( 'Already exists file : %s .... SKIPPING' %(self.priv_dir+'income_statement.html') )
         else:
             self._download_and_save( url_income_statement, self.priv_dir+'income_statement.html')
             self._download_and_save( url_income_statement_q, self.priv_dir+'income_statement_q.html')
 
-        if skip_if_exist and os.path.exists(self.priv_dir+'balance_sheet.html'):
+        if skip_if_exist and os.path.exists(self.priv_dir+'balance_sheet.html') and os.path.exists(self.priv_dir+'balance_sheet_q.html'):
             self._debug( 'Already exists file : %s .... SKIPPING' %(self.priv_dir+'balance_sheet.html') )
         else:
             self._download_and_save( url_balance_sheet, self.priv_dir+'balance_sheet.html')
             self._download_and_save( url_balance_sheet_q, self.priv_dir+'balance_sheet_q.html')
 
-        if skip_if_exist and os.path.exists(self.priv_dir+'cash_flow_statement.html'):
+        if skip_if_exist and os.path.exists(self.priv_dir+'cash_flow_statement.html') and os.path.exists(self.priv_dir+'cash_flow_statement_q.html'):
             self._debug( 'Already exists file : %s .... SKIPPING' %(self.priv_dir+'cash_flow_statement.html') )
         else:
             self._download_and_save( url_cash_flow_statement, self.priv_dir+'cash_flow_statement.html')
@@ -157,12 +169,19 @@ class SourceWSJ:
         self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
 
 
+    def parse(self, delete_raw=False):
+        #TODO
+        # Add a function to check if the data even exists
+        self.parse_financial_statements(delete_raw=delete_raw)
+        self.parse_profile(delete_raw=delete_raw)
+        self.parse_financials(delete_raw=delete_raw)
+
+
 
     ## Parses the .html of financial statements to .json
-    def parse(self):
+    def parse_financial_statements(self, delete_raw=False):
         """ Parse the downloaded files and save the data as pickle"""
         A = {}
-        A['financials'] = self.priv_dir+'financials.html'
         A['income_statement'] = self.priv_dir+'income_statement.html'
         A['income_statement_q'] = self.priv_dir+'income_statement_q.html'
         A['balance_sheet'] = self.priv_dir+'balance_sheet.html'
@@ -192,12 +211,15 @@ class SourceWSJ:
         self._report_time( 'Parsing done in %4.2fs' %(time.time()-startTime) )
 
 
-        # raw_html_str = self._load_raw_html( A['cash_flow_statement_q'])
-        # stt = self._parse_cash_flow_statement( raw_html_str )
+        # Delete raw html file (~55Kb each)
+        if delete_raw == True:
+            for ulr in A:
+                self._debug( 'rm '+A[ulr] )
+                os.remove( A[ulr] )
 
 
     ## Parses the company-people html page
-    def parse_profile(self):
+    def parse_profile(self, delete_raw=False):
         raw_html = self._load_raw_html( self.priv_dir+'wsj_profile.html' )
 
         soup = BeautifulSoup( str(raw_html), 'lxml' )
@@ -272,9 +294,13 @@ class SourceWSJ:
         self._debug( "File Written : "+json_fname)
 
 
+        # Delete raw html file (~55Kb each)
+        if delete_raw == True:
+            self._debug( 'rm '+self.priv_dir+'wsj_profile.html' )
+            self._rm_if_exists( self.priv_dir+'wsj_profile.html' )
 
-        #Incomplete
-    def parse_financials(self ):
+
+    def parse_financials(self, delete_raw=False ):
         """ Parses the raw string and returns json encoded string"""
         raw_html = self._load_raw_html( self.priv_dir+'financials.html' )
 
@@ -320,7 +346,10 @@ class SourceWSJ:
         self._debug( "File Written : "+json_fname)
 
 
-
+        # Delete raw html file (~55Kb each)
+        if delete_raw == True:
+            self._debug( 'rm '+self.priv_dir+'financials.html' )
+            self._rm_if_exists( self.priv_dir+'financials.html' )
 
 
 

@@ -30,9 +30,12 @@ class SourceReuters:
         """ """
         print tcol.OKBLUE, 'SourceReuters :', tcol.ENDC, txt
 
-    def _debug( self, txt ):
+    def _debug( self, txt, lvl=0 ):
         """ """
-        # print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+        to_print = self.verbosity
+        if lvl in to_print:
+            print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+
 
     def _report_time( self, txt ):
         """ """
@@ -63,10 +66,11 @@ class SourceReuters:
 
         return True
 
-    def __init__(self, ticker, stock_prefix):
+    def __init__(self, ticker, stock_prefix, verbosity=0):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
+        self.verbosity = range(verbosity)
 
         # print 'constructor'
         self.ticker = ticker

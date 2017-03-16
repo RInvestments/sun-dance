@@ -1,5 +1,4 @@
-""" Processes the list of equities from HKEX website and just downloads data.
-    Downloads
+""" Parse the downloaded data. For downloading use data_retriver.py
     a) HKEX profile data
     b) Data from Reuters
     c) Data from WSJ
@@ -46,7 +45,7 @@ def make_folder_if_not_exist(folder):
 parser = argparse.ArgumentParser()
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable retrival of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable retrival of WSJ data' )
-parser.add_argument( '-f', '--force_download', default=False, action='store_true', help='Force download. Default : False' )
+parser.add_argument( '--delete_raw', default=False, action='store_true', help='Delete the raw .html after parsing' )
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
@@ -93,8 +92,8 @@ for i,l in enumerate(full_list):
     # Download HKEX
     if args.hkex:
         s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_hkex.download_url(skip_if_exist=not args.force_download)
-        # s_hkex.parse()
+        # s_hkex.download_url(skip_if_exist=not args.force_download)
+        s_hkex.parse(delete_raw=args.delete_raw)
         # A = s_hkex.load_hkex_profile()
         # if A is not None:
         #     print A['Industry Classification']
@@ -103,8 +102,8 @@ for i,l in enumerate(full_list):
     # Download WSJ
     if args.wsj:
         s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_wsj.download_url(skip_if_exist=not args.force_download)
-        # # s_wsj.parse()
+        # s_wsj.download_url(skip_if_exist=not args.force_download)
+        s_wsj.parse(delete_raw=args.delete_raw)
         # # s_wsj.parse_profile()
         # # s_wsj.parse_financials()
         # json_data = s_wsj.load_json_profile()
