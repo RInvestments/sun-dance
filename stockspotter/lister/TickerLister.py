@@ -18,12 +18,12 @@ import TerminalColors
 tcol = TerminalColors.bcolors()
 tcolor = tcol
 
-TickerPoint = collections.namedtuple( 'TickerPoint', 'name ticker')
+from TickerPoint import TickerPoint
 
 class TickerLister:
     def __init__(self, lists_db):
         self.lists_db = lists_db
-        self._printer( "Set lists_db : %s" %(lists_db))
+        self._debug( "Set lists_db : %s" %(lists_db))
 
 
     def _printer( self, txt ):

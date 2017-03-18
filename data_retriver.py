@@ -80,7 +80,7 @@ make_folder_if_not_exist( db_prefix )
 
 # Get List
 lister = TickerLister( args.lists_db_dir )
-full_list = lister.list_full_hkex()
+full_list = lister.list_full_hkex( use_cached=False)
 
 for i,l in enumerate(full_list):
     print tcol.OKGREEN, i,l, tcol.ENDC

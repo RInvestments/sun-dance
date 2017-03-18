@@ -74,12 +74,15 @@ startTime = time.time()
 
 
 db_prefix = args.store_dir #'equities_db/data__N'#2017_Feb_26'
-make_folder_if_not_exist( db_prefix )
+if not os.path.exists(db_prefix):
+    print tcol.FAIL, 'Non existant database dir : '+db_prefix
+    print 'Ensure the directory exists and has the data. Can be downloaded with data_retriver', tcol.ENDC
+    quit()
 
 
 # Get List
 lister = TickerLister( args.lists_db_dir )
-full_list = lister.list_full_hkex()
+full_list = lister.list_full_hkex( use_cached=False)
 
 for i,l in enumerate(full_list):
     print tcol.OKGREEN, i,l, tcol.ENDC

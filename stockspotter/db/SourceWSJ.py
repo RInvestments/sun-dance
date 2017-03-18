@@ -221,6 +221,8 @@ class SourceWSJ:
     ## Parses the company-people html page
     def parse_profile(self, delete_raw=False):
         raw_html = self._load_raw_html( self.priv_dir+'wsj_profile.html' )
+        if raw_html is None:
+            return
 
         soup = BeautifulSoup( str(raw_html), 'lxml' )
         wsj_profile_tree = Tree()
@@ -303,6 +305,8 @@ class SourceWSJ:
     def parse_financials(self, delete_raw=False ):
         """ Parses the raw string and returns json encoded string"""
         raw_html = self._load_raw_html( self.priv_dir+'financials.html' )
+        if raw_html is None:
+            return
 
         soup = BeautifulSoup(str(raw_html), 'lxml')
         tree = Tree()
@@ -377,6 +381,8 @@ class SourceWSJ:
     def _parse_cash_flow_statement( self, raw_html_filename, out_json_filename ):
         """ Parses the cash-flow statement """
         raw_html = self._load_raw_html( raw_html_filename )
+        if raw_html is None:
+            return
 
         soup = BeautifulSoup(str(raw_html), 'lxml')
 
@@ -427,6 +433,8 @@ class SourceWSJ:
     def _parse_balance_sheet(self, raw_html_filename, out_json_filename):
         """ Parse the balance sheet. Has 2 parts viz. Assets, Liabilities """
         raw_html_str = self._load_raw_html( raw_html_filename )
+        if raw_html_str is None:
+            return
 
         soup = BeautifulSoup(str(raw_html_str), 'lxml')
 
@@ -464,8 +472,9 @@ class SourceWSJ:
 
     def _parse_income_statement(self, raw_html_filename, out_json_filename ):
         """ Parse the income-statement. Return json for each of the seen income statement """
-
         raw_html = self._load_raw_html( raw_html_filename )
+        if raw_html is None:
+            return
         soup = BeautifulSoup(str(raw_html), 'lxml')
 
         income_statement = soup.find_all( attrs={'data-module-id': 3 } )[0]
