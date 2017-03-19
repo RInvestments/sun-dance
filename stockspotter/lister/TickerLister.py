@@ -51,7 +51,7 @@ class TickerLister:
             # Read URL
             self._debug( 'Download : http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm' )
             html = urllib2.urlopen('http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm').read()  # List of securities
-
+            # TODO : after retrival, update cache. ie. write html to file
 
 
         soup = BeautifulSoup(html, 'lxml')
@@ -88,13 +88,20 @@ class TickerLister:
 
 
 
-    ############## Heng Seng Indices #####################
-    # https://www.hsi.com.hk/HSI-Net/HSI-Net
-    def list_hsi(self):
-        q = 0
-        #TODO
+    #TODO : add more official sources for full list of securities.
+    ############## India - NSE, BSE ########################
 
 
-    ############# Sector Trees ###########################
-    # process the sector info and build trees of the market
-    #TODO
+
+    ############## USA - NYSE, NASDAQ ###################
+
+
+    ############## JAPAN - TYO #########################
+
+
+    ############# China - SHenzen, Shanghai ################
+
+    ############### Other ASIA - Korea Exchange, Taiwan Stock Exchange,
+
+
+    ############## Europe - London, Frankfurt, Euronext
