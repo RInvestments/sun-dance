@@ -16,7 +16,7 @@ Transfer some of the machine learning techniques to analyse and potentially make
 buck or two. 
 
 ## Software Licence
-![License ICO](images/88x31.png)
+![License ICO](documents/images/88x31.png)
 This software is being released under the [Creative Commons Attribution-NonCommerial License](https://creativecommons.org/licenses/by-nc/4.0/legalcode). 
 
 
