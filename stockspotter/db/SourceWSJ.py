@@ -640,3 +640,9 @@ class SourceWSJ:
         json_file = self.priv_dir+'/institutional_investors.json'
         json_data = self._load_json( json_file )
         return json_data
+
+
+    def load_financials( self ):
+        json_file = self.priv_dir+'/financials.json'
+        json_data = self._load_json( json_file )
+        return json_data
