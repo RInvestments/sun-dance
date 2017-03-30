@@ -46,6 +46,8 @@ def make_folder_if_not_exist(folder):
 parser = argparse.ArgumentParser()
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable retrival of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable retrival of WSJ data' )
+parser.add_argument( '--yahoo', default=False, action='store_true', help='Enable retrival of Yahoo Quote data (price+volume)' )
+parser.add_argument( '--reuters', default=False, action='store_true', help='Enable retrival of Reuters company officers data' )
 parser.add_argument( '-f', '--force_download', default=False, action='store_true', help='Force download. Default : False' )
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
@@ -62,11 +64,22 @@ if args.wsj:
 else:
     print tcol.HEADER, 'Disable : WSJ', tcol.ENDC
 
+if args.yahoo:
+    print tcol.HEADER, 'Enable  : Yahoo', tcol.ENDC
+else:
+    print tcol.HEADER, 'Disable : Yahoo', tcol.ENDC
+
+if args.reuters:
+    print tcol.HEADER, 'Enable  : Reuters', tcol.ENDC
+else:
+    print tcol.HEADER, 'Disable : Reuters', tcol.ENDC
+
 if args.store_dir:
     print tcol.HEADER, 'store_dir : ', args.store_dir, tcol.ENDC
 
+
 if args.lists_db_dir:
-    print tcol.HEADER, 'store_dir : ', args.lists_db_dir, tcol.ENDC
+    print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
 
 
 
@@ -83,7 +96,7 @@ lister = TickerLister( args.lists_db_dir )
 full_list = lister.list_full_hkex( use_cached=False)
 
 for i,l in enumerate(full_list):
-    print tcol.OKGREEN, i,l, tcol.ENDC
+    print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'
@@ -112,6 +125,14 @@ for i,l in enumerate(full_list):
         #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
 
 
+    if args.yahoo:
+        s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_yahoo.download_quote()
+
+
+    if args.reuters:
+        s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_reuters.download_url()
 
 
 

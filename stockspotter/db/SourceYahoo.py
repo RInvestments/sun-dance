@@ -6,27 +6,31 @@ import code
 import string
 
 import pickle
+import json
 
 import TerminalColors
 tcol = TerminalColors.bcolors()
 
 from yahoo_finance import Share
-
+from yahoo_finance import YQLResponseMalformedError
 
 class SourceYahoo:
     def _printer( self, txt ):
         """ """
         print tcol.OKBLUE, 'SourceYahoo :', tcol.ENDC, txt
 
-    def _debug( self, txt ):
+    def _debug( self, txt, lvl=0 ):
         """ """
-        # print tcol.OKBLUE, 'SourceYahoo(Debug) :', tcol.ENDC, txt
+        if lvl in self.verbosity:
+            print tcol.OKBLUE, 'SourceYahoo(Debug) :', tcol.ENDC, txt
 
     def _report_time( self, txt ):
         """ """
         print tcol.OKBLUE, 'SourceYahoo(time) :', tcol.ENDC, txt
 
-
+    def _error( self, txt ):
+        """ """
+        print tcol.FAIL, 'SourceYahoo(Error) :', tcol.ENDC, txt
 
 
     def _save_obj( self, obj, name ):
@@ -42,10 +46,12 @@ class SourceYahoo:
             return pickle.load(f)
 
 
-    def __init__(self, ticker, stock_prefix):
+    def __init__(self, ticker, stock_prefix, verbosity=0):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
+        self.verbosity = range(verbosity)
+
 
         # print 'constructor'
         self.ticker = ticker
@@ -70,9 +76,34 @@ class SourceYahoo:
 
         return True
 
+    def download_quote( self ):
+        """ Stores only price and volume at datastart to json"""
+        if not os.path.exists(self.priv_dir):
+            self._debug( 'Make directory : '+self.priv_dir)
+            os.makedirs( self.priv_dir )
+
+        startTime = time.time()
+
+        self._debug( 'Query yahoo_finance for '+self.ticker )
+        try:
+            sh = Share( self.ticker ) #ensure ticker is in yahoo's format
+            data_dict = {}
+
+            data_dict['get_price'] = sh.get_open()
+            data_dict['get_volume'] = sh.get_volume()
+
+            out_json_filename = self.priv_dir + '/quote.json'
+            self._debug( '\n'+ json.dumps( data_dict, indent=4 ) )
+            json.dump( data_dict, open(out_json_filename, 'w') )
+            self._debug( "File Written : "+out_json_filename)
+            self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
+        except YQLResponseMalformedError:
+            self._error( 'YQLResponseMalformedError, not writing json' )
+
 
     def download_data( self, skip_if_exist=True ):
         if not os.path.exists(self.priv_dir):
+            self._debug( 'Make directory : '+self.priv_dir)
             os.makedirs( self.priv_dir )
 
         startTime = time.time()
@@ -83,6 +114,8 @@ class SourceYahoo:
 
         self._debug( 'Query yahoo_finance for '+self.ticker )
         sh = Share( self.ticker )
+
+
 
         data_dict = {}
         data_dict['get_price'] = sh.get_price()
@@ -137,4 +170,36 @@ class SourceYahoo:
         obj_name = self.priv_dir + '/yahoo_dict_data.pk'
         self._save_obj(data_dict, obj_name)
 
+        out_json_filename = self.priv_dir + '/quote_detailed.json'
+        self._debug( '\n'+ json.dumps( data_dict, indent=4 ) )
+        json.dump( data_dict, open(out_json_filename, 'w') )
+        self._debug( "File Written : "+out_json_filename)
         self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
+
+
+    ############################### LOAD JSON ########################
+    def _load_json( self, file_name ):
+        json_file = file_name
+        self._debug( 'Open json_file : %s' %(json_file))
+
+        if os.path.isfile( json_file ):
+            self._debug( 'File (%s) exists' %(json_file))
+        else:
+            self._debug( 'File (%s) does NOT exists' %(json_file))
+            self._error( 'File (%s) does NOT exists' %(json_file))
+            return None
+
+        json_data = json.loads( open( json_file ).read() )
+        # pprint ( json_data )
+        return json_data
+
+
+    def load_quote(self ):
+        json_file = self.priv_dir+'/quote.json'
+        json_data = self._load_json( json_file )
+        return json_data
+
+    def load_detailed_quote(self):
+        json_file = self.priv_dir+'/quote_detailed.json'
+        json_data = self._load_json( json_file )
+        return json_data

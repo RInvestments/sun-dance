@@ -1,4 +1,4 @@
-
+""" Test individual source parsers """
 
 import sys
 import os.path
@@ -20,23 +20,25 @@ from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
-ticker = '0005.HK'
-stock_prefix = 'equities_db/dataX__/'+ticker+'/'
-s_hkex = SourceHKEXProfile( ticker, stock_prefix )
-s_hkex.download_url()
-s_hkex.parse()
-A = s_hkex.load_hkex_profile()
-B = s_hkex.load_dividends_data()
+ticker = '0399.HK'
+stock_prefix = 'equities_db/data__/'+ticker+'/'
+# s_hkex = SourceHKEXProfile( ticker, stock_prefix )
+# s_hkex.download_url()
+# s_hkex.parse()
+# A = s_hkex.load_hkex_profile()
+# B = s_hkex.load_dividends_data()
 # print A['Market Capitalisation']
 
-# s_reuters = SourceReuters(ticker, stock_prefix )
+s_reuters = SourceReuters(ticker, stock_prefix, 5 )
+s_reuters.download_url()
+s_reuters.parse(delete_raw=False)
 # s_reuters.load_raw_file()
 # s_reuters.parse_financials()
 
 
 
-# s_yahoo = SourceYahoo( ticker, stock_prefix )
-# s_yahoo.download_data()
+# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+# s_yahoo.download_quote()
 # s_yahoo.load_pickle()
 
 
