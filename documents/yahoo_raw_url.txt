@@ -1,0 +1,7 @@
+## For historical data since 1962, all
+http://ichart.finance.yahoo.com/table.csv?s=1357.HK&c=1962
+
+## Current price
+http://download.finance.yahoo.com/d/quotes.csv?s=AAPL&f=nab
+
+

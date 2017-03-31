@@ -47,6 +47,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable retrival of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable retrival of WSJ data' )
 parser.add_argument( '--yahoo', default=False, action='store_true', help='Enable retrival of Yahoo Quote data (price+volume)' )
+parser.add_argument( '--yahoo_historical', default=False, action='store_true', help='Yahoo historical data. It is recommeded to download historical data stand alone, cause being the adjusted data for splits being present' )
 parser.add_argument( '--reuters', default=False, action='store_true', help='Enable retrival of Reuters company officers data' )
 parser.add_argument( '-f', '--force_download', default=False, action='store_true', help='Force download. Default : False' )
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
@@ -68,6 +69,11 @@ if args.yahoo:
     print tcol.HEADER, 'Enable  : Yahoo', tcol.ENDC
 else:
     print tcol.HEADER, 'Disable : Yahoo', tcol.ENDC
+
+if args.yahoo_historical:
+    print tcol.HEADER, 'Enable  : Yahoo Historical', tcol.ENDC
+else:
+    print tcol.HEADER, 'Disable : Yahoo Historical', tcol.ENDC
 
 if args.reuters:
     print tcol.HEADER, 'Enable  : Reuters', tcol.ENDC
@@ -127,9 +133,15 @@ for i,l in enumerate(full_list):
 
     if args.yahoo:
         s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_yahoo.download_quote()
+        s_yahoo.download_quick_quote()
+
+    if args.yahoo_historical:
+        s_yahoo_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_yahoo_historical.download_historical_quote(skip_if_exist=not args.force_download)
 
 
+
+    # Download Reuters
     if args.reuters:
         s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
         s_reuters.download_url()

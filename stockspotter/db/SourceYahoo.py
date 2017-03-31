@@ -7,12 +7,17 @@ import string
 
 import pickle
 import json
+import urllib2
 
 import TerminalColors
 tcol = TerminalColors.bcolors()
 
 from yahoo_finance import Share
 from yahoo_finance import YQLResponseMalformedError
+
+import collections
+def Tree():
+    return collections.defaultdict(Tree)
 
 class SourceYahoo:
     def _printer( self, txt ):
@@ -76,7 +81,82 @@ class SourceYahoo:
 
         return True
 
-    def download_quote( self ):
+
+    ## All historical for 10 years listing this file approx 500kb
+    def download_historical_quote(self, skip_if_exist=True ):
+        if not os.path.exists(self.priv_dir):
+            self._debug( 'Make directory : '+self.priv_dir)
+            os.makedirs( self.priv_dir )
+
+        output_json_file_name = self.priv_dir+'/historical_quotes.json'
+        if skip_if_exist and os.path.isfile(output_json_file_name):
+            self._debug( 'File already exists....SKIP')
+            return
+        else:
+            self._debug( 'File does not exist... continue')
+
+        # The package is broken for this download.
+        # Need to download the raw .csv file. Also note the difference between adj_price and open_price
+        # eg:: http://ichart.finance.yahoo.com/table.csv?s=1357.HK&c=1962
+        startTime = time.time()
+
+        self._debug( 'retrive url for yahoo historical data : http://ichart.finance.yahoo.com/table.csv?s=0000.HK&c=1962' )
+
+        try:
+            historical_csv = urllib2.urlopen('http://ichart.finance.yahoo.com/table.csv?s=%s&c=1962' %(self.ticker)).read()
+        except urllib2.HTTPError:
+            self._error( 'HTTP Error...SKIP')
+            return
+
+
+
+        self._debug( 'Open file : '+output_json_file_name )
+        fp = open( output_json_file_name, 'w' )
+
+        # The csv is structured into 7 cols, viz. Date, Open, High, Low, Close, Volume, Adj Close (in this order)
+        _csv = historical_csv.split('\n')
+        # T = Tree()
+        fp.write( '{')
+
+
+        for i,ln in enumerate(_csv[1:-2]):
+            cols = ln.split(',')
+            if len(cols) != 7: #expecting 7 cols
+                continue
+
+            # T[str(i)]['Date'] = cols[0].strip()
+            # T[str(i)]['Open'] = cols[1].strip()
+            # T[str(i)]['High'] = cols[2].strip()
+            # T[str(i)]['Low'] = cols[3].strip()
+            # T[str(i)]['Close'] = cols[4].strip()
+            # T[str(i)]['Volume'] = cols[5].strip()
+            # T[str(i)]['Adj Close'] = cols[6].strip()
+
+            # fp.write( '"%d": ' %(i) + '{\n\t"Date": "%s",\n\t"Open": "%s",\n\t"High": "%s",\n\t"Low": "%s",\n\t"Close": "%s",\n\t"Volume": "%s",\n\t"Adj Close": "%s"\n }\n' \
+                        # %( cols[0].strip(), cols[1].strip(), cols[2].strip(),cols[3].strip(), cols[4].strip(), cols[5].strip(), cols[6].strip() )
+                    # )
+
+            fp.write( '"%d": ' %(i) + '{"Date": "%s","Open": "%s","High": "%s","Low": "%s","Close": "%s","Volume": "%s","Adj Close": "%s"},' \
+                        %( cols[0].strip(), cols[1].strip(), cols[2].strip(),cols[3].strip(), cols[4].strip(), cols[5].strip(), cols[6].strip() )
+                    )
+
+        ln = _csv[-2]
+        cols = ln.split(',')
+        fp.write( '"%d": ' %(i) + '{"Date": "%s","Open": "%s","High": "%s","Low": "%s","Close": "%s","Volume": "%s","Adj Close": "%s"}' \
+                    %( cols[0].strip(), cols[1].strip(), cols[2].strip(),cols[3].strip(), cols[4].strip(), cols[5].strip(), cols[6].strip() )
+                )
+
+        fp.write( "}")
+        fp.close()
+        self._debug( 'Written json : '+output_json_file_name )
+        self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
+        # print json.dumps( T, indent=4 )
+
+
+
+
+    ## Quick quote for today
+    def download_quick_quote( self ):
         """ Stores only price and volume at datastart to json"""
         if not os.path.exists(self.priv_dir):
             self._debug( 'Make directory : '+self.priv_dir)
@@ -89,18 +169,30 @@ class SourceYahoo:
             sh = Share( self.ticker ) #ensure ticker is in yahoo's format
             data_dict = {}
 
-            data_dict['get_price'] = sh.get_open()
-            data_dict['get_volume'] = sh.get_volume()
 
-            out_json_filename = self.priv_dir + '/quote.json'
+            data_dict['Volume'] = sh.get_volume()
+            data_dict['High'] = sh.get_days_high()
+            data_dict['Low'] = sh.get_days_low()
+            data_dict['Date'] = sh.get_trade_datetime() #eg. 2014-02-05 21:00:00 UTC+0000
+            data_dict['Close'] = sh.get_price()
+            data_dict['Open'] = sh.get_open()
+            # This is current quote. Not adjusted for splits. This python package is a dumb and does not download split adjusted data.
+            # cannot get daily data adjusted. But if downloading hostorical data from url directly
+            # http://ichart.finance.yahoo.com/table.csv?s=1357.HK&c=1962 can get the llast column which is split adjusted (i have verified it for apple for example)
+
+
+
+            out_json_filename = self.priv_dir + '/quick_quote.json'
             self._debug( '\n'+ json.dumps( data_dict, indent=4 ) )
             json.dump( data_dict, open(out_json_filename, 'w') )
             self._debug( "File Written : "+out_json_filename)
-            self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
+            self._report_time( 'Quick Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
         except YQLResponseMalformedError:
             self._error( 'YQLResponseMalformedError, not writing json' )
 
 
+
+    ## All data for today. Almost never do this,
     def download_data( self, skip_if_exist=True ):
         if not os.path.exists(self.priv_dir):
             self._debug( 'Make directory : '+self.priv_dir)
@@ -171,7 +263,7 @@ class SourceYahoo:
         self._save_obj(data_dict, obj_name)
 
         out_json_filename = self.priv_dir + '/quote_detailed.json'
-        self._debug( '\n'+ json.dumps( data_dict, indent=4 ) )
+        self._debug( '\n'+ json.dumps( data_dict, indent=4 ) , lvl=2 )
         json.dump( data_dict, open(out_json_filename, 'w') )
         self._debug( "File Written : "+out_json_filename)
         self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )

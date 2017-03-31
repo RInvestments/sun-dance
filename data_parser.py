@@ -98,7 +98,7 @@ for i,l in enumerate(full_list):
     make_folder_if_not_exist( folder )
 
 
-    # Download HKEX
+    # Parse HKEX
     if args.hkex:
         s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
         # s_hkex.download_url(skip_if_exist=not args.force_download)
@@ -108,7 +108,7 @@ for i,l in enumerate(full_list):
         #     print A['Industry Classification']
 
 
-    # Download WSJ
+    # Parse WSJ
     if args.wsj:
         s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
         # s_wsj.download_url(skip_if_exist=not args.force_download)
@@ -120,6 +120,7 @@ for i,l in enumerate(full_list):
         #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
 
 
+    # Parse Reuters
     if args.reuters:
         s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
         s_reuters.parse(delete_raw=args.delete_raw)

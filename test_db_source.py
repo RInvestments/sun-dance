@@ -20,8 +20,8 @@ from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
-ticker = '0399.HK'
-stock_prefix = 'equities_db/data__/'+ticker+'/'
+ticker = '0001.HK'
+stock_prefix = 'equities_db/data__N/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -29,18 +29,24 @@ stock_prefix = 'equities_db/data__/'+ticker+'/'
 # B = s_hkex.load_dividends_data()
 # print A['Market Capitalisation']
 
-s_reuters = SourceReuters(ticker, stock_prefix, 5 )
-s_reuters.download_url()
-s_reuters.parse(delete_raw=False)
+# s_reuters = SourceReuters(ticker, stock_prefix, 5 )
+# s_reuters.download_url()
+# s_reuters.parse(delete_raw=False)
 # s_reuters.load_raw_file()
 # s_reuters.parse_financials()
 
 
 
-# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
-# s_yahoo.download_quote()
-# s_yahoo.load_pickle()
 
+s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+# s_yahoo.download_quick_quote()
+# s_yahoo.load_pickle()
+s_yahoo.download_historical_quote()
+
+# y_obj = Share( ticker )
+# a = y_obj.get_historical( '2010-07-12', '2017-01-29' )
+# print a[0]
+# print a[-1]
 
 # s_wsj = SourceWSJ( ticker, stock_prefix )
 # # s_wsj.download_url()
