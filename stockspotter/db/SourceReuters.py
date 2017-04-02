@@ -259,6 +259,7 @@ class SourceReuters:
             # print sd[i][0], '|', bd[i][0], '|', cbd[i][0], '|', cod[i][0]
 
             exec_name = str(i) #sd[i][0]
+            T[exec_name]['order'] = str(i)
             for j in range(len(sh)):
                 T[exec_name][sh[j]] = sd[i][j]
 

@@ -19,10 +19,17 @@ from stockspotter.lister.TickerLister import TickerLister
 
 import urllib2
 import uuid
+import pymongo
+import code
+
+client = pymongo.MongoClient()
+db = client.universalData
+
 
 
 def get_uuid( cur_dict ):
     od = collections.OrderedDict(sorted(cur_dict.items()))
+
     json_data_obj =  json.dumps(od)
     # print json_data_obj
     # print type(json_data_obj)
@@ -30,14 +37,42 @@ def get_uuid( cur_dict ):
     return str(digest)
 
 def add_to_db(cur_dict):
-    cur_dict['id'] = get_uuid( cur_dict )
+    #global db
 
+    cur_dict['id'] = get_uuid( cur_dict )
+    json_cur_dict = json.dumps(cur_dict)
+
+    # print str(cur_dict)
+
+
+
+    ########################
+    #### Solr Insertion ####
+    ########################
     req = urllib2.Request(url='http://localhost:8983/solr/universalData/update/json/docs',
-                          data=json.dumps(cur_dict))
-    print str(cur_dict)
+                          data=json_cur_dict)
+
     req.add_header('Content-type', 'application/json')
     f = urllib2.urlopen(req)
-    print f.read()
+    print 'Solr Response : ', f.read()
+
+
+
+    ###########################
+    #### MongoDB Insertion ####
+    ###########################
+
+    #code.interact(local=locals())
+
+    try:
+        cur_dict['last_modified'] = datetime.now()
+        db.universalData.insert( cur_dict )
+    except Exception as e:
+        print str(e)
+        print tcol.FAIL, 'MOngoDB insert failed', tcol.ENDC
+
+    del cur_dict
+
 
 def modi_safai_abhiyan():
     req = urllib2.Request(url='http://localhost:8983/solr/universalData/update?commit=true')
@@ -59,7 +94,7 @@ def module1( json_data ):
         except ValueError:
             cur_dict['val'] =  0
 
-        add_to_db(cur_dict)
+        add_to_db(cur_dict.copy())
 
 # def module2( json)
 
@@ -86,7 +121,7 @@ for l in full_list:
     cur_dict['sector'] = json_data['Company Info']['Sector']
     cur_dict['type1'] = 'Financials'
 
-    # module1()
+    module1(json_data)
 
     #print json.dumps( json_data_financials, indent=4 )
     for ty1 in json_data_financials:
@@ -98,8 +133,9 @@ for l in full_list:
             try:
                 n_cur_dict['val']= float(json_data_financials[ty1][ty2].strip().replace(',', '') )
                 add_to_db(n_cur_dict)
+                n_cur_dict = None
             except ValueError:
-                print "maa chudi. baad main samhalte hai !!"
+                print "Value Error"
 
 
 modi_safai_abhiyan()

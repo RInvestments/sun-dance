@@ -38,10 +38,10 @@ stock_prefix = 'equities_db/data__N/'+ticker+'/'
 
 
 
-s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
 # s_yahoo.download_quick_quote()
 # s_yahoo.load_pickle()
-s_yahoo.download_historical_quote()
+# s_yahoo.download_historical_quote()
 
 # y_obj = Share( ticker )
 # a = y_obj.get_historical( '2010-07-12', '2017-01-29' )
