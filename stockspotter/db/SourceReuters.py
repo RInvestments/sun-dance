@@ -301,9 +301,6 @@ class SourceReuters:
             headers.append(th.text.strip())
 
 
-
-
-
         pt = []
         for tr in all_tr[1:]:
             all_td = tr.find_all('td')
@@ -323,3 +320,22 @@ class SourceReuters:
 
         #
     ################################################
+    def _load_json( self, file_name ):
+        json_file = file_name
+        self._debug( 'Open json_file : %s' %(json_file))
+
+        if os.path.isfile( json_file ):
+            self._debug( 'File (%s) exists' %(json_file))
+        else:
+            self._debug( 'File (%s) does NOT exists' %(json_file))
+            self._error( 'File (%s) does NOT exists' %(json_file))
+            return None
+
+        json_data = json.loads( open( json_file ).read() )
+        # pprint ( json_data )
+        return json_data
+
+    def load_executives( self ):
+        json_file = self.priv_dir+'/companyExecutives.json'
+        json_data = self._load_json( json_file )
+        return json_data
