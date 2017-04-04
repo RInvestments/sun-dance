@@ -10,7 +10,7 @@ import urllib2
 import time
 import code
 import string
-import code
+import glob
 
 from bs4 import BeautifulSoup
 import pickle
@@ -580,6 +580,31 @@ class SourceWSJ:
 
 
 
+    ################ list (ls) available statements ############
+    ## Will return available tags
+    # period         : 'a' or 'q'
+    # statement_name : 'income_statement' or 'balance_sheet' or 'cash_flow_statement'
+    # sub_statement  :
+    #        if 'income_statement' then None
+    #        if 'balance_sheet' then 'assets' or 'liabilities'
+    #        if 'cash_flow_statement' then 'operating' or 'investing' or 'financing'
+    #
+    # Note: sub_statement = None will return all sub statements
+    # Note: Currently the check is not in place. PLease excersice care.
+    #TODO: Implement checking of arguments
+    def ls(self, period, statement_name, sub_statement=None):
+        if sub_statement is None:
+            pattern = '%s.%s.*.json' %(statement_name,period)
+        else:
+            pattern = '%s.%s.%s*.json' %(statement_name,period, sub_statement)
+        self._debug( 'ls %s' %(pattern))
+        self._debug( 'ls %s/%s' %(self.priv_dir,pattern), lvl=2 )
+        ll = glob.glob( self.priv_dir+'/%s' %(pattern) )
+        tags_list = []
+        for l in ll:
+            # get the last with split(/) and then split('.') and then join 1 to -1
+            tags_list.append(  '.'.join( l.split('/')[-1].split('.')[1:-1] )  )
+        return tags_list
 
 
     ############################### LOAD JSON ########################

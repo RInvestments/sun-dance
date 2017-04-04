@@ -122,17 +122,84 @@ def insert_financials_data(base_dict, json_financials):
             n_cur_dict = base_dict.copy()
             n_cur_dict['type2']=h1
             n_cur_dict['type3']=h2
+            v_string =  json_financials[h1][h2].strip()
+            n_cur_dict['value_string'] = v_string
             try:
-                n_cur_dict['value_string'] = json_financials[h1][h2].strip()
-                n_cur_dict['val']= float(json_financials[h1][h2].strip().replace(',', '') )
+                n_cur_dict['val']= float(v_string.replace(',', '') )
             except ValueError:
-                # print "Value Error"
-                n_cur_dict['val'] = 0
+                # Try split()
+                try:
+                    n_cur_dict['val'] = float( v_string.split()[0] )
+                except ValueError:
+                    # Try interpreting it as date
+                    try:
+                        n_cur_dict['val'] = datetime.strptime( v_string,  '%m/%d/%Y').strftime('%Y/%m/%d')
+                    except:
+                        pass
+
             add_to_db(n_cur_dict)
 
 
+def insert_institutional_investors(base_dict, json_institutional_investor):
+    base_dict['type1'] = 'Ownership'
+    base_dict['type2'] = 'Institutional Investor'
+    for owner in json_institutional_investor:
+        for particulars in json_institutional_investor[owner]:
+            np_cur_dict = base_dict.copy()
+            np_cur_dict['type3'] = owner.strip()
+            np_cur_dict['type4'] = particulars
+            try:
+                v_string = json_institutional_investor[owner][particulars].strip()
+                np_cur_dict['value_string'] = v_string
+                np_cur_dict['val'] = float(v_string.replace(',', '' ).replace( '%', '' ))
+            except ValueError:
+                #try interpreting it as a string
+                np_cur_dict['val'] = datetime.strptime( v_string, '%m/%d/%y').strftime('%Y/%m/%d') #month/date/year
+            except TypeError:
+                pass
+            add_to_db(np_cur_dict)
+
+
+
+def insert_mutual_fund_owners(base_dict, json_mutual_fund_owners):
+    base_dict['type1'] = 'Ownership'
+    base_dict['type2'] = 'Mutual Funds'
+    for owner in json_mutual_fund_owners:
+        for particulars in json_mutual_fund_owners[owner]:
+            np_cur_dict = base_dict.copy()
+            np_cur_dict['type3'] = owner.strip()
+            np_cur_dict['type4'] = particulars.strip()
+            try:
+                v_string = json_mutual_fund_owners[owner][particulars].strip()
+                np_cur_dict['value_string'] = v_string
+                np_cur_dict['val'] = float(v_string.replace(',', '' ).replace( '%', '' ))
+            except ValueError:
+                #try interpreting it as a string
+                np_cur_dict['val'] = datetime.strptime( v_string, '%m/%d/%y').strftime('%Y/%m/%d') #month/date/year
+            except TypeError:
+                pass
+            add_to_db(np_cur_dict)
+
+
+def insert_executives_data(base_dict, json_executives):
+    for i_str in json_executives:
+        n_cur_dict = base_dict.copy()
+        n_cur_dict['type1'] = 'Executives'
+        n_cur_dict['type2'] = i_str.strip() +'#'+ json_executives[i_str]['Name']
+        for attr in json_executives[i_str]:
+            np_cur_dict = n_cur_dict.copy()
+            np_cur_dict['type3'] = attr.strip()
+            np_cur_dict['value_string'] = json_executives[i_str][attr].strip()
+            try:
+                np_cur_dict['val'] = int(json_executives[i_str][attr].strip().replace(',',''))
+            except ValueError:
+                np_cur_dict['val'] = 0
+            add_to_db(np_cur_dict)
+            # print json_executives[i_str][attr]
+
+
 lister = TickerLister( 'equities_db/lists/' )
-full_list = lister.list_full_hkex( use_cached=False)
+full_list = lister.list_full_hkex( use_cached=True)
 db_prefix = 'equities_db/data__20170316'
 
 
@@ -141,7 +208,7 @@ cur_dict = {}
 
 # l = full_list[9]
 startTimeTotal = time.time()
-for i,l in enumerate(full_list):
+for i,l in enumerate(full_list[0:10]):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
     print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
@@ -160,66 +227,38 @@ for i,l in enumerate(full_list):
     base_dict['industry'] = json_wsj_profile['Company Info']['Industry']
     base_dict['sector'] = json_wsj_profile['Company Info']['Sector']
 
+    # #
+    # # Profile Data
+    # insert_profile_data(base_dict.copy(), json_wsj_profile)
     #
-    # Profile Data
-    insert_profile_data(base_dict.copy(), json_wsj_profile)
-
+    # #
+    # # Financial Overview
+    # insert_financials_data( base_dict.copy(), json_financials )
     #
-    # Financial Overview
-    insert_financials_data( base_dict.copy(), json_financials )
-
-
     #
-    # Institutional Investors
-    json_institutional_investor = s_wsj.load_institutional_investors()
-    if json_institutional_investor is not None:
-        n_cur_dict = base_dict.copy()
-        n_cur_dict['type1'] = 'Ownership'
-        n_cur_dict['type2'] = 'Institutional Investor'
-        for owner in json_institutional_investor:
-            np_cur_dict = n_cur_dict.copy()
-            for particulars in json_institutional_investor[owner]:
-                np_cur_dict['type3'] = owner.strip()
-                np_cur_dict['type4'] = particulars
-                np_cur_dict['value_string'] = json_institutional_investor[owner][particulars].strip()
-                add_to_db(np_cur_dict.copy())
-
+    # #
+    # # Institutional Investors
+    # json_institutional_investor = s_wsj.load_institutional_investors()
+    # if json_institutional_investor is not None:
+    #     insert_institutional_investors( base_dict.copy(), json_institutional_investor )
     #
-    # Mutual Funds that Own this share
-    json_mutual_fund_owners = s_wsj.load_mututal_fund_owners()
-    if json_mutual_fund_owners is not None:
-        n_cur_dict = base_dict.copy()
-        n_cur_dict['type1'] = 'Ownership'
-        n_cur_dict['type2'] = 'Mutual Funds'
-        for owner in json_mutual_fund_owners:
-            np_cur_dict = n_cur_dict.copy()
-            for particulars in json_mutual_fund_owners[owner]:
-                np_cur_dict['type3'] = owner.strip()
-                np_cur_dict['type4'] = particulars.strip()
-                np_cur_dict['value_string'] = json_mutual_fund_owners[owner][particulars].strip()
-                add_to_db(np_cur_dict.copy())
-
-
     #
-    # Executives
-    s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
-    json_executives = s_reuters.load_executives()
-    if json_executives is not None:
-        for i_str in json_executives:
-            n_cur_dict = base_dict.copy()
-            n_cur_dict['type1'] = 'Executives'
-            n_cur_dict['type2'] = i_str.strip() # json_executives[i_str]['Name']
-            for attr in json_executives[i_str]:
-                np_cur_dict = n_cur_dict.copy()
-                np_cur_dict['type3'] = attr.strip()
-                np_cur_dict['value_string'] = json_executives[i_str][attr].strip()
-                try:
-                    np_cur_dict['val'] = int(json_executives[i_str][attr].strip().replace(',',''))
-                except ValueError:
-                    np_cur_dict['val'] = 0
-                add_to_db(np_cur_dict.copy())
-                # print json_executives[i_str][attr]
+    # #
+    # # Mutual Funds that Own this share
+    # json_mutual_fund_owners = s_wsj.load_mututal_fund_owners()
+    # if json_mutual_fund_owners is not None:
+    #     insert_mutual_fund_owners(base_dict.copy(), json_mutual_fund_owners )
+    #
+    #
+    # #
+    # # Executives
+    # s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
+    # json_executives = s_reuters.load_executives()
+    # if json_executives is not None:
+    #     insert_executives_data( base_dict.copy(), json_executives )
 
+
+    print s_wsj.ls('a', 'cash_flow_statement', 'operating')
 
 
 
