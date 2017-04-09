@@ -72,7 +72,7 @@ def add_to_db(cur_dict):
         print str(e)
         print tcol.FAIL, 'MOngoDB insert failed', tcol.ENDC
 
-    del cur_dict
+    # del cur_dict
 
 
 def solr_commit():
@@ -80,6 +80,22 @@ def solr_commit():
     f = urllib2.urlopen(req)
     print f.read()
     print "Solr Commit Done !!!"
+
+
+# h_string : '12 M' or '123 B' or '1.2 T'
+def human_readable_nums_to_int( h_string ):
+    conv = {'M':1000000, 'B':1000000000, 'T':1000000000000}
+    _d = h_string.split()
+    if len(_d) == 2:
+        try:
+            n = float(_d[0]) * conv[_d[1]]
+            return n
+        except ValueError:
+            raise ValueError('Invalid number to convert. 1st word is not a number', h_string)
+        except KeyError:
+            raise ValueError('Invalid number to convert. 2nd word should be either of M,B or T', h_string)
+    else:
+        raise ValueError('Invalid number to convert.There should be 2 words', h_string)
 
 def insert_profile_data( cur_dict, json_wsj_profile ):
         # cur_dict['company'] = l.name
@@ -94,11 +110,23 @@ def insert_profile_data( cur_dict, json_wsj_profile ):
             n_cur_dict = cur_dict.copy()
             n_cur_dict['type2'] = 'Company Info'
             n_cur_dict['type3'] = h
+            n_cur_dict['value_string'] = json_wsj_profile['Company Info'][h]
+            _string = json_wsj_profile['Company Info'][h].strip()
             try:
-                n_cur_dict['value_string'] = json_wsj_profile['Company Info'][h]
-                n_cur_dict['val'] = float(json_wsj_profile['Company Info'][h].strip().replace( ',', '' ))
+                # try with 68,000 ==> 68000
+                n_cur_dict['val'] = float(_string.replace( ',', '' ))
             except ValueError:
-                n_cur_dict['val'] =  0
+                try:
+                    #Percentage eg. 68% ==> 68
+                    n_cur_dict['val'] = float(_string.replace( '%', '' ))
+                except ValueError:
+                    # try million billion. eg: 120 M ==< 120000000
+                    try:
+                        n_cur_dict['val'] = human_readable_nums_to_int( _string )
+                    except ValueError:
+                        None
+
+
             add_to_db(n_cur_dict)
 
         n_cur_dict = cur_dict.copy()
@@ -198,8 +226,120 @@ def insert_executives_data(base_dict, json_executives):
             # print json_executives[i_str][attr]
 
 
+
+#-------------- Financial Statements Insertion ----------------#
+def str_to_float( r ):
+    try:
+        r = r.strip().replace(',', '').replace('%','').strip()
+    except:
+        r = 'None'
+    try:
+        #try directly converting
+        f = float(r)
+        return f
+    except ValueError:
+        try:
+            #try brackets eg: (4500)==> -4500
+            f =  -float(str(r).translate(None,"(),"))
+            # code.interact( local=locals() )
+            return f
+        except:
+        #     print 'EEEEE'
+            return 0.0
+
+## Inserts 1 sheet only
+## statement_name : one of ('income_statement', 'balance_sheet', 'cash_flow_statement')
+## base_dict : a copy of base_dict
+## tag : eg: a.assets.2012, a.operating.2015, a.30-Jun-2014 etc
+## json_loader_func : eg: wsj.load_json_cash_flow_statement etc
+def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
+    l2_dict = base_dict.copy()
+    tag_components = tag.split( '.' )
+    l2_dict['type1'] = 'Financial Statements'
+    l2_dict['type2'] = str(statement_name)
+
+    # this converts tag_components ==> (type2,type3,type4)
+    if len(tag_components)==3: #for cashflow st. and balance sheet
+        l2_dict['period'] = tag_components[0] # a
+        l2_dict['type3'] = tag_components[1] # eg. assets
+        try:
+            l2_dict['type4'] = int(tag_components[2]) # 2013
+        except:
+            try:
+                l2_dict['type4'] = int(datetime.strptime( tag_components[2], '%d-%b-%Y' ).strftime( '%Y%m%d' )) #30-Jun-2014
+            except:
+                l2_dict['type4'] = tag_components[2]
+    elif len(tag_components)==2: #for income statement
+        l2_dict['period'] = tag_components[0] # a
+        l2_dict['type3'] = str(None)         # None, #TODO consider getting rid of these None. And then figure out howto do such queries. using None because it is convinient. SImilarly for others like type6, type7 etc
+        try:
+            l2_dict['type4'] = int(tag_components[1]) # 2013
+        except:
+            try:
+                l2_dict['type4'] = int(datetime.strptime( tag_components[1], '%d-%b-%Y' ).strftime( '%Y%m%d' )) #30-Jun-2014
+            except:
+                l2_dict['type4'] = tag_components[1]
+    else:
+        print "FATAL ERROR : INVALID TAG"
+
+
+    A = json_loader_func( tag ) #note that these statements are having data in _E3M5_ tag
+    for h1 in A:
+        if h1 == '_HEADER_': continue #avoid _HEADER_ / use it for verification
+        # print h1, A[h1]['_E3M5_'], str_to_float( A[h1]['_E3M5_'] )
+        l2_dict['type5'] = h1
+        l2_dict['type6'] = str(None)
+        l2_dict['type7'] = str(None)
+        l2_dict['value_string'] = A[h1]['_E3M5_']
+        l2_dict['val'] = str_to_float( A[h1]['_E3M5_'] )
+        add_to_db( l2_dict.copy() )
+        for h2 in A[h1]:
+            if h2 == '_E3M5_': continue #found data
+            # print '    ', h2, A[h1][h2]['_E3M5_'], str_to_float( A[h1][h2]['_E3M5_'] )
+            l2_dict['type5'] = h1
+            l2_dict['type6'] = h2
+            l2_dict['type7'] = str(None)
+            l2_dict['value_string'] = A[h1][h2]['_E3M5_']
+            l2_dict['val'] = str_to_float( A[h1][h2]['_E3M5_'] )
+            add_to_db( l2_dict.copy() )
+            for h3 in A[h1][h2]:
+                if h3 == '_E3M5_': continue
+                # print '        ',h3, A[h1][h2][h3]['_E3M5_'], str_to_float(A[h1][h2][h3]['_E3M5_'] )
+                l2_dict['type5'] = h1
+                l2_dict['type6'] = h2
+                l2_dict['type7'] = h3
+                l2_dict['value_string'] = A[h1][h2][h3]['_E3M5_']
+                l2_dict['val'] = str_to_float( A[h1][h2][h3]['_E3M5_'] )
+                add_to_db( l2_dict.copy() )
+
+
+def insert_all_financial_sheets( s_wsj, base_dict ):
+    loaders = {'income_statement':s_wsj.load_json_income_statement, \
+               'balance_sheet': s_wsj.load_json_balance_sheet,\
+               'cash_flow_statement': s_wsj.load_json_cash_flow_statement\
+               }
+
+    components = {'income_statement': [None], \
+               'balance_sheet': ['assets', 'liabilities'],\
+               'cash_flow_statement': ['operating', 'financing', 'investing']\
+               }
+
+    for period in ['a', 'q']:
+        for st_name in loaders: #iterative over statement name
+            # print st_name
+            for sub_st_name in components[st_name]: #iterate over sub-statement names
+                # print '    ', sub_st_name
+                tag_list = s_wsj.ls( period, st_name, sub_st_name)
+                json_loader_func = loaders[st_name]
+
+                # print tag_list
+                for tag in tag_list: #iteraive over each sheet
+                    # print 'insert_statement_data( base, %s, %s )' %(tag, json_loader_func)
+                    insert_statement_data( st_name, base_dict.copy(), tag, json_loader_func )
+
+
 lister = TickerLister( 'equities_db/lists/' )
-full_list = lister.list_full_hkex( use_cached=True)
+full_list = lister.list_full_hkex( use_cached=False)
 db_prefix = 'equities_db/data__20170316'
 
 
@@ -208,7 +348,7 @@ cur_dict = {}
 
 # l = full_list[9]
 startTimeTotal = time.time()
-for i,l in enumerate(full_list[0:10]):
+for i,l in enumerate(full_list):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
     print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
@@ -227,41 +367,40 @@ for i,l in enumerate(full_list[0:10]):
     base_dict['industry'] = json_wsj_profile['Company Info']['Industry']
     base_dict['sector'] = json_wsj_profile['Company Info']['Sector']
 
-    # #
-    # # Profile Data
-    # insert_profile_data(base_dict.copy(), json_wsj_profile)
     #
-    # #
-    # # Financial Overview
-    # insert_financials_data( base_dict.copy(), json_financials )
+    # Profile Data
+    insert_profile_data(base_dict.copy(), json_wsj_profile)
+
     #
-    #
-    # #
-    # # Institutional Investors
-    # json_institutional_investor = s_wsj.load_institutional_investors()
-    # if json_institutional_investor is not None:
-    #     insert_institutional_investors( base_dict.copy(), json_institutional_investor )
-    #
-    #
-    # #
-    # # Mutual Funds that Own this share
-    # json_mutual_fund_owners = s_wsj.load_mututal_fund_owners()
-    # if json_mutual_fund_owners is not None:
-    #     insert_mutual_fund_owners(base_dict.copy(), json_mutual_fund_owners )
-    #
-    #
-    # #
-    # # Executives
-    # s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
-    # json_executives = s_reuters.load_executives()
-    # if json_executives is not None:
-    #     insert_executives_data( base_dict.copy(), json_executives )
+    # Financial Overview
+    insert_financials_data( base_dict.copy(), json_financials )
 
 
-    print s_wsj.ls('a', 'cash_flow_statement', 'operating')
+    #
+    # Institutional Investors
+    json_institutional_investor = s_wsj.load_institutional_investors()
+    if json_institutional_investor is not None:
+        insert_institutional_investors( base_dict.copy(), json_institutional_investor )
 
 
+    #
+    # Mutual Funds that Own this share
+    json_mutual_fund_owners = s_wsj.load_mututal_fund_owners()
+    if json_mutual_fund_owners is not None:
+        insert_mutual_fund_owners(base_dict.copy(), json_mutual_fund_owners )
 
+
+    #
+    # Executives
+    s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
+    json_executives = s_reuters.load_executives()
+    if json_executives is not None:
+        insert_executives_data( base_dict.copy(), json_executives )
+
+
+    #
+    # Financial Statements
+    insert_all_financial_sheets( s_wsj, base_dict.copy() )
 
 
     print 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime )

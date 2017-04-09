@@ -21,7 +21,7 @@ from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
 ticker = '0001.HK'
-stock_prefix = 'equities_db/data__N/'+ticker+'/'
+stock_prefix = 'equities_db/data__20170316_copy/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -48,9 +48,9 @@ stock_prefix = 'equities_db/data__N/'+ticker+'/'
 # print a[0]
 # print a[-1]
 
-# s_wsj = SourceWSJ( ticker, stock_prefix )
+s_wsj = SourceWSJ( ticker, stock_prefix )
 # # s_wsj.download_url()
-# # s_wsj.parse()
+s_wsj.parse()
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()
 # # A = s_wsj.load_json_income_statement( 'a.2015' )

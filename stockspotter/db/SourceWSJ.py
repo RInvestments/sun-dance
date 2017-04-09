@@ -533,7 +533,6 @@ class SourceWSJ:
                 parent_l1 = tag
                 for h in range(len(forest)):
                     forest[h][parent_l0][tag]['_E3M5_'] = all_td[h+1].string
-
             else:
                 tab = '' #parent ds
                 parent_l0 = tag
@@ -549,6 +548,7 @@ class SourceWSJ:
         return forest
 
 
+    ##TODO: This is a deprecated function. Remove this.
     def __parse_crTable_bak( self, data_table ):
         #HEADER
         header = data_table.find_all( 'thead' )[0].find_all('th')
@@ -591,6 +591,7 @@ class SourceWSJ:
     #
     # Note: sub_statement = None will return all sub statements
     # Note: Currently the check is not in place. PLease excersice care.
+    # Note: the returned tag list might not be sorted by year/quater
     #TODO: Implement checking of arguments
     def ls(self, period, statement_name, sub_statement=None):
         if sub_statement is None:
