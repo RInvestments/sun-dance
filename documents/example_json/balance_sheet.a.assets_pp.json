@@ -1,0 +1,174 @@
+{
+   "Total Investments and Advances" : {
+      "LT Investment - Affiliate Companies" : {
+         "_E3M5_" : "245,909"
+      },
+      "Other Long-Term Investments" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "245,909"
+   },
+   "Total Assets" : {
+      "_E3M5_" : "428,837",
+      "Assets - Total - Growth" : {
+         "_E3M5_" : "5.44%"
+      },
+      "Return On Average Assets" : {
+         "_E3M5_" : "-"
+      },
+      "Asset Turnover" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Inventories" : {
+      "_E3M5_" : "79,784",
+      "Progress Payments & Other" : {
+         "_E3M5_" : "-"
+      },
+      "Finished Goods" : {
+         "_E3M5_" : "-"
+      },
+      "Work in Progress" : {
+         "_E3M5_" : "-"
+      },
+      "Raw Materials" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Net Income before Extraordinaries" : {
+      "_E3M5_" : "-"
+   },
+   "Total Accounts Receivable" : {
+      "Accounts Receivables, Net" : {
+         "Accounts Receivables, Gross" : {
+            "_E3M5_" : "-"
+         },
+         "Bad Debt/Doubtful Accounts" : {
+            "_E3M5_" : "-"
+         },
+         "_E3M5_" : "-"
+      },
+      "Accounts Receivable Growth" : {
+         "_E3M5_" : "12.41%"
+      },
+      "Other Receivables" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "19,256",
+      "Accounts Receivable Turnover" : {
+         "_E3M5_" : "0.97"
+      }
+   },
+   "Long-Term Note Receivable" : {
+      "_E3M5_" : "-"
+   },
+   "Other Current Assets" : {
+      "_E3M5_" : "-",
+      "Miscellaneous Current Assets" : {
+         "_E3M5_" : "-"
+      },
+      "Prepaid Expenses" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Other Assets" : {
+      "_E3M5_" : "144,174",
+      "Tangible Other Assets" : {
+         "_E3M5_" : "692"
+      },
+      "Deferred Charges" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "_HEADER_" : "2013",
+   "Cash & Short Term Investments" : {
+      "Cash Only" : {
+         "_E3M5_" : "33,197"
+      },
+      "_E3M5_" : "34,557",
+      "Cash & Short Term Investments Growth" : {
+         "_E3M5_" : "61.46%"
+      },
+      "Cash & ST Investments / Total Assets" : {
+         "_E3M5_" : "8.06%"
+      },
+      "Short-Term Investments" : {
+         "_E3M5_" : "1,360"
+      }
+   },
+   "Total Current Assets" : {
+      "_E3M5_" : "-"
+   },
+   "Net Property, Plant & Equipment" : {
+      "Accumulated Depreciation" : {
+         "Buildings" : {
+            "_E3M5_" : "3,001"
+         },
+         "Construction in Progress" : {
+            "_E3M5_" : "-"
+         },
+         "Computer Software and Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "_E3M5_" : "4,239",
+         "Other Property, Plant & Equipment" : {
+            "_E3M5_" : "1,238"
+         },
+         "Leases" : {
+            "_E3M5_" : "-"
+         },
+         "Land & Improvements" : {
+            "_E3M5_" : "-"
+         },
+         "Transportation Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "Machinery & Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "Leased Property" : {
+            "_E3M5_" : "-"
+         }
+      },
+      "_E3M5_" : "38,754",
+      "Property, Plant & Equipment - Gross" : {
+         "Land & Improvements" : {
+            "_E3M5_" : "-"
+         },
+         "Machinery & Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "Transportation Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "Leased Property" : {
+            "_E3M5_" : "-"
+         },
+         "Computer Software and Equipment" : {
+            "_E3M5_" : "-"
+         },
+         "Construction in Progress" : {
+            "_E3M5_" : "-"
+         },
+         "Buildings" : {
+            "_E3M5_" : "41,626"
+         },
+         "Other Property, Plant & Equipment" : {
+            "_E3M5_" : "1,367"
+         },
+         "_E3M5_" : "42,993",
+         "Leases" : {
+            "_E3M5_" : "-"
+         }
+      }
+   },
+   "Intangible Assets" : {
+      "Net Other Intangibles" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "-",
+      "Net Goodwill" : {
+         "_E3M5_" : "-"
+      }
+   }
+}

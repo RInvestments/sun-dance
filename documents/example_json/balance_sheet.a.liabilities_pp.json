@@ -1,0 +1,171 @@
+{
+   "Non-Equity Reserves" : {
+      "_E3M5_" : "-",
+      "Total Liabilities / Total Assets" : {
+         "_E3M5_" : "13.06%"
+      }
+   },
+   "Total Current Liabilities" : {
+      "_E3M5_" : "-"
+   },
+   "Preferred Stock (Carrying Value)" : {
+      "Non-Redeemable Preferred Stock" : {
+         "_E3M5_" : "-"
+      },
+      "Redeemable Preferred Stock" : {
+         "_E3M5_" : "-"
+      },
+      "ESOP Guarantees - Preferred Stock" : {
+         "_E3M5_" : "-"
+      },
+      "Preferred Stock issues for ESOP" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "-"
+   },
+   "Long-Term Debt" : {
+      "Capitalized Lease Obligations" : {
+         "_E3M5_" : "-"
+      },
+      "Long-Term Debt excl. Capitalized Leases" : {
+         "_E3M5_" : "39,452",
+         "Convertible Debt" : {
+            "_E3M5_" : "-"
+         },
+         "Non-Convertible Debt" : {
+            "_E3M5_" : "39,452"
+         }
+      },
+      "_E3M5_" : "39,452"
+   },
+   "Total Equity" : {
+      "_E3M5_" : "372,821"
+   },
+   "Inventories FOR CALCULATION PURPOSES ONLY" : {
+      "_E3M5_" : "79,784"
+   },
+   "Income Tax Payable" : {
+      "_E3M5_" : "-"
+   },
+   "Total Assets FOR CALCULATION PURPOSES ONLY" : {
+      "_E3M5_" : "428,837"
+   },
+   "Accounts Payable" : {
+      "_E3M5_" : "-",
+      "Accounts Payable Growth" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Other Current Liabilities" : {
+      "_E3M5_" : "-",
+      "Accrued Payroll" : {
+         "_E3M5_" : "-"
+      },
+      "Dividends Payable" : {
+         "_E3M5_" : "-"
+      },
+      "Miscellaneous Current Liabilities" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "ST Debt & Current Portion LT Debt" : {
+      "Current Portion of Long Term Debt" : {
+         "_E3M5_" : "2,438"
+      },
+      "Short Term Debt" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "2,438"
+   },
+   "Total Liabilities" : {
+      "_E3M5_" : "56,016"
+   },
+   "Deferred Taxes" : {
+      "Deferred Taxes - Credit" : {
+         "_E3M5_" : "986"
+      },
+      "Deferred Taxes - Debit" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "986"
+   },
+   "_HEADER_" : "2013",
+   "Liabilities & Shareholders' Equity" : {
+      "_E3M5_" : "428,837"
+   },
+   "Total Current Assets FOR CALCULATION PURPOSES ONLY" : {
+      "_E3M5_" : "-"
+   },
+   "Provision for Risks & Charges" : {
+      "_E3M5_" : "-"
+   },
+   "Total Shareholders' Equity" : {
+      "_E3M5_" : "369,729",
+      "Total Shareholders' Equity / Total Assets" : {
+         "_E3M5_" : "86.22%"
+      }
+   },
+   "Accumulated Minority Interest" : {
+      "_E3M5_" : "3,092"
+   },
+   "Other Liabilities" : {
+      "Other Liabilities (excl. Deferred Income)" : {
+         "_E3M5_" : "15,578"
+      },
+      "Deferred Income" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "15,578",
+      "Deferred Tax Liability-Untaxed Reserves" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Common Equity (Total)" : {
+      "Unappropriated Reserves" : {
+         "_E3M5_" : "9,048"
+      },
+      "Revaluation Reserves" : {
+         "_E3M5_" : "16"
+      },
+      "Common Equity / Total Assets" : {
+         "_E3M5_" : "86.22%"
+      },
+      "_E3M5_" : "369,729",
+      "Common Stock Par/Carry Value" : {
+         "_E3M5_" : "1,158"
+      },
+      "Other Appropriated Reserves" : {
+         "_E3M5_" : "-"
+      },
+      "Unrealized Gain/Loss Marketable Securities" : {
+         "_E3M5_" : "3,522"
+      },
+      "Retained Earnings" : {
+         "_E3M5_" : "342,716"
+      },
+      "Treasury Stock" : {
+         "_E3M5_" : "-"
+      },
+      "ESOP Debt Guarantee" : {
+         "_E3M5_" : "-"
+      },
+      "Cumulative Translation Adjustment/Unrealized For. Exch. Gain" : {
+         "_E3M5_" : "-"
+      },
+      "Additional Paid-In Capital/Capital Surplus" : {
+         "_E3M5_" : "9,331"
+      }
+   },
+   "Cash & Short Term Investments FOR CALCULATION PURPOSES ONLY" : {
+      "_E3M5_" : "34,557",
+      "Cash Ratio" : {
+         "_E3M5_" : "-"
+      },
+      "Current Ratio" : {
+         "_E3M5_" : "-"
+      },
+      "Quick Ratio" : {
+         "_E3M5_" : "-"
+      }
+   }
+}

@@ -1,0 +1,48 @@
+{
+   "_HEADER_" : "2015",
+   "Capital Expenditures" : {
+      "Capital Expenditures (Other Assets)" : {
+         "_E3M5_" : "(2,988)"
+      },
+      "Capital Expenditures / Sales" : {
+         "_E3M5_" : "-15.28%"
+      },
+      "Capital Expenditures Growth" : {
+         "_E3M5_" : "-223.91%"
+      },
+      "_E3M5_" : "(25,482)",
+      "Capital Expenditures (Fixed Assets)" : {
+         "_E3M5_" : "(22,494)"
+      }
+   },
+   "Net Assets from Acquisitions" : {
+      "_E3M5_" : "(640)"
+   },
+   "Net Investing Cash Flow" : {
+      "_E3M5_" : "72,588",
+      "Net Investing Cash Flow Growth" : {
+         "_E3M5_" : "852.91%"
+      },
+      "Net Investing Cash Flow / Sales" : {
+         "_E3M5_" : "43.53%"
+      }
+   },
+   "Sale of Fixed Assets & Businesses" : {
+      "_E3M5_" : "110,294"
+   },
+   "Purchase/Sale of Investments" : {
+      "Sale/Maturity of Investments" : {
+         "_E3M5_" : "9,841"
+      },
+      "_E3M5_" : "(11,584)",
+      "Purchase of Investments" : {
+         "_E3M5_" : "(21,425)"
+      }
+   },
+   "Other Sources" : {
+      "_E3M5_" : "-"
+   },
+   "Other Uses" : {
+      "_E3M5_" : "-"
+   }
+}

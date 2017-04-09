@@ -1,0 +1,180 @@
+{
+   "Equity in Affiliates (Pretax)" : {
+      "_E3M5_" : "-"
+   },
+   "Net Income After Extraordinaries" : {
+      "_E3M5_" : "32,036"
+   },
+   "EPS (Basic)" : {
+      "_E3M5_" : "13.83",
+      "EPS (Basic) Growth" : {
+         "_E3M5_" : "-30.43%"
+      }
+   },
+   "Consolidated Net Income" : {
+      "_E3M5_" : "32,146"
+   },
+   "EBITDA" : {
+      "EBITDA Margin" : {
+         "_E3M5_" : "-",
+         "EBIT" : {
+            "_E3M5_" : "-"
+         }
+      },
+      "_E3M5_" : "8,394",
+      "EBITDA Growth" : {
+         "_E3M5_" : "-19.96%"
+      }
+   },
+   "Pretax Income" : {
+      "_E3M5_" : "14,627",
+      "Pretax Margin" : {
+         "_E3M5_" : "-"
+      },
+      "Pretax Income Growth" : {
+         "_E3M5_" : "-0.11%"
+      }
+   },
+   "Equity in Affiliates" : {
+      "_E3M5_" : "19,015"
+   },
+   "Minority Interest Expense" : {
+      "_E3M5_" : "110"
+   },
+   "Cost of Goods Sold (COGS) incl. D&A" : {
+      "COGS Growth" : {
+         "_E3M5_" : "-50.04%"
+      },
+      "COGS excluding D&A" : {
+         "_E3M5_" : "11,417"
+      },
+      "_E3M5_" : "11,757",
+      "Depreciation & Amortization Expense" : {
+         "Amortization of Intangibles" : {
+            "_E3M5_" : "-"
+         },
+         "Depreciation" : {
+            "_E3M5_" : "340"
+         },
+         "Amortization of Deferred Charges" : {
+            "_E3M5_" : "-"
+         },
+         "_E3M5_" : "340"
+      }
+   },
+   "Preferred Dividends" : {
+      "_E3M5_" : "-"
+   },
+   "Income Tax" : {
+      "Income Tax - Current Domestic" : {
+         "_E3M5_" : "1,095"
+      },
+      "Income Tax - Current Foreign" : {
+         "_E3M5_" : "122"
+      },
+      "Income Tax - Deferred Domestic" : {
+         "_E3M5_" : "17"
+      },
+      "Income Tax - Deferred Foreign" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "1,234",
+      "Income Tax Credits" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Other After Tax Income (Expense)" : {
+      "_E3M5_" : "(262)"
+   },
+   "SG&A Expense" : {
+      "Other SG&A" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "-",
+      "Research & Development" : {
+         "_E3M5_" : "-"
+      },
+      "SGA Growth" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Net Income" : {
+      "Net Income Growth" : {
+         "_E3M5_" : "-30.44%"
+      },
+      "Net Margin" : {
+         "_E3M5_" : "-"
+      },
+      "Cumulative Effect - Accounting Chg" : {
+         "Discontinued Operations" : {
+            "_E3M5_" : "-"
+         },
+         "_E3M5_" : "-"
+      },
+      "Extraordinaries & Discontinued Operations" : {
+         "_E3M5_" : "-",
+         "Extra Items & Gain/Loss Sale Of Assets" : {
+            "_E3M5_" : "-"
+         }
+      },
+      "_E3M5_" : "32,036"
+   },
+   "Gross Income" : {
+      "_E3M5_" : "9,167",
+      "Gross Profit Margin" : {
+         "_E3M5_" : "-"
+      },
+      "Gross Income Growth" : {
+         "_E3M5_" : "-13.69%"
+      }
+   },
+   "Interest Expense" : {
+      "Gross Interest Expense" : {
+         "_E3M5_" : "1,046"
+      },
+      "_E3M5_" : "617",
+      "Interest Expense Growth" : {
+         "_E3M5_" : "15.54%"
+      },
+      "Interest Capitalized" : {
+         "_E3M5_" : "429"
+      }
+   },
+   "Unusual Expense" : {
+      "_E3M5_" : "(5,618)"
+   },
+   "Diluted Shares Outstanding" : {
+      "_E3M5_" : "2,316"
+   },
+   "Non Operating Income/Expense" : {
+      "_E3M5_" : "1,572"
+   },
+   "Non-Operating Interest Income" : {
+      "_E3M5_" : "-"
+   },
+   "_HEADER_" : "2012",
+   "EBIT" : {
+      "_E3M5_" : "-"
+   },
+   "Sales/Revenue" : {
+      "Sales Growth" : {
+         "_E3M5_" : "-38.74%"
+      },
+      "_E3M5_" : "20,924"
+   },
+   "Net Income Available to Common" : {
+      "_E3M5_" : "32,036"
+   },
+   "Other Operating Expense" : {
+      "_E3M5_" : "1,113"
+   },
+   "EPS (Diluted)" : {
+      "EPS (Diluted) Growth" : {
+         "_E3M5_" : "-30.44%"
+      },
+      "_E3M5_" : "13.83"
+   },
+   "Basic Shares Outstanding" : {
+      "_E3M5_" : "2,316"
+   }
+}

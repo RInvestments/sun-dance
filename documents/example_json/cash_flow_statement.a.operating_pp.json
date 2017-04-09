@@ -1,0 +1,66 @@
+{
+   "Other Funds" : {
+      "_E3M5_" : "(34,935)"
+   },
+   "Extraordinaries" : {
+      "_E3M5_" : "-"
+   },
+   "Changes in Working Capital" : {
+      "Other Accruals" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "(11,126)",
+      "Inventories" : {
+         "_E3M5_" : "(2,976)"
+      },
+      "Receivables" : {
+         "_E3M5_" : "(137)"
+      },
+      "Income Taxes Payable" : {
+         "_E3M5_" : "-"
+      },
+      "Accounts Payable" : {
+         "_E3M5_" : "1,400"
+      },
+      "Other Assets/Liabilities" : {
+         "_E3M5_" : "(9,413)"
+      }
+   },
+   "Net Operating Cash Flow" : {
+      "Net Operating Cash Flow Growth" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "2,431",
+      "Net Operating Cash Flow / Sales" : {
+         "_E3M5_" : "7.12%"
+      }
+   },
+   "_HEADER_" : "2011",
+   "Depreciation, Depletion & Amortization" : {
+      "_E3M5_" : "400",
+      "Depreciation and Depletion" : {
+         "_E3M5_" : "400"
+      },
+      "Amortization of Intangible Assets" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Net Income before Extraordinaries" : {
+      "Net Income Growth" : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "48,092"
+   },
+   "Deferred Taxes & Investment Tax Credit" : {
+      "_E3M5_" : "-",
+      "Investment Tax Credit" : {
+         "_E3M5_" : "-"
+      },
+      "Deferred Taxes" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Funds from Operations" : {
+      "_E3M5_" : "13,557"
+   }
+}

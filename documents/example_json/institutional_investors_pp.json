@@ -1,0 +1,72 @@
+{
+   "JF Asset Management Ltd." : {
+      "Percent Shares Out" : "0.73%",
+      "Change In Shares" : "0",
+      "Shares Held" : "27,996,558",
+      "Percent of Assets" : "1.76%",
+      "As of Date" : "02/28/17"
+   },
+   "Norges Bank Investment Management" : {
+      "Shares Held" : "35,048,508",
+      "Change In Shares" : "-7,151,485",
+      "Percent Shares Out" : "0.91%",
+      "As of Date" : "12/31/16",
+      "Percent of Assets" : "0.07%"
+   },
+   "Southeastern Asset Management, Inc." : {
+      "Shares Held" : "26,182,029",
+      "Change In Shares" : "0",
+      "Percent Shares Out" : "0.68%",
+      "As of Date" : "12/31/16",
+      "Percent of Assets" : "2.10%"
+   },
+   "Invesco Advisers, Inc." : {
+      "Shares Held" : "33,587,211",
+      "Change In Shares" : "+1,511,544",
+      "Percent Shares Out" : "0.87%",
+      "As of Date" : "01/31/17",
+      "Percent of Assets" : "0.23%"
+   },
+   "First State Investment Management (UK) Ltd." : {
+      "Change In Shares" : "0",
+      "Percent Shares Out" : "0.81%",
+      "Shares Held" : "31,381,192",
+      "Percent of Assets" : "1.58%",
+      "As of Date" : "01/31/17"
+   },
+   "BlackRock Fund Advisors" : {
+      "Change In Shares" : "+348,500",
+      "Percent Shares Out" : "0.99%",
+      "Shares Held" : "38,341,671",
+      "As of Date" : "02/28/17",
+      "Percent of Assets" : "0.03%"
+   },
+   "The Vanguard Group, Inc." : {
+      "Percent of Assets" : "0.03%",
+      "As of Date" : "01/31/17",
+      "Shares Held" : "58,120,431",
+      "Percent Shares Out" : "1.51%",
+      "Change In Shares" : "+758,248"
+   },
+   "State Street Global Advisors Asia Ltd." : {
+      "Change In Shares" : "+157,987",
+      "Percent Shares Out" : "0.75%",
+      "Shares Held" : "29,033,793",
+      "As of Date" : "02/28/17",
+      "Percent of Assets" : "3.28%"
+   },
+   "Hang Seng Investment Management Ltd." : {
+      "Shares Held" : "32,610,912",
+      "Percent Shares Out" : "0.85%",
+      "Change In Shares" : "+15,445,660",
+      "Percent of Assets" : "2.22%",
+      "As of Date" : "02/28/17"
+   },
+   "T. Rowe Price Associates, Inc." : {
+      "Percent of Assets" : "0.09%",
+      "As of Date" : "01/31/17",
+      "Change In Shares" : "+7,052,500",
+      "Percent Shares Out" : "1.05%",
+      "Shares Held" : "40,623,528"
+   }
+}

@@ -1,0 +1,78 @@
+{
+   "Free Cash Flow" : {
+      "_E3M5_" : "8,674",
+      "Free Cash Flow Growth" : {
+         "_E3M5_" : "1023.75%"
+      },
+      "Free Cash Flow Yield" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Net Financing Cash Flow" : {
+      "Net Financing Cash Flow Growth" : {
+         "_E3M5_" : "-216.64%"
+      },
+      "Net Financing Cash Flow / Sales" : {
+         "_E3M5_" : "-16.21%"
+      },
+      "_E3M5_" : "(3,042)"
+   },
+   "Exchange Rate Effect" : {
+      "_E3M5_" : "-"
+   },
+   "_HEADER_" : "2013",
+   "Cash Dividends Paid - Total" : {
+      "_E3M5_" : "-",
+      "Preferred Dividends" : {
+         "_E3M5_" : "-"
+      },
+      "Common Dividends" : {
+         "_E3M5_" : "-"
+      }
+   },
+   "Other Funds" : {
+      "_E3M5_" : "3,051",
+      "Other Sources" : {
+         "_E3M5_" : "3,834"
+      },
+      "Other Uses" : {
+         "_E3M5_" : "(783)"
+      }
+   },
+   "Miscellaneous Funds" : {
+      "_E3M5_" : "-"
+   },
+   "Change in Capital Stock" : {
+      "Repurchase of Common & Preferred Stk." : {
+         "_E3M5_" : "-"
+      },
+      "_E3M5_" : "-",
+      "Sale of Common & Preferred Stock" : {
+         "Other Proceeds from Sale of Stock" : {
+            "_E3M5_" : "-"
+         },
+         "_E3M5_" : "-",
+         "Proceeds from Stock Options" : {
+            "_E3M5_" : "-"
+         }
+      }
+   },
+   "Net Change in Cash" : {
+      "_E3M5_" : "12,493"
+   },
+   "Issuance/Reduction of Debt, Net" : {
+      "_E3M5_" : "(6,093)",
+      "Change in Current Debt" : {
+         "_E3M5_" : "-"
+      },
+      "Change in Long-Term Debt" : {
+         "Issuance of Long-Term Debt" : {
+            "_E3M5_" : "4,086"
+         },
+         "Reduction in Long-Term Debt" : {
+            "_E3M5_" : "(10,179)"
+         },
+         "_E3M5_" : "(6,093)"
+      }
+   }
+}
