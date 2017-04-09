@@ -1,3 +1,15 @@
+""" Insert into mongodb
+        This script can insert the parsed json data into a mongodb database.
+        Make sure the mongodb database is correctly set and keys, unique indices
+        correctly set. This script is intended to be run after `data_retriver.py`
+        and `data_parser.py`.
+
+        Author  : Manohar Kuse <mpkuse@connect.ust.hk>
+                  Ayush Thakkar
+
+        Created : 15 Mar, 2017
+"""
+
 import sys
 import os.path
 import urllib2
@@ -23,8 +35,7 @@ import uuid
 import pymongo
 import code
 
-client = pymongo.MongoClient()
-db = client.universalData
+
 
 
 
@@ -69,6 +80,7 @@ def add_to_db(cur_dict):
         cur_dict['last_modified'] = datetime.now()
         db.universalData.insert( cur_dict )
     except Exception as e:
+        #TODO catch the `Duplicate key insertion`. This denotes this data already exists
         print str(e)
         print tcol.FAIL, 'MOngoDB insert failed', tcol.ENDC
 
@@ -82,7 +94,7 @@ def solr_commit():
     print "Solr Commit Done !!!"
 
 
-# h_string : '12 M' or '123 B' or '1.2 T'
+# h_string : '12 M' or '123 B' or '1.2 T'. Space is important
 def human_readable_nums_to_int( h_string ):
     conv = {'M':1000000, 'B':1000000000, 'T':1000000000000}
     _d = h_string.split()
@@ -338,12 +350,21 @@ def insert_all_financial_sheets( s_wsj, base_dict ):
                     insert_statement_data( st_name, base_dict.copy(), tag, json_loader_func )
 
 
+# ------------------------- MAIN ----------------------------#
+
+# Commandline Argument Parsing
+#TODO
+
+# Setup DB access and file accesses
+client = pymongo.MongoClient()
+db = client.universalData
+
 lister = TickerLister( 'equities_db/lists/' )
 full_list = lister.list_full_hkex( use_cached=False)
 db_prefix = 'equities_db/data__20170316'
 
 
-
+# Loop Over the list
 cur_dict = {}
 
 # l = full_list[9]

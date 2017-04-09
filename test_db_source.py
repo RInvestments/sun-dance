@@ -51,6 +51,7 @@ stock_prefix = 'equities_db/data__20170316_copy/'+ticker+'/'
 s_wsj = SourceWSJ( ticker, stock_prefix )
 # # s_wsj.download_url()
 s_wsj.parse()
+print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()
 # # A = s_wsj.load_json_income_statement( 'a.2015' )
