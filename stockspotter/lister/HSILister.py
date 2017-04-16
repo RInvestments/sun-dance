@@ -39,20 +39,20 @@ class HSILister:
 
     #################### Printer functions ################
     def _printer( self, txt ):
-        print tcol.OKBLUE, 'TickerLister :', tcol.ENDC, txt
+        print tcol.OKBLUE, 'HSILister :', tcol.ENDC, txt
 
     def _debug( self, txt, lvl=0 ):
         """ """
         to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'TickerLister(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            print tcol.OKBLUE, 'HSILister(Debug=%2d) :' %(lvl), tcol.ENDC, txt
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'TickerLister(Error) :', tcol.ENDC, txt
+        print tcol.FAIL, 'HSILister(Error) :', tcol.ENDC, txt
 
     def _report_time( self, txt ):
-        print tcol.OKBLUE, 'TickerLister(time) :', tcol.ENDC, txt
+        print tcol.OKBLUE, 'HSILister(time) :', tcol.ENDC, txt
 
 
     ############# retrival-core #####################

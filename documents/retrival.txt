@@ -1,5 +1,5 @@
-python data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --hkex --wsj 
-
 
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw
 
+
+python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse

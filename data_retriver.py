@@ -48,11 +48,19 @@ def make_folder_if_not_exist(folder):
 
 
 parser = argparse.ArgumentParser()
+# Source Specific Parsers
+# TODO Later have this all in a config file instead of commandline as difference exchanges will have different data sources
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable retrival of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable retrival of WSJ data' )
 parser.add_argument( '--yahoo', default=False, action='store_true', help='Enable retrival of Yahoo Quote data (price+volume)' )
 parser.add_argument( '--yahoo_historical', default=False, action='store_true', help='Yahoo historical data. It is recommeded to download historical data stand alone, cause being the adjusted data for splits being present' )
 parser.add_argument( '--reuters', default=False, action='store_true', help='Enable retrival of Reuters company officers data' )
+
+# Bourse
+parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
+parser.add_argument( '--xbse', default=False, action='store_true', help='List all Bombay Stock Ex (BSE) Stocks' )
+parser.add_argument( '--xnse', default=False, action='store_true', help='List all National Stock Ex India (NSE) Stocks' )
+
 parser.add_argument( '-f', '--force_download', default=False, action='store_true', help='Force download. Default : False' )
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
@@ -103,8 +111,21 @@ make_folder_if_not_exist( db_prefix )
 
 # Get List
 lister = TickerLister( args.lists_db_dir )
-full_list = lister.list_full_hkex( use_cached=False)
+full_list = []
+print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+if args.xhkex:
+    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_hkex( use_cached=True)[0:3]
+if args.xbse:
+    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_bse( use_cached=True )[0:3]
+if args.xnse:
+    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    full_list += lister.list_full_nse( use_cached=True )[0:3]
 
+
+#
+# Main Loop
 for i,l in enumerate(full_list):
     print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
 

@@ -375,8 +375,13 @@ client = pymongo.MongoClient()
 db = client.universalData
 
 lister = TickerLister( 'equities_db/lists/' )
-full_list = lister.list_full_hkex( use_cached=False)
-db_prefix = 'equities_db/data__20170316'
+# full_list = lister.list_full_hkex( use_cached=True)
+full_list = []
+full_list += lister.list_full_hkex( use_cached=True)[0:3]
+full_list += lister.list_full_bse( use_cached=True )[0:3]
+full_list += lister.list_full_nse( use_cached=True )[0:3]
+
+db_prefix = 'equities_db/data__N'
 
 
 # Loop Over the list
@@ -398,6 +403,7 @@ for i,l in enumerate(full_list):
 
     # Base structure
     base_dict = {}
+    base_dict['bourse'] = l.ticker.split('.')[-1]
     base_dict['company'] = l.name
     base_dict['ticker'] = l.ticker
     base_dict['industry'] = json_wsj_profile['Company Info']['Industry']
@@ -428,10 +434,10 @@ for i,l in enumerate(full_list):
 
     #
     # Executives
-    s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
-    json_executives = s_reuters.load_executives()
-    if json_executives is not None:
-        insert_executives_data( base_dict.copy(), json_executives )
+    # s_reuters = SourceReuters( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
+    # json_executives = s_reuters.load_executives()
+    # if json_executives is not None:
+    #     insert_executives_data( base_dict.copy(), json_executives )
 
 
     #
