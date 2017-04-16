@@ -25,6 +25,97 @@ import TerminalColors
 tcol = TerminalColors.bcolors()
 tcolor = tcol
 
+class URLFactoryWSJ:
+    def __init__(self, ticker ):
+        self.xchange = ticker.split('.')[-1]
+        self.ticker_p  = '.'.join( ticker.split('.')[0:-1])
+        # print 'xchange : ', self.xchange
+        # print 'ticker :  ', self.ticker_p
+
+
+    def get_url_financials(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            #eg: http://quotes.wsj.com/IN/500227/financials
+            return 'http://quotes.wsj.com/IN/%s/financials' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            #eg: http://quotes.wsj.com/IN/XNSE/EQHDFCBANK/financials
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_wsj_profile(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/company-people' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/company-people' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/company-people' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_income_statement(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/income-statement' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/annual/income-statement' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/income-statement' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_balance_sheet(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/balance-sheet' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/annual/balance-sheet' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/balance-sheet' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_cash_flow_statement(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/cash-flow' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/annual/cash-flow' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/cash-flow' %(self.ticker_p)
+        else:
+            return None
+
+
+    def get_url_income_statement_q(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/quarter/income-statement' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/income-statement' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_balance_sheet_q(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/quarter/balance-sheet' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/balance-sheet' %(self.ticker_p)
+        else:
+            return None
+
+    def get_url_cash_flow_statement_q(self):
+        if self.xchange == 'HK':
+            return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow' %(self.ticker_p)
+        elif self.xchange == 'BSE':
+            return 'http://quotes.wsj.com/IN/%s/financials/quarter/cash-flow' %(self.ticker_p)
+        elif self.xchange == 'NSE':
+            return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/cash-flow' %(self.ticker_p)
+        else:
+            return None
+
 
 class SourceWSJ:
     def _printer( self, txt ):
@@ -114,24 +205,31 @@ class SourceWSJ:
         if not os.path.exists(self.priv_dir):
             os.makedirs( self.priv_dir )
 
-        # #TODO: Instead of just checking exisitence of overview, put this code in _download_and_save() to check for exisitence of each file
-        # if skip_if_exist and os.path.isfile( self.priv_dir+'/overview.html' ):
-        #     self._debug( "Raw html Exists:" +self.priv_dir+'/overview.html' + "...SKIP" )
-        #     return True
 
         # Setup the url(s).
-        wsg_ticker = self.ticker[0:4]#ticker in WSG format
-        url_financials = 'http://quotes.wsj.com/HK/XHKG/%s/financials' %(wsg_ticker)
-        url_wsj_profile = 'http://quotes.wsj.com/HK/XHKG/%s/company-people' %(wsg_ticker)
+        # wsg_ticker = self.ticker[0:4]#ticker in WSG format
+        uf = URLFactoryWSJ( self.ticker ) #url_factory
+        url_financials = uf.get_url_financials() #'http://quotes.wsj.com/HK/XHKG/%s/financials' %(wsg_ticker)
+        url_wsj_profile = uf.get_url_wsj_profile() #'http://quotes.wsj.com/HK/XHKG/%s/company-people' %(wsg_ticker)
 
-        url_income_statement = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/income-statement' %(wsg_ticker)
-        url_balance_sheet = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/balance-sheet' %(wsg_ticker)
-        url_cash_flow_statement = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/cash-flow' %(wsg_ticker)
+        url_income_statement = uf.get_url_income_statement() #'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/income-statement' %(wsg_ticker)
+        url_balance_sheet = uf.get_url_balance_sheet() #'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/balance-sheet' %(wsg_ticker)
+        url_cash_flow_statement = uf.get_url_cash_flow_statement() #'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/cash-flow' %(wsg_ticker)
 
-        url_income_statement_q = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement' %(wsg_ticker)
-        url_balance_sheet_q = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet' %(wsg_ticker)
-        url_cash_flow_statement_q = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow' %(wsg_ticker)
+        url_income_statement_q = uf.get_url_income_statement_q() #'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement' %(wsg_ticker)
+        url_balance_sheet_q = uf.get_url_balance_sheet_q() #'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet' %(wsg_ticker)
+        url_cash_flow_statement_q = uf.get_url_cash_flow_statement_q() #'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow' %(wsg_ticker)
 
+
+        self._debug( ' url_financials            '+ url_financials )
+        self._debug( ' url_wsj_profile           '+ url_wsj_profile )
+        self._debug( ' url_income_statement      '+ url_income_statement )
+        self._debug( ' url_balance_sheet         '+ url_balance_sheet )
+        self._debug( ' url_cash_flow_statement   '+ url_cash_flow_statement )
+        self._debug( ' url_income_statement_q    '+ url_income_statement_q )
+        self._debug( ' url_balance_sheet_q       '+ url_balance_sheet_q )
+        self._debug( ' url_cash_flow_statement_q '+ url_cash_flow_statement_q )
+        # return
 
 
 
@@ -263,6 +361,18 @@ class SourceWSJ:
             out_description = 'N/A'
         wsj_profile_tree['Description'] = out_description.strip()
         # print out_description
+
+
+        # Company Full Legal Name
+        co_full_name = soup.find( 'div', attrs={'data-module-id': 1 } )
+        if co_full_name is not None:
+            wsj_profile_tree['companyName']  = co_full_name.find( 'span', class_='companyName' ).text.strip()
+            wsj_profile_tree['tickerName']   = co_full_name.find( 'span', class_='tickerName' ).text.strip()
+            wsj_profile_tree['exchangeName'] = co_full_name.find( 'span', class_='exchangeName' ).text.strip()
+        else:
+            wsj_profile_tree['companyName']  = 'N/A'
+            wsj_profile_tree['tickerName']   = 'N/A'
+            wsj_profile_tree['exchangeName'] = 'N/A'
 
 
         self._debug( 'overview_json_string\n'+ json.dumps( wsj_profile_tree, indent=4 ), lvl=1 )

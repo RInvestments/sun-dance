@@ -8,12 +8,12 @@ AMEX : http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=AMEX
 
 
 BSE, India
-`http://www.bseindia.com/corporates/List_Scrips.aspx?expandable=1%3fexpandable%3d1`
+Need to download bhavcopy http://www.bseindia.com/markets/equity/EQReports/BhavCopyDebt.aspx?expandable=3
 **http://quotes.wsj.com/IN/500227/company-people**
 
 NSE, India
-No list avaiable but, a bunch of indices, so i guess stick to those.
-difference between bse and nse is that bse is very old with more listings (which is good).
+Download bhavcopy
+https://www.nseindia.com/products/content/all_daily_reports.htm
 Similar market caps. NSE has more trades per day and more liquid. BSE is more like
 a long term hold exchange
 **http://quotes.wsj.com/IN/XNSE/EQHDFCBANK**

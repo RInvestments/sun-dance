@@ -5,6 +5,10 @@
 
         Later will also have reverse and neighbourhood search on this tree
 
+        UPDATE (13th Apr, 2017): Probably there is no utility for this class
+        as it was later decided to put all data into mongodb engine. Can
+        easily get the tree and tree-neighbours with an aggregate query in mongodb
+
         Author  : Manohar Kuse <mpkuse@connect.ust.hk>
         Created : 18th Mar, 2017
 """
@@ -114,7 +118,7 @@ class Taxonomer:
             if A is None:
                 continue
 
-            #TODO: Have a function to clean `chain`. This looks ugly. 
+            #TODO: Have a function to clean `chain`. This looks ugly.
             chain = A['Industry Classification'].split( '-' )
             # print chain
             l0 = ' '.join(chain[0].strip().split())

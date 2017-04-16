@@ -152,6 +152,21 @@ def insert_profile_data( cur_dict, json_wsj_profile ):
         n_cur_dict['value_string'] = json_wsj_profile['Description']
         add_to_db(n_cur_dict)
 
+        n_cur_dict = cur_dict.copy()
+        n_cur_dict['type2'] = 'companyName'
+        n_cur_dict['value_string'] = json_wsj_profile['companyName']
+        add_to_db(n_cur_dict)
+
+        n_cur_dict = cur_dict.copy()
+        n_cur_dict['type2'] = 'tickerName'
+        n_cur_dict['value_string'] = json_wsj_profile['tickerName']
+        add_to_db(n_cur_dict)
+
+        n_cur_dict = cur_dict.copy()
+        n_cur_dict['type2'] = 'exchangeName'
+        n_cur_dict['value_string'] = json_wsj_profile['exchangeName']
+        add_to_db(n_cur_dict)
+
 
 
 def insert_financials_data(base_dict, json_financials):

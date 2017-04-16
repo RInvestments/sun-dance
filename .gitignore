@@ -2,3 +2,4 @@ equities_db*
 *.pyc
 *.htm
 *.html
+html/*

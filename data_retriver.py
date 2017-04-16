@@ -3,6 +3,10 @@
     a) HKEX profile data
     b) Data from Reuters
     c) Data from WSJ
+
+    Sample Usage:
+    python data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --hkex --wsj
+
 """
 
 

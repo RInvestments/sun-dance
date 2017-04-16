@@ -2,6 +2,10 @@
     a) HKEX profile data
     b) Data from Reuters
     c) Data from WSJ
+
+    Sample Usage:
+    python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw
+
 """
 
 
