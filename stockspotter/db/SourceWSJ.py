@@ -279,6 +279,7 @@ class SourceWSJ:
     ## Parses the .html of financial statements to .json
     def parse_financial_statements(self, delete_raw=False):
         """ Parse the downloaded files and save the data as pickle"""
+        # Raw HTML List
         A = {}
         A['income_statement'] = self.priv_dir+'income_statement.html'
         A['income_statement_q'] = self.priv_dir+'income_statement_q.html'
@@ -287,6 +288,7 @@ class SourceWSJ:
         A['cash_flow_statement'] = self.priv_dir+'cash_flow_statement.html'
         A['cash_flow_statement_q'] = self.priv_dir+'cash_flow_statement_q.html'
 
+        # Names of JSON files
         F = {}
         F['financials'] = self.priv_dir+'financials.'
         F['income_statement'] = self.priv_dir+'income_statement.a.'
@@ -687,6 +689,27 @@ class SourceWSJ:
                 print '%02d |%s| |%s|' %(u, tab, tag), data_1#,data_2,data_3,data_4
             else:
                 print '%02d |%s|' %(u, tag), data_1#,data_2,data_3,data_4
+
+
+    ## Delete raw html files
+    def rm_raw(self):
+        self._debug( 'rm '+self.priv_dir+'wsj_profile.html' )
+        self._rm_if_exists( self.priv_dir+'wsj_profile.html' )
+
+        self._debug( 'rm '+self.priv_dir+'financials.html' )
+        self._rm_if_exists( self.priv_dir+'financials.html' )
+
+        A = {}
+        A['income_statement'] = self.priv_dir+'income_statement.html'
+        A['income_statement_q'] = self.priv_dir+'income_statement_q.html'
+        A['balance_sheet'] = self.priv_dir+'balance_sheet.html'
+        A['balance_sheet_q'] = self.priv_dir+'balance_sheet_q.html'
+        A['cash_flow_statement'] = self.priv_dir+'cash_flow_statement.html'
+        A['cash_flow_statement_q'] = self.priv_dir+'cash_flow_statement_q.html'
+
+        for ulr in A:
+            self._debug( 'rm '+A[ulr] )
+            self._rm_if_exists(  A[ulr] )
 
 
 

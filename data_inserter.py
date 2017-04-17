@@ -188,7 +188,7 @@ def insert_financials_data(base_dict, json_financials):
                 except ValueError:
                     # Try interpreting it as date
                     try:
-                        n_cur_dict['val'] = datetime.strptime( v_string,  '%m/%d/%Y').strftime('%Y/%m/%d')
+                        n_cur_dict['val'] = datetime.strptime( v_string,  '%m/%d/%Y').strftime('%Y%m%d')
                     except:
                         pass
 
@@ -377,9 +377,9 @@ db = client.universalData
 lister = TickerLister( 'equities_db/lists/' )
 # full_list = lister.list_full_hkex( use_cached=True)
 full_list = []
-full_list += lister.list_full_hkex( use_cached=True)[0:3]
-full_list += lister.list_full_bse( use_cached=True )[0:3]
-full_list += lister.list_full_nse( use_cached=True )[0:3]
+full_list += lister.list_full_hkex( use_cached=True)[0:100]
+full_list += lister.list_full_bse( use_cached=True )[0:100]
+full_list += lister.list_full_nse( use_cached=True )[0:100]
 
 db_prefix = 'equities_db/data__N'
 

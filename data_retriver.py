@@ -115,13 +115,13 @@ full_list = []
 print tcol.HEADER, ' : Exchanges :', tcol.ENDC
 if args.xhkex:
     print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)[0:3]
+    full_list += lister.list_full_hkex( use_cached=True)#[0:100]
 if args.xbse:
     print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_bse( use_cached=True )[0:3]
+    full_list += lister.list_full_bse( use_cached=True )#[0:100]
 if args.xnse:
     print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
-    full_list += lister.list_full_nse( use_cached=True )[0:3]
+    full_list += lister.list_full_nse( use_cached=True )#[0:100]
 
 
 #

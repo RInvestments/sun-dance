@@ -59,6 +59,9 @@ parser.add_argument( '--xbse', default=False, action='store_true', help='List al
 parser.add_argument( '--xnse', default=False, action='store_true', help='List all National Stock Ex India (NSE) Stocks' )
 
 parser.add_argument( '--delete_raw', default=False, action='store_true', help='Delete the raw .html after parsing' )
+parser.add_argument( '--delete_raw_wsj', default=False, action='store_true', help='Delete the raw .html after parsing' )
+
+
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
@@ -104,13 +107,13 @@ full_list = []
 print tcol.HEADER, ' : Exchanges :', tcol.ENDC
 if args.xhkex:
     print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)[0:3]
+    full_list += lister.list_full_hkex( use_cached=True)
 if args.xbse:
     print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_bse( use_cached=True )[0:3]
+    full_list += lister.list_full_bse( use_cached=True )
 if args.xnse:
     print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
-    full_list += lister.list_full_nse( use_cached=True )[0:3]
+    full_list += lister.list_full_nse( use_cached=True )
 
 
 for i,l in enumerate(full_list):
@@ -124,23 +127,19 @@ for i,l in enumerate(full_list):
     # Parse HKEX
     if args.hkex:
         s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        # s_hkex.download_url(skip_if_exist=not args.force_download)
         s_hkex.parse(delete_raw=args.delete_raw)
-        # A = s_hkex.load_hkex_profile()
-        # if A is not None:
-        #     print A['Industry Classification']
 
 
     # Parse WSJ
     if args.wsj:
         s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        # s_wsj.download_url(skip_if_exist=not args.force_download)
         s_wsj.parse(delete_raw=args.delete_raw)
-        # # s_wsj.parse_profile()
-        # # s_wsj.parse_financials()
-        # json_data = s_wsj.load_json_profile()
-        # if json_data is not None:
-        #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
+
+
+    # Delete WSJ Raw files
+    if args.delete_raw_wsj:
+        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_wsj.rm_raw()
 
 
     # Parse Reuters
