@@ -79,9 +79,12 @@ def add_to_db(cur_dict):
     try:
         cur_dict['last_modified'] = datetime.now()
         db.universalData.insert( cur_dict )
+    except pymongo.errors.DuplicateKeyError, e:
+        # print 'Dup licate'
+        uiii= 0 #silently ignore this. may be report only in a verbose setting
     except Exception as e:
         #TODO catch the `Duplicate key insertion`. This denotes this data already exists
-        print str(e)
+        print str(e), e
         print tcol.FAIL, 'MOngoDB insert failed', tcol.ENDC
 
     # del cur_dict
@@ -274,6 +277,17 @@ def str_to_float( r ):
         #     print 'EEEEE'
             return 0.0
 
+# Million returns 1; Thousand returns 0.001; Billion returns 1000;
+def _get_multiplier( fiscal_str ):
+    if fiscal_str.find('Million'):
+        return 1.0
+    elif fiscal_str.find('Thousand'):
+        return 0.001
+    elif fiscal_str.find('Billion'):
+        return 1000.
+    else:
+        return 1.0
+
 ## Inserts 1 sheet only
 ## statement_name : one of ('income_statement', 'balance_sheet', 'cash_flow_statement')
 ## base_dict : a copy of base_dict
@@ -311,14 +325,17 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
 
 
     A = json_loader_func( tag ) #note that these statements are having data in _E3M5_ tag
+    fiscal_mul = _get_multiplier( A['_FISCAL_NOTE_']['_E3M5_'] )
     for h1 in A:
         if h1 == '_HEADER_': continue #avoid _HEADER_ / use it for verification
+        # if h1 == '_FISCAL_NOTE_': continue #TODO
         # print h1, A[h1]['_E3M5_'], str_to_float( A[h1]['_E3M5_'] )
         l2_dict['type5'] = h1
         l2_dict['type6'] = str(None)
         l2_dict['type7'] = str(None)
         l2_dict['value_string'] = A[h1]['_E3M5_']
         l2_dict['val'] = str_to_float( A[h1]['_E3M5_'] )
+        l2_dict['fiscal_mul'] = fiscal_mul
         add_to_db( l2_dict.copy() )
         for h2 in A[h1]:
             if h2 == '_E3M5_': continue #found data
@@ -377,11 +394,11 @@ db = client.universalData
 lister = TickerLister( 'equities_db/lists/' )
 # full_list = lister.list_full_hkex( use_cached=True)
 full_list = []
-full_list += lister.list_full_hkex( use_cached=True)[0:100]
-full_list += lister.list_full_bse( use_cached=True )[0:100]
-full_list += lister.list_full_nse( use_cached=True )[0:100]
+full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+full_list += lister.list_full_bse( use_cached=True )#[1500:]
+full_list += lister.list_full_nse( use_cached=True )#[0:100]
 
-db_prefix = 'equities_db/data__N'
+db_prefix = 'equities_db/data__N/'
 
 
 # Loop Over the list

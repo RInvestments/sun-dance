@@ -335,6 +335,13 @@ class SourceWSJ:
 
         contact_addr = dat_company_info[0].find_all( 'div', class_='cr_profile_contact')
         out_address = []
+        # code.interact( local=locals() )
+        if len(contact_addr) == 0 :
+            self._error( 'No Contact Adress' )
+            return False
+        if contact_addr[0].find_all('span') is None:
+            self._error( 'No address ')
+            return False
         for ln in contact_addr[0].find_all('span'):
             # print ln.string
             if ln.string is not None:
@@ -426,33 +433,39 @@ class SourceWSJ:
         earnings_estimates = soup.find_all( attrs={'data-module-id': 4 } ) # Earning and Estimates
         if len(earnings_estimates) != 1:
             self._error( 'data module 4 not found in parse_financials')
-            return False
-        lbl = earnings_estimates[0].find_all( 'span', class_='data_lbl' )
-        dat = earnings_estimates[0].find_all( 'span', class_='data_data' )
-        # print tcolor.HEADER, 'Earning and Estimates', tcolor.ENDC
-        for i in range(len(lbl)):
-            # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
-            tree['Earning and Estimates'][lbl[i].get_text().strip()] = dat[i].get_text().strip()
+        else:
+            lbl = earnings_estimates[0].find_all( 'span', class_='data_lbl' )
+            dat = earnings_estimates[0].find_all( 'span', class_='data_data' )
+            # print tcolor.HEADER, 'Earning and Estimates', tcolor.ENDC
+            for i in range(len(lbl)):
+                # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
+                tree['Earning and Estimates'][lbl[i].get_text().strip()] = dat[i].get_text().strip()
 
 
-        per_share_data = soup.find_all( attrs={'data-module-id': 5 } )[0]
-        lbl = per_share_data.find_all( 'span', class_='data_lbl' )
-        dat = per_share_data.find_all( 'span', class_='data_data' )
-        # print tcolor.HEADER, 'Per Share Data', tcolor.ENDC
-        for i in range(len(lbl)):
-            # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
-            tree['Per Share Data'][lbl[i].get_text()] = dat[i].get_text()
+        per_share_data = soup.find_all( attrs={'data-module-id': 5 } )
+        if len(per_share_data) != 1:
+            self._error( 'data module 5 not found in parse_financials')
+        else:
+            lbl = per_share_data[0].find_all( 'span', class_='data_lbl' )
+            dat = per_share_data[0].find_all( 'span', class_='data_data' )
+            # print tcolor.HEADER, 'Per Share Data', tcolor.ENDC
+            for i in range(len(lbl)):
+                # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
+                tree['Per Share Data'][lbl[i].get_text()] = dat[i].get_text()
 
 
 
-        ratios_n_margin = soup.find_all( attrs={'data-module-id': 7 } )[0]
-        all_tr = ratios_n_margin.find_all( 'tr' )
-        # print tcolor.HEADER, 'Ratios and Margins', tcolor.ENDC
-        for tr in all_tr:
-            lbl = tr.find( 'span', class_='data_lbl' ).text.strip()
-            data = tr.find( 'span', class_='data_data' ).text.strip()
-            # print tcolor.BOLD, lbl, tcolor.ENDC, data
-            tree[ 'Ratios and Margins'][lbl] = data
+        ratios_n_margin = soup.find_all( attrs={'data-module-id': 7 } )
+        if len(ratios_n_margin) != 1:
+            self._error( 'data module 7 not found in parse_financials')
+        else:
+            all_tr = ratios_n_margin[0].find_all( 'tr' )
+            # print tcolor.HEADER, 'Ratios and Margins', tcolor.ENDC
+            for tr in all_tr:
+                lbl = tr.find( 'span', class_='data_lbl' ).text.strip()
+                data = tr.find( 'span', class_='data_data' ).text.strip()
+                # print tcolor.BOLD, lbl, tcolor.ENDC, data
+                tree[ 'Ratios and Margins'][lbl] = data
 
 
         json_string = json.dumps(tree, indent=4)
@@ -618,11 +631,15 @@ class SourceWSJ:
 
         #HEADER
         header = data_table.find_all( 'thead' )[0].find_all('th')
+        self._debug( 'Note : '+str(header[0]) )
+        # code.interact( local=locals() )
+
         for u in range(1,len(header)-1):
             self._debug('HEADER %d %s' %(u, header[u].string)) #1,2,3,4,5 are valid value
 
             tr = Tree()
             tr['_HEADER_'] = header[u].string
+            tr['_FISCAL_NOTE_']['_E3M5_'] = header[0].string
             forest.append(tr)
 
         #Other data

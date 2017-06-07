@@ -23,8 +23,8 @@ pprint.pprint( db.find_one({'ticker':'0011.HK', 'type1':'Profile', 'type2':'Comp
 
 year = 2012
 
-for year in [2012,2013,2014,2015]:
-    cursor = db.find({'industry':'Automotive', 'sector':'Automobiles', 'type1':'Financial Statements', 'type2':'income_statement', 'type3':'None', 'period':'a', 'type5':'Sales/Revenue', 'type6':'None',  'type7':'None', 'type4':year }, \
+for year in [2012]:
+    cursor = db.find({'industry':'Automotive', 'type1':'Financial Statements', 'type2':'income_statement', 'type3':'None', 'period':'a', 'type5':'Sales/Revenue', 'type6':'None',  'type7':'None', 'type4':year }, \
                         {'industry':1, 'sector':1, 'company':1, 'ticker':1, 'val':1} ).sort( 'company', 1 )
 
 
@@ -45,5 +45,5 @@ for year in [2012,2013,2014,2015]:
     plt.clf()
     plt.pie( pdf*100, autopct='%1.1f%%', shadow=True, labels=labels )
     plt.axis( 'equal')
-    plt.show(False)
-    plt.pause(1)
+    plt.show()
+    plt.pause(0)

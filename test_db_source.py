@@ -20,8 +20,9 @@ from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
-ticker = '0001.HK'
-stock_prefix = 'equities_db/data__20170316_copy/'+ticker+'/'
+# ticker = 'ELECTCAST.NSE'
+ticker = '6163.HK'
+stock_prefix = 'equities_db/data__N/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -48,10 +49,12 @@ stock_prefix = 'equities_db/data__20170316_copy/'+ticker+'/'
 # print a[0]
 # print a[-1]
 
-s_wsj = SourceWSJ( ticker, stock_prefix )
+s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+s_wsj.parse_financial_statements()
+
 # # s_wsj.download_url()
-s_wsj.parse()
-print s_wsj.ls( 'a', 'income_statement')
+# s_wsj.parse()
+# print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()
 # # A = s_wsj.load_json_income_statement( 'a.2015' )
