@@ -278,15 +278,17 @@ def str_to_float( r ):
             return 0.0
 
 # Million returns 1; Thousand returns 0.001; Billion returns 1000;
-def _get_multiplier( fiscal_str ):
-    if fiscal_str.find('Million'):
+def get_multiplier( fiscal_str ):
+    if fiscal_str.find('Million') > 0:
         return 1.0
-    elif fiscal_str.find('Thousand'):
+
+    if fiscal_str.find('Thousand') > 0:
         return 0.001
-    elif fiscal_str.find('Billion'):
+
+    if fiscal_str.find('Billion') > 0:
         return 1000.
-    else:
-        return 1.0
+
+    return 1.1
 
 ## Inserts 1 sheet only
 ## statement_name : one of ('income_statement', 'balance_sheet', 'cash_flow_statement')
@@ -325,7 +327,15 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
 
 
     A = json_loader_func( tag ) #note that these statements are having data in _E3M5_ tag
-    fiscal_mul = _get_multiplier( A['_FISCAL_NOTE_']['_E3M5_'] )
+
+    try:
+        fiscal_mul = get_multiplier( A['_FISCAL_NOTE_']['_E3M5_'] )
+    except:
+        fiscal_mul = -1.0 #this string does not exist
+
+    # if l2_dict['ticker'] == '0048.HK':
+        # code.interact( local=locals() )
+
     for h1 in A:
         if h1 == '_HEADER_': continue #avoid _HEADER_ / use it for verification
         # if h1 == '_FISCAL_NOTE_': continue #TODO
@@ -394,7 +404,7 @@ db = client.universalData
 lister = TickerLister( 'equities_db/lists/' )
 # full_list = lister.list_full_hkex( use_cached=True)
 full_list = []
-full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+full_list += lister.list_full_hkex( use_cached=True)#[40:60]
 full_list += lister.list_full_bse( use_cached=True )#[1500:]
 full_list += lister.list_full_nse( use_cached=True )#[0:100]
 

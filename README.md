@@ -10,7 +10,8 @@ balance sheet, cashflow statements).
 
 Read books especially from value investors like Ben Graham etc. Other
 sources like investopedia etc to build scripts that can scan all the listings of 
-HKEX (for now, plan on other exchanges later). 
+HKEX. It is easy to add more source (need work).
+Currently can do HKEX, BSE(India), NSE(India)
 
 Transfer some of the machine learning techniques to analyse and potentially make a
 buck or two. 
@@ -30,6 +31,15 @@ python data_parser.py --delete_raw_wsj -sd equities_db/data__N -ld equities_db/l
 python -i data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
 
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse
+
+## MongoDB Schema
+I insert individual elements into flat mongodb structure. Note that the code might not be exactlty as described in document, but is more or less consistent. 
+
+Details of Schema : [HERE](documents/mongodb_schema_details.md)
+
+
+## Study Resources
+List of books, articles, other resources to learn on investing [HERE](documents/economics_theory/README.md)
 
 ## Software Licence
 ![License ICO](documents/images/88x31.png)

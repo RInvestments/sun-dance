@@ -92,4 +92,5 @@ on the date specified in type4. In type4 the dates are specified as integers. Fo
 
 
 #### type5, type6 and type7:
-This is used for the heirarchy in each of the statements. For details of this refer to the example json in above sub-section. 
+This is used for the heirarchy in each of the statements. For details of this refer to the example json in above sub-section. There is another `fiscal_mul` type. Basically some companies report earnings are in different currencies (HKD, USD, etc.), also some have it in 
+million, billion etc, use this field to correct that. Additionally also look at `_FISCAL_NOTE_`
