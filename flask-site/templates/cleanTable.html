@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.2/css/fixedHeader.bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/3.1.2/js/dataTables.fixedHeader.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+
+
+
+<script>
+$(document).ready(function() {
+    var table = $('#example').DataTable( {
+        responsive: true
+    } );
+
+    new $.fn.dataTable.FixedHeader( table );
+} );
+</script>
+
+
+</head>
+<body>
+  <div id="chartdiv"></div>
+
+  <table id="example" class="table table-striped table-bordered nowrap" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                {% for h in INFO[0] %}
+                  <th>{{ h }}</th>
+                {% endfor %}
+              </tr>
+          </thead>
+          <tfoot>
+              <tr>
+                  {% for h in INFO[0] %}
+                    <th>{{ h }}</th>
+                  {% endfor %}
+
+              </tr>
+          </tfoot>
+          <tbody>
+              {% for row in INFO %}
+              <tr>
+                {% for d in row %}
+                <td>{{row[d]}}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+</body>
+</html>
