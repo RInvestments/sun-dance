@@ -18,6 +18,8 @@ ave = MongoQueries(db)
 #     for sector in sorted(ave.getSectorsOf( industry )):
 #         INFO[industry][sector] = ave.getCompanyName_FilterByIndustrynSector( industry, sector )
 
+print ave.getTickerBalanceSheetAssetsDetails( "2333.HK", 2016, "Total Assets")
+quit()
 
 # ary = ave.getCompanyRevenue(bourse='BSE')
 print 'Revenue', ave.getTickerIncomeStatementDetails( '2333.HK', 2016, 'Sales/Revenue' )

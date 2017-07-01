@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import code
+import json
 
 ## This class shall return information as strings/arrays/lists,tuples etc.
 ## to it's caller. This will be base class for queries. Might add more classes later
@@ -35,6 +36,16 @@ class MongoQueries:
             return p['value_string']
         except:
             return None
+
+    def getTickerName( self, ticker ):
+        return self.getCompanyName( ticker )
+    def getTickerIndustry( self, ticker ):
+        return self.getCompanyIndustry( ticker )
+    def getTickerSector( self, ticker ):
+        return self.getCompanySector( ticker )
+    def getTickerDescription( self, ticker ):
+        return self.getCompanyDescription( ticker )
+
 
     ## Returns list of industry as string array
     def getIndustryList(self, bourse='HK'):
@@ -140,6 +151,68 @@ class MongoQueries:
 
         if result is not None:
             # return result['val']
+            return float(result['val']) * float(result['fiscal_mul'])
+        else:
+            return 0
+
+    def getTickerBalanceSheetAssetsDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements', 'type2':'balance_sheet', 'type3':'assets', 'type4':2016, 'type5':'Total Accounts Receivable', 'type6':'None', 'type7':'None'} )
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements',
+        #'type2':'balance_sheet', 'type3':'assets', 'type4':2016,
+        #'type5':'Total Accounts Receivable', 'type6':'None', 'type7':'None'} )
+
+        query = {}
+
+        query['ticker'] = str(ticker)
+        query['type1'] = 'Financial Statements'
+        query['type2'] = 'balance_sheet'
+        query['type3'] = 'assets'
+        # query['period'] = 'a'
+
+        if year is not None:
+            query['type4'] = year
+
+        query['type5'] = item_string#'Total Assets'
+        query['type6'] = item_string2#'None'
+        query['type7'] = item_string3#'None'
+
+        # return str(query)
+        result=self.db.find_one( query  )
+
+
+        if result is not None:
+            return float(result['val']) * float(result['fiscal_mul'])
+        else:
+            return 0
+
+
+    def getTickerBalanceSheetLiabilitiesDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements', 'type2':'balance_sheet', 'type3':'assets', 'type4':2016, 'type5':'Total Accounts Receivable', 'type6':'None', 'type7':'None'} )
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements',
+        #'type2':'balance_sheet', 'type3':'assets', 'type4':2016,
+        #'type5':'Total Accounts Receivable', 'type6':'None', 'type7':'None'} )
+
+        query = {}
+
+        query['ticker'] = str(ticker)
+        query['type1'] = 'Financial Statements'
+        query['type2'] = 'balance_sheet'
+        query['type3'] = 'liabilities'
+        # query['period'] = 'a'
+
+        if year is not None:
+            query['type4'] = year
+
+        if item_string != 'None':
+            query['type5'] = item_string#'Total Assets'
+
+        query['type6'] = item_string2#'None'
+        query['type7'] = item_string3#'None'
+        # return str(query)
+
+        result=self.db.find_one( query  )
+
+        if result is not None:
             return float(result['val']) * float(result['fiscal_mul'])
         else:
             return 0

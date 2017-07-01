@@ -29,10 +29,57 @@ def template_hello(name):
 
 
 #------------------------ API Calls ---------------------------#
+
+
+#### Ticker Info Calls
 @app.route( '/api/info/<ticker>')
 def lookup_ticker( ticker ):
     return ave.getCompanyName( ticker )
 
+@app.route( '/api/info/<ticker>/is/<datum>/<int:year>' ) #income statement data
+def lookup_ticker_income_statement( ticker, datum, year ):
+    alias = {}
+    alias['revenue' ] = "Sales/Revenue"
+    alias['cogs' ] = "Cost of Goods Sold (COGS) incl. D&A"
+    alias['income_gross' ] = "Gross Income"
+    alias['income_pretax' ] = "Pretax Income"
+    alias['income_net' ] = "Net Income"
+    alias['expense_sga' ] = "SG&A Expense"
+    alias['expense_interest' ] = "Interest Expense"
+    alias['expense_tax' ] = "Income Tax"
+    alias['ebit' ] = "EBIT"
+    alias['ebitda' ] = "EBITDA"
+    alias['eps' ] = "EPS (Diluted)"
+    alias['eps_basic' ] = "EPS (Basic)"
+    alias['eps_diluted' ] = "EPS (Diluted)"
+    alias['shares_outstanding' ] = "Diluted Shares Outstanding"
+
+    if datum in alias.keys():
+        return str(ave.getTickerIncomeStatementDetails( ticker, year, alias[datum] ))
+    else:
+        if datum == '_list_':
+            return str( alias.keys() )
+        if datum == '_list_col_':
+            s = ""
+            for k in alias.keys():
+                s += k+ '\n'
+            return s
+        if datum == '_json_':
+            return json.dumps( alias )
+        return "#N/A %s" %(datum)
+
+
+@app.route( '/api/info/<ticker>/bs/<datum>/<int:year>' ) #income statement data
+def lookup_ticker_balance_sheet( ticker, datum, year ):
+    alias_assets = {}
+    alias_assets['']
+    return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, "Net Property, Plant & Equipment", "Accumulated Depreciation", "Construction in Progress" ))
+    # return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
+
+
+
+
+#### List calls
 @app.route( '/api/list/industry_list')
 def lookup_industry_list( ):
     list_of_industry = ave.getIndustryList()

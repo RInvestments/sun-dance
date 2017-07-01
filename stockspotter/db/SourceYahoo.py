@@ -51,6 +51,32 @@ class SourceYahoo:
             return pickle.load(f)
 
 
+    def _download_and_save( self, url, fname ):
+        if url is None:
+            self._debug( 'URL is None, Skipping...' )
+            return False
+        self._debug( 'download :'+ url )
+
+
+        try:
+            self._debug( 'Attempt downloading :'+url)
+            html_response = urllib2.urlopen( url )
+            with open(fname, "w") as handle:
+                hkex_html = html_response.read()
+                handle.write( hkex_html )
+                self._debug( 'written to : '+ fname )
+
+        except urllib2.HTTPError, e:
+            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            return False
+        except urllib2.URLError, e:
+            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            return False
+
+
+        return True
+
+
     def __init__(self, ticker, stock_prefix, verbosity=0):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
@@ -81,9 +107,64 @@ class SourceYahoo:
 
         return True
 
+    def download_historical_quote(self, skip_if_exist=True ):
+        # This now (1st Jul, 2017) does not work
+        # self.download_historical_quote_yahoo( skip_if_exist )
+
+        self.download_historical_quote_alphavantage(skip_if_exist)
+
+
+    def download_historical_quote_alphavantage( self, skip_if_exist=True ):
+        if not os.path.exists(self.priv_dir):
+            self._debug( 'Make directory : '+self.priv_dir)
+            os.makedirs( self.priv_dir )
+
+        output_json_file_name = self.priv_dir+'/historical_quotes.json'
+        if skip_if_exist and os.path.isfile(output_json_file_name):
+            self._debug( 'File already exists....SKIP')
+            return
+        else:
+            self._debug( 'File does not exist... continue')
+
+
+        ticker_seg = self.ticker.split('.')
+
+        symbol = ticker_seg[0]
+        xchange = ticker_seg[1]
+
+        file_to_save = self.priv_dir+'/historical_quotes.json'
+        startTime = time.time()
+
+
+        if xchange == 'HK':
+            #sample HK query
+            #https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=2333.HK&apikey=E215Y9QXBIMEAI3B&outputsize=full
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=%s.HK&apikey=E215Y9QXBIMEAI3B&outputsize=full' %(symbol)
+            self._download_and_save(url, file_to_save )
+            self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
+            return True
+
+        if xchange == 'NSE':
+            # Sample NSE data
+            #https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NSE:TATAMOTORS&apikey=E215Y9QXBIMEAI3B&outputsize=full
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NSE:%s&apikey=E215Y9QXBIMEAI3B&outputsize=full' %(symbol)
+            self._download_and_save(url, file_to_save )
+            self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
+            return True
+
+
+        self._error( 'Invalid exchange '+xchange )
+        return False
+
+
+
+
+
+
 
     ## All historical for 10 years listing this file approx 500kb
-    def download_historical_quote(self, skip_if_exist=True ):
+    ## Yahoo has disabled this service as of 1st Jul, 2017
+    def download_historical_quote_yahoo(self, skip_if_exist=True ):
         if not os.path.exists(self.priv_dir):
             self._debug( 'Make directory : '+self.priv_dir)
             os.makedirs( self.priv_dir )
@@ -169,16 +250,18 @@ class SourceYahoo:
             sh = Share( self.ticker ) #ensure ticker is in yahoo's format
             data_dict = {}
 
-
-            data_dict['Volume'] = sh.get_volume()
-            data_dict['High'] = sh.get_days_high()
-            data_dict['Low'] = sh.get_days_low()
-            data_dict['Date'] = sh.get_trade_datetime() #eg. 2014-02-05 21:00:00 UTC+0000
-            data_dict['Close'] = sh.get_price()
-            data_dict['Open'] = sh.get_open()
+            try:
+                data_dict['Volume'] = sh.get_volume()
+                data_dict['High'] = sh.get_days_high()
+                data_dict['Low'] = sh.get_days_low()
+                data_dict['Close'] = sh.get_price()
+                data_dict['Open'] = sh.get_open()
+                data_dict['Date'] = sh.get_trade_datetime() #eg. 2014-02-05 21:00:00 UTC+0000
             # This is current quote. Not adjusted for splits. This python package is a dumb and does not download split adjusted data.
             # cannot get daily data adjusted. But if downloading hostorical data from url directly
             # http://ichart.finance.yahoo.com/table.csv?s=1357.HK&c=1962 can get the llast column which is split adjusted (i have verified it for apple for example)
+            except:
+                self._error( 'Data missing error...in download_quick_quote()')
 
 
 
@@ -193,6 +276,7 @@ class SourceYahoo:
 
 
     ## All data for today. Almost never do this,
+    ## Deprecated
     def download_data( self, skip_if_exist=True ):
         if not os.path.exists(self.priv_dir):
             self._debug( 'Make directory : '+self.priv_dir)
