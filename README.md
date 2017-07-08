@@ -26,6 +26,8 @@ python data_inserter.py (currently no commandline parsing. adjust db_prefix para
 #### Delete Raw (WSJ)
 python data_parser.py --delete_raw_wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
 
+#### Daily Quote Data (currently only for HKEX, NSE)
+python -i data_retriver.py -sd equities_db/data__quotes -ld equities_db/lists --yahoo_historical --xnse --xhkex
 
 #### Verbose
 python -i data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse

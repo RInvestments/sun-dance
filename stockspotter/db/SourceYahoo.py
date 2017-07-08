@@ -8,6 +8,7 @@ import string
 import pickle
 import json
 import urllib2
+import os
 
 import TerminalColors
 tcol = TerminalColors.bcolors()
@@ -16,6 +17,8 @@ from yahoo_finance import Share
 from yahoo_finance import YQLResponseMalformedError
 
 import collections
+from collections import OrderedDict
+
 def Tree():
     return collections.defaultdict(Tree)
 
@@ -51,11 +54,17 @@ class SourceYahoo:
             return pickle.load(f)
 
 
-    def _download_and_save( self, url, fname ):
+    def _download_and_save( self, url, fname, skip_if_exist=True ):
         if url is None:
             self._debug( 'URL is None, Skipping...' )
             return False
         self._debug( 'download :'+ url )
+
+        if skip_if_exist and os.path.isfile(fname):
+            self._debug( 'File already exists....SKIP')
+            return
+        else:
+            self._debug( 'File does not exist... continue')
 
 
         try:
@@ -119,12 +128,11 @@ class SourceYahoo:
             self._debug( 'Make directory : '+self.priv_dir)
             os.makedirs( self.priv_dir )
 
-        output_json_file_name = self.priv_dir+'/historical_quotes.json'
-        if skip_if_exist and os.path.isfile(output_json_file_name):
-            self._debug( 'File already exists....SKIP')
-            return
-        else:
-            self._debug( 'File does not exist... continue')
+        # if skip_if_exist and os.path.isfile(output_json_file_name):
+        #     self._debug( 'File already exists....SKIP')
+        #     return
+        # else:
+        #     self._debug( 'File does not exist... continue')
 
 
         ticker_seg = self.ticker.split('.')
@@ -132,25 +140,88 @@ class SourceYahoo:
         symbol = ticker_seg[0]
         xchange = ticker_seg[1]
 
-        file_to_save = self.priv_dir+'/historical_quotes.json'
+
         startTime = time.time()
 
+        # In general, to take advantage of multiple sources,
+        # Parse the data to a generic json format.
+        ## Step-1 : Download data from a source to a file
+        ## Step-2 : Parse the downloaded data into a uniform format
+        ## Step-3 : Remove raw file
+        #TODO: currently will download the enture 20years data.
+        #      Don't need to do this everyday. everyday usually previous 10days
+        #      data is enough. This can be switched by the output flag
+        outputsize = 'full'
+        outputsize = 'compact'
 
         if xchange == 'HK':
+
             #sample HK query
             #https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=2333.HK&apikey=E215Y9QXBIMEAI3B&outputsize=full
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=%s.HK&apikey=E215Y9QXBIMEAI3B&outputsize=full' %(symbol)
-            self._download_and_save(url, file_to_save )
+
+            # STEP-1
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=%s.HK&apikey=E215Y9QXBIMEAI3B&outputsize=%s' %(symbol, outputsize)
+            file_to_save_raw = self.priv_dir+'/historical_quotes.json'
+            self._download_and_save(url, file_to_save_raw, skip_if_exist )
+
+            # Step-2
+            file_to_save_parsed = self.priv_dir+'/historical_quotes_parsed.json'
+            self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
+
+            # Step-3
+            os.remove(file_to_save_raw)
+
             self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
             return True
 
         if xchange == 'NSE':
             # Sample NSE data
             #https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NSE:TATAMOTORS&apikey=E215Y9QXBIMEAI3B&outputsize=full
-            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NSE:%s&apikey=E215Y9QXBIMEAI3B&outputsize=full' %(symbol)
-            self._download_and_save(url, file_to_save )
+            url = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=NSE:%s&apikey=E215Y9QXBIMEAI3B&outputsize=%s' %(symbol,outputsize)
+            file_to_save_raw = self.priv_dir+'/historical_quotes.json'
+            self._download_and_save(url, file_to_save_raw, skip_if_exist )
+
+            file_to_save_parsed = self.priv_dir+'/historical_quotes_parsed.json'
+            self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
+
+            #delete raw file
+            os.remove(file_to_save_raw)
+
+
             self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
             return True
+
+
+        #Example Queries
+        # Seem like all this is under construction. However this data is accessible in Yahoo finance ticker format.
+        # for example, Hong Kong daily quotes can be obtained as 2333.HK etc. Japan data is not available
+        #  <li>Australian Securities Exchange: ASX</li>
+        #           https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=ASX:AAC&apikey=E215Y9QXBIMEAI3B
+        #   <li>Bombay Stock Exchange: BOM</li>
+        #           ?
+        #   <li>Borsa Italiana Milan Stock Exchange: BIT</li>
+        #   <li>Canadian/Toronto Securities Exchange: TSE</li>
+        #           https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSE:AEM&apikey=E215Y9QXBIMEAI3B
+        #   <li>Deutsche Borse Frankfurt Stock Exchange: FRA or ETR</li>
+        #           https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=ETR:BMW&apikey=E215Y9QXBIMEAI3B
+        #   <li>Euronext Amsterdam: AMS</li>
+        #   <li>Euronext Brussels: EBR</li>
+        #   <li>Euronext Lisbon: ELI</li>
+        #   <li>Euronext Paris: EPA</li>
+        #   <li>London Stock Exchange: LON</li>
+        #   <li>Moscow Exchange: MCX</li>
+        #   <li>NASDAQ Exchange: NASDAQ</li>
+        #   <li>NASDAQ OMX Copenhagen: CPH</li>
+        #   <li>NASDAQ OMX Helsinki: HEL</li>
+        #   <li>NASDAQ OMX Iceland: ICE</li>
+        #   <li>NASDAQ OMX Stockholm: STO</li>
+        #   <li>National Stock Exchange of India: NSE</li>
+        #   <li>New York Stock Exchange: NYSE</li>
+        #   <li>Singapore Exchange: SGX</li>
+        #   <li>Shanghai Stock Exchange: SHA</li>
+        #   <li>Shenzhen Stock Exchange: SHE</li>
+        #   <li>Taiwan Stock Exchange: TPE</li>
+        #   <li>Tokyo Stock Exchange: TYO</li>
 
 
         self._error( 'Invalid exchange '+xchange )
@@ -379,3 +450,88 @@ class SourceYahoo:
         json_file = self.priv_dir+'/quote_detailed.json'
         json_data = self._load_json( json_file )
         return json_data
+
+
+    ###################### Parsers ######################################
+    # intended to be used with downloads. ie. as soon as you download parse and save it
+    # optionally delete raw file.
+    # Standard format for storage of quote data (json)
+    #  {
+    #         "meta" : {
+    #             "ticker" : "2333.HK"
+    #         }
+    #         "quote_daily" : {
+    #             "2017-06-30" : {
+    #                 "close" : 2323.3,
+    #                 "close_adjusted" :3333,
+    #                 "volume" :333333
+    #                 "open" : 22,
+    #                 "high" : 44,
+    #                 "low"  : 32
+    #             }
+    #             "2017-06-29" : {
+    #                 "close" : 2323.3,
+    #                 "close_adjusted" :3333,
+    #                 "volume" :333333
+    #                 "open" : 22,
+    #                 "high" : 44,
+    #                 "low"  : 32
+    #             }
+    #             "2017-06-28" : {
+    #                 "close" : 2323.3,
+    #                 "close_adjusted" :3333,
+    #                 "volume" :333333
+    #                 "open" : 22,
+    #                 "high" : 44,
+    #                 "low"  : 32
+    #             }
+    #             .
+    #             .
+    #             .
+    #         }
+    #  }
+    def __parse_alphavantage( self, input_raw_file_name, output_json_file_name ):
+        # Takes in the raw file, and processes it to standard format
+        self._debug( 'Parsing file %s' %(input_raw_file_name) )
+        data_raw = json.loads( open(input_raw_file_name).read(), object_pairs_hook=OrderedDict )
+
+        output = collections.OrderedDict()
+
+        # Meta Data
+        try:
+            output['meta'] = collections.OrderedDict()
+            output['meta']['ticker'] = data_raw['Meta Data']['2. Symbol']
+        except KeyError:
+            self._error( 'Cannot parse. Probably alphavantage gave an error' )
+            return
+
+
+        # Quotes
+        output['quotes_daily'] = collections.OrderedDict()
+        keys = data_raw['Time Series (Daily)'].keys()
+        self._debug( 'Data from %s to %s' %(keys[0], keys[-1]) )
+        for k in keys: #loop over all dates
+
+            # Get data
+            _close = data_raw['Time Series (Daily)'][k]['4. close']
+            _close_adj = data_raw['Time Series (Daily)'][k]['5. adjusted close']
+            _volume = data_raw['Time Series (Daily)'][k]['6. volume']
+            _open = data_raw['Time Series (Daily)'][k]['1. open']
+            _low = data_raw['Time Series (Daily)'][k]['3. low']
+            _high = data_raw['Time Series (Daily)'][k]['2. high']
+
+            # put data in standard format
+            output['quotes_daily'][k] = collections.OrderedDict()
+            output['quotes_daily'][k]['close'] = _close
+            output['quotes_daily'][k]['close_adj'] = _close_adj
+            output['quotes_daily'][k]['volume'] = _volume
+            output['quotes_daily'][k]['open'] = _open
+            output['quotes_daily'][k]['low'] = _low
+            output['quotes_daily'][k]['high'] = _high
+
+            self._debug( "%s:%s" %(k,_close), lvl=2 )
+
+        self._debug( 'Write file %s' %(output_json_file_name) )
+        with open( output_json_file_name, "w" ) as handle:
+            json_string = json.dumps( output, indent=2 )
+            handle.write( json_string )

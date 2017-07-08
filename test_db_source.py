@@ -20,8 +20,8 @@ from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
-ticker = 'ELECTCAST.NSE'
-# ticker = '0001.HK'
+# ticker = 'ELECTCAST.NSE'
+ticker = '2333.HK'
 stock_prefix = 'equities_db/data_quotes_hist/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()

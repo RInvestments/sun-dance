@@ -72,9 +72,9 @@ def lookup_ticker_income_statement( ticker, datum, year ):
 @app.route( '/api/info/<ticker>/bs/<datum>/<int:year>' ) #income statement data
 def lookup_ticker_balance_sheet( ticker, datum, year ):
     alias_assets = {}
-    alias_assets['']
-    return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, "Net Property, Plant & Equipment", "Accumulated Depreciation", "Construction in Progress" ))
-    # return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
+    # alias_assets['']
+    # return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, "Net Property, Plant & Equipment", "Accumulated Depreciation", "Construction in Progress" ))
+    return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
 
 
 
@@ -98,8 +98,9 @@ def lookup_sector_list( industry ):
         s += sector+','
     return s[:-1].replace( '/', '_')
 
-@app.route( '/api/list/<industry>/<sector>/company_list')
-def lookup_company_list( industry, sector ):
+@app.route( '/api/list/<industry>/<sector>/company_list/')
+@app.route( '/api/list/<industry>/<sector>/company_list/<xchange>')
+def lookup_company_list( industry, sector, xchange=None ):
     industry = industry.replace( '_', '/' )
     sector = sector.replace( '_', '/' )
 
@@ -108,7 +109,7 @@ def lookup_company_list( industry, sector ):
     if sector == 'None':
         sector = None
 
-    list_of_companies = ave.getCompanyName_FilterByIndustrynSector( industry=industry, sector=sector )
+    list_of_companies = ave.getCompanyName_FilterByIndustrynSector( industry=industry, sector=sector, bourse=xchange )
     s = ''
     for ticker in list_of_companies.keys():
         s += ticker+','
@@ -156,13 +157,14 @@ def show_industry_list():
         s += l+'<br/>'
     return s
 
-@app.route( '/industryInfo/collapsibleList')
-def show_collapsible_list():
+@app.route( '/industryInfo/collapsibleList/')
+@app.route( '/industryInfo/collapsibleList/<xchange>')
+def show_collapsible_list(xchange=None):
     INFO = {}
     for industry in sorted( ave.getIndustryList() ):
         INFO[industry] = {}
         for sector in sorted(ave.getSectorsOf( industry )):
-            INFO[industry][sector] = ave.getCompanyName_FilterByIndustrynSector( industry, sector, bourse='HK' )
+            INFO[industry][sector] = ave.getCompanyName_FilterByIndustrynSector( industry, sector, bourse=xchange )
 
     return render_template( 'collapsible.html', INFO=INFO )
 
