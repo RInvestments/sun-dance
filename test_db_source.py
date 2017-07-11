@@ -22,7 +22,7 @@ from stockspotter.db.SourceWSJ import SourceWSJ
 
 # ticker = 'ELECTCAST.NSE'
 ticker = '2333.HK'
-stock_prefix = 'equities_db/data_quotes_hist/'+ticker+'/'
+stock_prefix = 'equities_db/data_quotes/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -42,7 +42,8 @@ stock_prefix = 'equities_db/data_quotes_hist/'+ticker+'/'
 s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
 # s_yahoo.download_quick_quote()
 # s_yahoo.load_pickle()
-s_yahoo.download_historical_quote()
+# s_yahoo.download_historical_quote()
+qqq = s_yahoo.load_quote()
 
 
 # y_obj = Share( ticker )

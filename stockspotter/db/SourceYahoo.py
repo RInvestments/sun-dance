@@ -41,13 +41,14 @@ class SourceYahoo:
         print tcol.FAIL, 'SourceYahoo(Error) :', tcol.ENDC, txt
 
 
+    # Mark for removal
     def _save_obj( self, obj, name ):
         """ Loads a data_dict from pickle """
         with open( name , 'wb') as f:
             self._debug( 'Save :'+name )
             pickle.dump( obj, f, pickle.HIGHEST_PROTOCOL )
 
-
+    # Mark for removal
     def _load_obj( self, name ):
         with open( name, 'rb' ) as f:
             self._debug( 'Load :'+name )
@@ -103,6 +104,7 @@ class SourceYahoo:
         self._debug( 'setting stock_prefix : '+ stock_prefix )
         self._debug( 'setting priv_dir : '+ self.priv_dir )
 
+    # Mark for removal
     def load_pickle(self):
         name = self.priv_dir+'/yahoo_dict_data.pk'
         self._debug( 'Open pickle : '+ name )
@@ -116,14 +118,27 @@ class SourceYahoo:
 
         return True
 
+    # Loads the file equities_db/2333.HK/yahoo/historical_quotes_parsed.json and returns the json object
+    # For schema of this json see docs for __parse_alphavantage() in this file
+    def load_quote( self ):
+
+        quote_parsed_file_name = self.priv_dir+'/historical_quotes_parsed.json'
+        data_json = self._load_json( quote_parsed_file_name )
+        return data_json
+
+
+
+
     def download_historical_quote(self, skip_if_exist=True ):
         # This now (1st Jul, 2017) does not work
         # self.download_historical_quote_yahoo( skip_if_exist )
 
-        self.download_historical_quote_alphavantage(skip_if_exist)
+        # outputsize = 'full'
+        # outputsize = 'compact'
+        self.download_historical_quote_alphavantage(outputsize='full', skip_if_exist=skip_if_exist)
 
 
-    def download_historical_quote_alphavantage( self, skip_if_exist=True ):
+    def download_historical_quote_alphavantage( self, outputsize='compact', skip_if_exist=True ):
         if not os.path.exists(self.priv_dir):
             self._debug( 'Make directory : '+self.priv_dir)
             os.makedirs( self.priv_dir )
@@ -151,8 +166,7 @@ class SourceYahoo:
         #TODO: currently will download the enture 20years data.
         #      Don't need to do this everyday. everyday usually previous 10days
         #      data is enough. This can be switched by the output flag
-        outputsize = 'full'
-        outputsize = 'compact'
+
 
         if xchange == 'HK':
 
@@ -169,7 +183,7 @@ class SourceYahoo:
             self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
 
             # Step-3
-            os.remove(file_to_save_raw)
+            # os.remove(file_to_save_raw)
 
             self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
             return True
@@ -185,7 +199,7 @@ class SourceYahoo:
             self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
 
             #delete raw file
-            os.remove(file_to_save_raw)
+            # os.remove(file_to_save_raw)
 
 
             self._report_time( 'Historical Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
@@ -232,7 +246,7 @@ class SourceYahoo:
 
 
 
-
+    # Mark for removal -- Yahoo no longer provides data like this
     ## All historical for 10 years listing this file approx 500kb
     ## Yahoo has disabled this service as of 1st Jul, 2017
     def download_historical_quote_yahoo(self, skip_if_exist=True ):
@@ -307,6 +321,7 @@ class SourceYahoo:
 
 
 
+    # Mark for removal. Yahoo no more provides data
     ## Quick quote for today
     def download_quick_quote( self ):
         """ Stores only price and volume at datastart to json"""
@@ -436,20 +451,12 @@ class SourceYahoo:
             self._error( 'File (%s) does NOT exists' %(json_file))
             return None
 
-        json_data = json.loads( open( json_file ).read() )
+        json_data = json.loads( open( json_file ).read(), object_pairs_hook=OrderedDict )
         # pprint ( json_data )
         return json_data
 
 
-    def load_quote(self ):
-        json_file = self.priv_dir+'/quote.json'
-        json_data = self._load_json( json_file )
-        return json_data
 
-    def load_detailed_quote(self):
-        json_file = self.priv_dir+'/quote_detailed.json'
-        json_data = self._load_json( json_file )
-        return json_data
 
 
     ###################### Parsers ######################################
@@ -522,6 +529,7 @@ class SourceYahoo:
 
             # put data in standard format
             output['quotes_daily'][k] = collections.OrderedDict()
+            # output['quotes_daily'][k]['ticker'] = self.ticker
             output['quotes_daily'][k]['close'] = _close
             output['quotes_daily'][k]['close_adj'] = _close_adj
             output['quotes_daily'][k]['volume'] = _volume

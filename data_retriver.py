@@ -156,7 +156,7 @@ for i,l in enumerate(full_list):
         #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
 
 
-    if args.yahoo:
+    if args.yahoo: #yahoo no more provides data
         s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
         s_yahoo.download_quick_quote()
 
