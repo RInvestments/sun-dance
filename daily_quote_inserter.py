@@ -25,13 +25,13 @@ db = client.sun_dance.stock_quotes #mongodb collection
 # Lister
 lister = TickerLister( 'equities_db/lists/' )
 full_list = []
-full_list += lister.list_full_hkex( use_cached=True)
+full_list += lister.list_full_hkex( use_cached=True)#[520:]
 # full_list += lister.list_full_bse( use_cached=True )#[1500:]
 full_list += lister.list_full_nse( use_cached=True )
 
 
 # Loop on List
-db_prefix = 'equities_db/data_quotes/'
+db_prefix = 'equities_db/data__quotes_20170711/'
 startTimeTotal = time.time()
 for i,l in enumerate(full_list):
     startTime = time.time()
@@ -48,7 +48,7 @@ for i,l in enumerate(full_list):
     #Insert
     daily_list = q_json_obj['quotes_daily']
 
-
+    failed_inserts = 0
     for date_inst in daily_list.keys():
         adj_close = daily_list[date_inst]['close_adj']
         digest = uuid.uuid3( uuid.NAMESPACE_DNS, str(l.ticker)+str(date_inst)+str(adj_close) )
@@ -67,7 +67,14 @@ for i,l in enumerate(full_list):
             db.insert( insert_query )
         except pymongo.errors.DuplicateKeyError:
             #print tcol.FAIL, 'Duplicate Keys error', tcol.ENDC
+            failed_inserts += 1
             pass
+            # break;
+            #TODO: Consider break here. as soon as you start getting DuplicateKeyErrors means that previous data already exists. Probably no point looking ahead
+
+    print 'Dates : ', daily_list.keys()[-1], '-', daily_list.keys()[0], ',',
+    print 'nPoints : %4d, Failed Inserts : %4d' %( len(daily_list.keys()), failed_inserts )
+
 
 
 

@@ -5,11 +5,12 @@ import numpy as np
 from MongoQueries import MongoQueries
 import pprint
 import json
+import datetime
 
 # MongoDB
 client = MongoClient()
 db = client.universalData.universalData
-ave = MongoQueries(db)
+ave = MongoQueries(client)
 
 # Flask
 app = Flask(__name__)
@@ -69,13 +70,26 @@ def lookup_ticker_income_statement( ticker, datum, year ):
         return "#N/A %s" %(datum)
 
 
-@app.route( '/api/info/<ticker>/bs/<datum>/<int:year>' ) #income statement data
+@app.route( '/api/info/<ticker>/bs/<datum>/<int:year>' ) #balance sheet
 def lookup_ticker_balance_sheet( ticker, datum, year ):
     alias_assets = {}
     # alias_assets['']
     # return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, "Net Property, Plant & Equipment", "Accumulated Depreciation", "Construction in Progress" ))
     return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
 
+
+@app.route( '/api/info/<ticker>/cf/<datum>/<int:year>' ) #cash flow statement
+def loopup_ticker_cashflow_statement( ticker, datum, year ):
+    return "Not yet implemented"
+
+
+### Quote Calls
+@app.route( '/api/info/<ticker>/quote/<field>/')
+@app.route( '/api/info/<ticker>/quote/<field>/<date>')
+def loopup_ticker_quote( ticker, field, date=None ):
+    if field not in ['close', 'close_adj', 'volume', 'datetime', 'inserted_on', 'open', 'high', 'low']:
+        return "invalid quote field"
+    return ave.getTickerDailyQuote(ticker, date=date, field=field)
 
 
 

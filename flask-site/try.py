@@ -5,7 +5,7 @@ from MongoQueries import MongoQueries
 client = MongoClient()
 db = client.universalData.universalData
 
-ave = MongoQueries(db)
+ave = MongoQueries(client)
 # print ave.getCompanyName( '2333.HK' )
 # p=ave.getIndustryList()
 # p = ave.getSectorsOf( industryName='Automotive' )
@@ -17,6 +17,8 @@ ave = MongoQueries(db)
 #     INFO[industry] = {}
 #     for sector in sorted(ave.getSectorsOf( industry )):
 #         INFO[industry][sector] = ave.getCompanyName_FilterByIndustrynSector( industry, sector )
+
+print ave.getTickerDailyQuote( "2208.HK", '2017-07-05', 'close' )
 
 print ave.getTickerBalanceSheetAssetsDetails( "2333.HK", 2016, "Total Assets")
 quit()

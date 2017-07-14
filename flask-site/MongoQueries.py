@@ -1,12 +1,15 @@
 from pymongo import MongoClient
 import code
 import json
+import pymongo
+from datetime import datetime
 
 ## This class shall return information as strings/arrays/lists,tuples etc.
 ## to it's caller. This will be base class for queries. Might add more classes later
 class MongoQueries:
-    def __init__( self, db ):
-        self.db = db
+    def __init__( self, client ):
+        self.db = client.universalData.universalData # Data of WSJ
+        self.quote_db = client.sun_dance.stock_quotes
 
     ## Returns name of company as string given its ticker. If not found returns None
     def getCompanyName( self, ticker ):
@@ -216,3 +219,46 @@ class MongoQueries:
             return float(result['val']) * float(result['fiscal_mul'])
         else:
             return 0
+
+
+    #TODO implement getCashFlowOperatingActivityDetails, getCashFlowInvestingActivityDetails, getCashFlowFinancingActivityDetails
+
+
+    def getTickerDailyQuote( self, ticker, date, field=None ):
+        if field not in ['close', 'close_adj', 'volume', 'datetime', 'inserted_on', 'open', 'high', 'low']:
+            return "ERROR2"
+
+        query = {}
+        query['ticker'] = ticker
+        if date == None:
+            # db.getCollection('stock_quotes').find({'ticker':'2208.HK'}).sort( {'datetime':-1, 'inserted_on':-1} ).limit(1)
+            pass
+        else:
+            # return str(datetime.strptime( date, '%Y-%m-%d' ))
+            # Allowed dates: a) 20170705 b) 2017-07-05 c) 2017-Jul-5 d) 2017-July-05
+            try:
+                query['datetime'] = datetime.strptime( date, '%Y%m%d' )
+            except ValueError:
+                try:
+                    query['datetime'] = datetime.strptime( date, '%Y-%m-%d' )
+                except:
+                    try:
+                        query['datetime'] = datetime.strptime( date, '%Y-%b-%d' )
+                    except:
+                        try:
+                            query['datetime'] = datetime.strptime( date, '%Y-%B-%d' )
+                        except:
+                            return "query failed. invalid date"
+            # return str(query)
+
+        # Will return the latest inserted data.
+        result = self.quote_db.find( query ).sort( [('datetime',pymongo.DESCENDING), ('inserted_on',pymongo.DESCENDING)] ).limit(1)
+
+        if result is not None:
+            # print result
+            for r in result:
+                return str(r[field])#+','+str(r['datetime'])
+            else:
+                return "N/A"
+        else:
+            return "query fail"

@@ -135,7 +135,7 @@ class SourceYahoo:
 
         # outputsize = 'full'
         # outputsize = 'compact'
-        self.download_historical_quote_alphavantage(outputsize='full', skip_if_exist=skip_if_exist)
+        self.download_historical_quote_alphavantage(outputsize='compact', skip_if_exist=skip_if_exist)
 
 
     def download_historical_quote_alphavantage( self, outputsize='compact', skip_if_exist=True ):
@@ -501,6 +501,11 @@ class SourceYahoo:
         # Takes in the raw file, and processes it to standard format
         self._debug( 'Parsing file %s' %(input_raw_file_name) )
         data_raw = json.loads( open(input_raw_file_name).read(), object_pairs_hook=OrderedDict )
+        if os.path.isfile(input_raw_file_name):
+            self._debug( 'File exists, continue parsing it')
+        else:
+            self._debug( 'Raw downloaded file does not exist, it was probably not downloaded...!')
+            self._error( 'Raw downloaded file does not exist, it was probably not downloaded...!')
 
         output = collections.OrderedDict()
 
