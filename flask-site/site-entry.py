@@ -6,6 +6,7 @@ from MongoQueries import MongoQueries
 import pprint
 import json
 import datetime
+from collections import OrderedDict
 
 # MongoDB
 client = MongoClient()
@@ -37,6 +38,14 @@ def template_hello(name):
 def lookup_ticker( ticker ):
     return ave.getCompanyName( ticker )
 
+@app.route( '/api/info/<ticker>/<datum>')
+def lookup_ticker_timeless_info( ticker, datum ):
+    f=0
+    return "Not Implemented"
+    # Can return things like sector, industry, name, description, website url, employees, address
+    # and other info which has no time associated with it.
+
+
 @app.route( '/api/info/<ticker>/is/<datum>/<int:year>' ) #income statement data
 def lookup_ticker_income_statement( ticker, datum, year ):
     alias = {}
@@ -66,27 +75,147 @@ def lookup_ticker_income_statement( ticker, datum, year ):
                 s += k+ '\n'
             return s
         if datum == '_json_':
-            return json.dumps( alias )
+            _XX_ = OrderedDict()
+            _XX_['is_keys'] = alias.keys()
+            _XX_['is_full'] = alias
+
+            return json.dumps( _XX_ )
         return "#N/A %s" %(datum)
 
 
 @app.route( '/api/info/<ticker>/bs/<datum>/<int:year>' ) #balance sheet
 def lookup_ticker_balance_sheet( ticker, datum, year ):
     alias_assets = {}
-    # alias_assets['']
+    #current assets
+    alias_assets['total_current_assets'] = 'Total Current Assets:None:None'
+    alias_assets['total_accounts_receivable'] = 'Total Accounts Receivable:None:None'
+    alias_assets['inventories'] = 'Inventories:None:None'
+    alias_assets['ppe'] = 'Net Property, Plant & Equipment:None:None'
+    alias_assets['other_current_assets'] = 'Other Current Assets:None:None'
+    alias_assets['cash'] = 'Cash & Short Term Investments:Cash Only:None'
+    alias_assets['short_term_investments'] = 'Cash & Short Term Investments:Short-Term Investments:None'
+
+    #non-current assets
+    alias_assets['total_investment_advances'] = 'Total Investments and Advances:None:None'
+    alias_assets['long_term_receivable'] = 'Long-Term Note Receivable:None:None'
+    alias_assets['intangible_assets'] = 'Intangible Assets:None:None'
+    alias_assets['other_assets'] = 'Other Assets:None:None'
+
+    alias_assets['total_assets'] = 'Total Assets:None:None'
+
+
+
+    alias_liabilities = {}
+    alias_liabilities['debt_payment_short_term'] = 'ST Debt & Current Portion LT Debt:Short Term Debt:None'
+    alias_liabilities['debt_payment_long_term'] = 'ST Debt & Current Portion LT Debt:Current Portion of Long Term Debt:None'
+    alias_liabilities['accounts_payable'] = 'Accounts Payable:None:None'
+    alias_liabilities['income_tax_payable'] = 'Income Tax Payable:None:None'
+    alias_liabilities['other_current_liabilities'] = 'Other Current Liabilities:None:None'
+    alias_liabilities['total_current_liabilities'] = 'Total Current Liabilities:None:None'
+
+    alias_liabilities['other_liabilities'] = 'Other Liabilities:None:None'
+    alias_liabilities['total_liabilities'] = 'Total Liabilities:None:None'
+
+    #ratio - TODO: consider removing this. calculate these ratios by yourself later
+    alias_liabilities['current_ratio'] = 'Cash & Short Term Investments FOR CALCULATION PURPOSES ONLY:Current Ratio:None'
+    alias_liabilities['quick_ratio'] = 'Cash & Short Term Investments FOR CALCULATION PURPOSES ONLY:Quick Ratio:None'
+    alias_liabilities['cash_ratio'] = 'Cash & Short Term Investments FOR CALCULATION PURPOSES ONLY:Cash Ratio:None'
+
+
+
+    if datum in alias_assets.keys():
+        spl = alias_assets[datum].split(':')
+        return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, spl[0], spl[1], spl[2] ))
+
+    if datum in alias_liabilities.keys():
+        spl = alias_liabilities[datum].split(':')
+        return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year,  spl[0], spl[1], spl[2]  ))
+    else:
+        if datum == '_list_':
+            return str( alias_assets.keys() )
+        if datum == '_list_col_':
+            s = "\n#Assets\n"
+            for k in alias_assets.keys():
+                s += k+ '\n'
+            s += "\n#Liabilities\n"
+            for k in alias_liabilities.keys():
+                s += k+ '\n'
+            return s
+        if datum == '_json_':
+            _XX_ = OrderedDict()
+            _XX_['Assets'] = alias_assets.keys()
+            _XX_['Liabilities'] = alias_liabilities.keys()
+            _XX_['Assets_full'] = alias_assets
+            _XX_['Liabilities_full'] = alias_liabilities
+            return json.dumps( _XX_ )
+        return "#N/A %s" %(datum)
+
     # return str(ave.getTickerBalanceSheetAssetsDetails( ticker, year, "Net Property, Plant & Equipment", "Accumulated Depreciation", "Construction in Progress" ))
-    return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
+    # return str(ave.getTickerBalanceSheetLiabilitiesDetails( ticker, year, 'None', "Quick Ratio" ))
 
 
 @app.route( '/api/info/<ticker>/cf/<datum>/<int:year>' ) #cash flow statement
-def loopup_ticker_cashflow_statement( ticker, datum, year ):
-    return "Not yet implemented"
+def lookup_ticker_cashflow_statement( ticker, datum, year ):
+    alias_operating = {}
+    alias_operating['net_operating_cashflow'] = "Net Operating Cash Flow:None:None"
+
+    alias_investing = {}
+    alias_investing['net_investing_cashflow'] = "Net Investing Cash Flow:None:None"
+    alias_investing['capital_expense'] = "Capital Expenditures:None:None"
+    alias_investing['acquisitions'] = "Net Assets from Acquisitions:None:None"
+    alias_investing['sale_of_assets'] = "Sale of Fixed Assets & Businesses:None:None"
+    alias_investing['from_financial_instruments'] = "Purchase/Sale of Investments:None:None"
+
+
+    alias_financing = {}
+    alias_financing['net_financing_cashflow'] = "Net Financing Cash Flow:None:None"
+    alias_financing['free_cashflow'] = "Free Cash Flow:None:None"
+    alias_financing['net_change_in_cash'] = "Net Change in Cash:None:None"
+    alias_financing['dividend_paid'] = "Cash Dividends Paid - Total"
+    alias_financing['debt_reduction'] = "Issuance/Reduction of Debt, Net:None:None"
+
+
+
+
+    if datum in alias_operating.keys():
+        spl = alias_operating[datum].split(':')
+        return str( ave.getCashFlowOperatingActivityDetails(ticker, year, spl[0], spl[1], spl[2]))
+
+
+    if datum in alias_investing.keys():
+        spl = alias_investing[datum].split(':')
+        return str( ave.getCashFlowInvestingActivityDetails(ticker, year, spl[0], spl[1], spl[2]))
+
+
+    if datum in alias_financing:
+        spl = alias_financing[datum].split(':')
+        return str( ave.getCashFlowFinancingActivityDetails(ticker, year, spl[0], spl[1], spl[2]))
+
+
+    if datum == '_json_':
+        _XX_ = OrderedDict()
+        _XX_['Operating Activity'] = alias_operating.keys()
+        _XX_['Investing Activity'] = alias_investing.keys()
+        _XX_['Financing Activity'] = alias_financing.keys()
+        _XX_['Operating Activity_full'] = alias_operating
+        _XX_['Investing Activity_full'] = alias_investing
+        _XX_['Financing Activity_full'] = alias_financing
+
+        return json.dumps( _XX_ )
+    return "#N/A %s" %(datum)
+
+
+
+    # return str( ave.getCashFlowOperatingActivityDetails(ticker, year, 'Other Funds'))
+    # return str( ave.getCashFlowInvestingActivityDetails(ticker, year, 'Capital Expenditures'))
+    # return str( ave.getCashFlowFinancingActivityDetails(ticker, year, 'Free Cash Flow'))
+
 
 
 ### Quote Calls
 @app.route( '/api/info/<ticker>/quote/<field>/')
 @app.route( '/api/info/<ticker>/quote/<field>/<date>')
-def loopup_ticker_quote( ticker, field, date=None ):
+def lookup_ticker_quote( ticker, field, date=None ):
     if field not in ['close', 'close_adj', 'volume', 'datetime', 'inserted_on', 'open', 'high', 'low']:
         return "invalid quote field"
     return ave.getTickerDailyQuote(ticker, date=date, field=field)
@@ -123,6 +252,7 @@ def lookup_company_list( industry, sector, xchange=None ):
     if sector == 'None':
         sector = None
 
+    #TODO Current xchange can only be 1 exchange. Implement xchange to be a comma separated list
     list_of_companies = ave.getCompanyName_FilterByIndustrynSector( industry=industry, sector=sector, bourse=xchange )
     s = ''
     for ticker in list_of_companies.keys():

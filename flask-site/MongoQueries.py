@@ -77,6 +77,8 @@ class MongoQueries:
         #query =  {'type1':'Profile', 'type2':'companyName', 'bourse':'%s'%(bourse)}
         query =  {'type1':'Profile', 'type2':'companyName'}
 
+        #TODO Current bourse can only be 1 exchange. Implement bourse to be a comma separated list
+        # and correspondingly do a or query if multiple items. 
         if bourse is not None:
             query['bourse'] = bourse
 
@@ -186,7 +188,7 @@ class MongoQueries:
         if result is not None:
             return float(result['val']) * float(result['fiscal_mul'])
         else:
-            return 0
+            return 'N/A'
 
 
     def getTickerBalanceSheetLiabilitiesDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
@@ -218,10 +220,105 @@ class MongoQueries:
         if result is not None:
             return float(result['val']) * float(result['fiscal_mul'])
         else:
-            return 0
+            return 'N/A'
 
 
     #TODO implement getCashFlowOperatingActivityDetails, getCashFlowInvestingActivityDetails, getCashFlowFinancingActivityDetails
+    def getCashFlowOperatingActivityDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements', 'type2':'cash_flow_statement', 'type3':'operating', 'type4':2016, 'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        #db.getCollection('universalData').find({'ticker':'2333.HK',
+        #   'type1':'Financial Statements', 'type2':'cash_flow_statement',
+        #   'type3':'operating', 'type4':2016,
+        #   'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        query = {}
+
+        query['ticker'] = str(ticker)
+        query['type1'] = 'Financial Statements'
+        query['type2'] = 'cash_flow_statement'
+        query['type3'] = 'operating'
+        # query['period'] = 'a'
+
+        if year is not None:
+            query['type4'] = year
+
+        if item_string != 'None':
+            query['type5'] = item_string#'Total Assets'
+
+        query['type6'] = item_string2#'None'
+        query['type7'] = item_string3#'None'
+        # return str(query)
+
+        result=self.db.find_one( query  )
+
+        if result is not None:
+            return float(result['val']) * float(result['fiscal_mul'])
+        else:
+            return 'N/A'
+
+
+    def getCashFlowInvestingActivityDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements', 'type2':'cash_flow_statement', 'type3':'operating', 'type4':2016, 'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        #db.getCollection('universalData').find({'ticker':'2333.HK',
+        #   'type1':'Financial Statements', 'type2':'cash_flow_statement',
+        #   'type3':'operating', 'type4':2016,
+        #   'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        query = {}
+
+        query['ticker'] = str(ticker)
+        query['type1'] = 'Financial Statements'
+        query['type2'] = 'cash_flow_statement'
+        query['type3'] = 'investing'
+        # query['period'] = 'a'
+
+        if year is not None:
+            query['type4'] = year
+
+        if item_string != 'None':
+            query['type5'] = item_string#'Total Assets'
+
+        query['type6'] = item_string2#'None'
+        query['type7'] = item_string3#'None'
+        # return str(query)
+
+        result=self.db.find_one( query  )
+
+        if result is not None:
+            return float(result['val']) * float(result['fiscal_mul'])
+        else:
+            return 'N/A'
+
+
+    def getCashFlowFinancingActivityDetails( self, ticker, year, item_string='None', item_string2='None', item_string3='None' ):
+        #db.getCollection('universalData').find({'ticker':'2333.HK', 'type1':'Financial Statements', 'type2':'cash_flow_statement', 'type3':'operating', 'type4':2016, 'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        #db.getCollection('universalData').find({'ticker':'2333.HK',
+        #   'type1':'Financial Statements', 'type2':'cash_flow_statement',
+        #   'type3':'operating', 'type4':2016,
+        #   'type5':'Other Funds', 'type6':'None', 'type7':'None'})
+        query = {}
+
+        query['ticker'] = str(ticker)
+        query['type1'] = 'Financial Statements'
+        query['type2'] = 'cash_flow_statement'
+        query['type3'] = 'financing'
+        # query['period'] = 'a'
+
+        if year is not None:
+            query['type4'] = year
+
+        if item_string != 'None':
+            query['type5'] = item_string#'Total Assets'
+
+        query['type6'] = item_string2#'None'
+        query['type7'] = item_string3#'None'
+        # return str(query)
+
+        result=self.db.find_one( query  )
+
+        if result is not None:
+            return float(result['val']) * float(result['fiscal_mul'])
+        else:
+            return 'N/A'
+
 
 
     def getTickerDailyQuote( self, ticker, date, field=None ):

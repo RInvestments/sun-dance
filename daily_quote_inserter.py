@@ -31,7 +31,7 @@ full_list += lister.list_full_nse( use_cached=True )
 
 
 # Loop on List
-db_prefix = 'equities_db/data__quotes_20170711/'
+db_prefix = 'equities_db/data_quotes_20170716/'
 startTimeTotal = time.time()
 for i,l in enumerate(full_list):
     startTime = time.time()
@@ -68,8 +68,8 @@ for i,l in enumerate(full_list):
         except pymongo.errors.DuplicateKeyError:
             #print tcol.FAIL, 'Duplicate Keys error', tcol.ENDC
             failed_inserts += 1
-            pass
-            # break;
+            # pass
+            break;
             #TODO: Consider break here. as soon as you start getting DuplicateKeyErrors means that previous data already exists. Probably no point looking ahead
 
     print 'Dates : ', daily_list.keys()[-1], '-', daily_list.keys()[0], ',',
