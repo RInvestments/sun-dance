@@ -14,24 +14,68 @@ import uuid
 import TerminalColors
 tcol = TerminalColors.bcolors()
 
+import argparse
+
+
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.lister.TickerLister import TickerLister
+
+#----- Commandline Parsing ---#
+parser = argparse.ArgumentParser()
+parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory (eg. equities_db/lists/)' )
+parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
+parser.add_argument( '-db', '--quotes_data_dir', required=True, help='Specify quotes directory (eg. equities_db/data_quotes_20170716/)' )
+
+# Bourse
+parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
+parser.add_argument( '--xbse', default=False, action='store_true', help='List all Bombay Stock Ex (BSE) Stocks' )
+parser.add_argument( '--xnse', default=False, action='store_true', help='List all National Stock Ex India (NSE) Stocks' )
+
+args = parser.parse_args()
+
+if args.lists_db_dir:
+    print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
+
+if args.quotes_data_dir:
+    print tcol.HEADER, 'quotes_data_dir : ', args.quotes_data_dir, tcol.ENDC
+
+# if args.verbosity:
+print tcol.HEADER, 'verbosity : ', args.verbosity, tcol.ENDC
+
+
 
 # ----------- MAIN -------------#
 # Setup DB access and file accesses
 client = pymongo.MongoClient()
 db = client.sun_dance.stock_quotes #mongodb collection
 
-# Lister
-lister = TickerLister( 'equities_db/lists/' )
-full_list = []
-full_list += lister.list_full_hkex( use_cached=True)#[520:]
-# full_list += lister.list_full_bse( use_cached=True )#[1500:]
-full_list += lister.list_full_nse( use_cached=True )
+# # Lister
+# # lister = TickerLister( 'equities_db/lists/' )
+# lister = TickerLister( args.lists_db_dir )
+# full_list = []
+# full_list += lister.list_full_hkex( use_cached=True)#[520:]
+# # full_list += lister.list_full_bse( use_cached=True )#[1500:]
+# full_list += lister.list_full_nse( use_cached=True )
 
+# Get List
+lister = TickerLister( args.lists_db_dir )
+full_list = []
+print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+if args.xhkex:
+    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+if args.xbse:
+    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_bse( use_cached=True )#[0:100]
+    print tcol.FAIL, 'No quotes data for BSE current TODO. Try without BSE...quiting', tcol.ENDC
+    quit()
+if args.xnse:
+    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    full_list += lister.list_full_nse( use_cached=True )#[0:100]
 
 # Loop on List
-db_prefix = 'equities_db/data_quotes_20170716/'
+# db_prefix = 'equities_db/data_quotes_20170716/'
+db_prefix = args.quotes_data_dir
 startTimeTotal = time.time()
 for i,l in enumerate(full_list):
     startTime = time.time()
@@ -39,7 +83,7 @@ for i,l in enumerate(full_list):
     print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
 
 
-    s_yahoo = SourceYahoo( l.ticker, folder, 1 )
+    s_yahoo = SourceYahoo( l.ticker, folder, args.verbosity )
     q_json_obj = s_yahoo.load_quote()
     if q_json_obj is None:
         print tcol.FAIL, 'No Quote available for ', l.ticker, tcol.ENDC

@@ -25,6 +25,9 @@ from datetime import datetime
 import TerminalColors
 tcol = TerminalColors.bcolors()
 
+import argparse
+
+
 from stockspotter.db.SourceHKEXProfile import SourceHKEXProfile
 from stockspotter.db.SourceWSJ import SourceWSJ
 from stockspotter.db.SourceReuters import SourceReuters
@@ -395,20 +398,56 @@ def insert_all_financial_sheets( s_wsj, base_dict ):
 # ------------------------- MAIN ----------------------------#
 
 # Commandline Argument Parsing
-#TODO
+parser = argparse.ArgumentParser()
+parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory (eg. equities_db/lists/)' )
+parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
+parser.add_argument( '-db', '--data_dir', required=True, help='Specify database directory (eg. equities_db/data__N/)' )
+
+# Bourse
+parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
+parser.add_argument( '--xbse', default=False, action='store_true', help='List all Bombay Stock Ex (BSE) Stocks' )
+parser.add_argument( '--xnse', default=False, action='store_true', help='List all National Stock Ex India (NSE) Stocks' )
+
+args = parser.parse_args()
+
+if args.lists_db_dir:
+    print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
+
+if args.data_dir:
+    print tcol.HEADER, 'data_dir : ', args.data_dir, tcol.ENDC
+
+# if args.verbosity:
+print tcol.HEADER, 'verbosity : ', args.verbosity, tcol.ENDC
+
+
 
 # Setup DB access and file accesses
 client = pymongo.MongoClient()
 db = client.universalData
 
-lister = TickerLister( 'equities_db/lists/' )
-# full_list = lister.list_full_hkex( use_cached=True)
-full_list = []
-full_list += lister.list_full_hkex( use_cached=True)#[40:60]
-full_list += lister.list_full_bse( use_cached=True )#[1500:]
-full_list += lister.list_full_nse( use_cached=True )#[0:100]
+# lister = TickerLister( args.lists_db_dir )
+# full_list = []
+# full_list += lister.list_full_hkex( use_cached=True)#[40:60]
+# full_list += lister.list_full_bse( use_cached=True )#[1500:]
+# full_list += lister.list_full_nse( use_cached=True )#[0:100]
 
-db_prefix = 'equities_db/data__N/'
+# Get List
+lister = TickerLister( args.lists_db_dir )
+full_list = []
+print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+if args.xhkex:
+    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+if args.xbse:
+    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_bse( use_cached=True )#[0:100]
+if args.xnse:
+    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    full_list += lister.list_full_nse( use_cached=True )#[0:100]
+
+
+# db_prefix = 'equities_db/data__N/'
+db_prefix = args.data_dir
 
 
 # Loop Over the list
@@ -421,7 +460,7 @@ for i,l in enumerate(full_list):
     folder = db_prefix+'/'+l.ticker+'/'
     print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
 
-    s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=0 )
+    s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity)
     json_wsj_profile = s_wsj.load_json_profile()
     json_financials = s_wsj.load_financials()
 
