@@ -35,6 +35,10 @@ python -i data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists -
 
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse
 
+#### First time usage 
+Populate list of stocks from various exchanges
+python test_lister.py 
+
 ## MongoDB Schema
 I insert individual elements into flat mongodb structure. Note that the code might not be exactlty as described in document, but is more or less consistent. 
 
