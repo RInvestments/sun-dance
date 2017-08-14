@@ -36,7 +36,8 @@ python -i data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists -
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse
 
 #### First time usage 
-Populate list of stocks from various exchanges
+Populate list of stocks from various exchanges. You might also want to look at `test_pkg.py` which is a cummulation of all the required pakages.
+
 python test_lister.py 
 
 ## MongoDB Schema
