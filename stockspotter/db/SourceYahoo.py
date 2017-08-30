@@ -451,9 +451,13 @@ class SourceYahoo:
             self._error( 'File (%s) does NOT exists' %(json_file))
             return None
 
-        json_data = json.loads( open( json_file ).read(), object_pairs_hook=OrderedDict )
-        # pprint ( json_data )
-        return json_data
+	try:
+            json_data = json.loads( open( json_file ).read(), object_pairs_hook=OrderedDict )
+            # pprint ( json_data )
+            return json_data
+	except:
+	    self._error( "no json" )
+	    return None
 
 
 
@@ -500,7 +504,11 @@ class SourceYahoo:
     def __parse_alphavantage( self, input_raw_file_name, output_json_file_name ):
         # Takes in the raw file, and processes it to standard format
         self._debug( 'Parsing file %s' %(input_raw_file_name) )
-        data_raw = json.loads( open(input_raw_file_name).read(), object_pairs_hook=OrderedDict )
+	try:
+            data_raw = json.loads( open(input_raw_file_name).read(), object_pairs_hook=OrderedDict )
+        except:
+	    self._error( "No json" )
+	    return 
         if os.path.isfile(input_raw_file_name):
             self._debug( 'File exists, continue parsing it')
         else:
