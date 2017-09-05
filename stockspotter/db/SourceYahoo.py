@@ -134,8 +134,8 @@ class SourceYahoo:
         # self.download_historical_quote_yahoo( skip_if_exist )
 
         # outputsize = 'full'
-        # outputsize = 'compact'
-        self.download_historical_quote_alphavantage(outputsize='compact', skip_if_exist=skip_if_exist)
+        outputsize = 'compact'
+        self.download_historical_quote_alphavantage(outputsize=outputsize, skip_if_exist=skip_if_exist)
 
 
     def download_historical_quote_alphavantage( self, outputsize='compact', skip_if_exist=True ):

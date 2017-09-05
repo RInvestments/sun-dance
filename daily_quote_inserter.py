@@ -103,7 +103,11 @@ for i,l in enumerate(full_list):
         insert_query['id'] = str(digest)
         insert_query['ticker'] = l.ticker
         insert_query['inserted_on'] = datetime.datetime.now()
-        insert_query['datetime'] = datetime.datetime.strptime( date_inst, '%Y-%m-%d')
+	try:
+            insert_query['datetime'] = datetime.datetime.strptime( date_inst, '%Y-%m-%d')
+	except ValueError:
+	     print 'ValueError, date contains unparsed things. OK to ignore.', insert_query
+
         for attr in daily_list[date_inst].keys(): #attr will usually be close, close_adj, open, high, low, volume
             insert_query[attr] = daily_list[date_inst][attr]
 
