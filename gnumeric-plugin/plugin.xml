@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="Gnumeric_PyFunc">
+	<information>
+		<name>Kuse's Python functions</name>
+		<description>Gnumeric plugin my mpkuse</description>
+		<require_explicit_enabling/>
+	</information>
+	<loader type="Gnumeric_PythonLoader:python">
+		<attribute value="py_func" name="module_name"/>
+	</loader>
+	<services>
+		<service type="function_group" id="test">
+			<category>Python</category>
+			<functions>
+				<!--<function name="py_printf"/>
+				<function name="py_capwords"/>
+				<function name="py_bitand"/>-->
+				<function name="square_me" />
+				<function name="SUNDANCE_INFO" /> <!-- untimed data about ticker -->
+				<function name="SUNDANCE" /> <!-- timed data about ticker -->
+				<function name="SUNDANCE_QUOTE" /> <!-- for quote data -->
+				<function name="SUNDANCE_INDUSTRY_LIST" />
+				<function name="SUNDANCE_SECTOR_LIST" />
+				<function name="SUNDANCE_COMPANY_LIST" />
+				<function name="SD_INFO" /> <!-- untimed data about ticker -->
+				<function name="SD" /> <!-- timed data about ticker -->
+				<function name="SD_QUOTE" /> <!-- for quote data -->
+				<function name="SD_INDUSTRY_LIST" />
+				<function name="SD_SECTOR_LIST" />
+				<function name="SD_COMPANY_LIST" />
+			</functions>
+		</service>
+	</services>
+</plugin>
