@@ -22,6 +22,10 @@ Calls can be categorized as a) returning a list; b) ticker info untimed; c) tick
 ### Ticker Info
 - SD_INFO( ticker, *datum* )
   * name
+  * industry
+  * sector
+  * employees
+  * description
   * quote_lastclose
   * lastclose
   * quote_lastvolume

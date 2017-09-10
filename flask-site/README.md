@@ -19,13 +19,13 @@ python -m flask run
 we provide some simple web based tools to get info from the database. We
 also provide a API under `/api/` of the flask site. For a more detailed
 and upto date info have a look at `site-entry.py` which defines an URL
-and its associated callback functions. 
+and its associated callback functions.
 
 Note that these call back functions
 are not supposed to query the database directly, but it is to be done
-using the `MongoQuery` class provided in file `MongoQuery.py`. This 
+using the `MongoQuery` class provided in file `MongoQuery.py`. This
 class provides various functions to query the mongodb database. In the future
-can create more classes to give access to various parts of database. 
+can create more classes to give access to various parts of database.
 
 The api is organized into 2 parts.
 
@@ -35,28 +35,40 @@ The api is organized into 2 parts.
     * Data on balance sheet. Needs ticker name, field name, year/quater [here](#info-on-balance-sheet)
     * Data on cashflow statement sheet. Needs ticker name, field name, year/quater [here](#info-on-cashflow-statement)
     * Daily quote [here](#quote-data)
-  
+
 - Returns a list
-    * Of companies given a (industry, sector) pair. 
+    * Of companies given a (industry, sector) pair.
     * Of industries
     * Of sectors given an industry
 
 
 
-## Data on Ticker 
-This section is about info (timed and untimed) about a ticker. 
-Use the URLs below to get the needed info. 
+## Data on Ticker
+This section is about info (timed and untimed) about a ticker.
+Use the URLs below to get the needed info.
 
 ### Info
-URL : ``/api/info/<ticker>``<br/> 
+URL : ``/api/info/<ticker>``<br/>
 
 
 ### Info Details
-URL : ``/api/info/<ticker>/<datum>``<br/> 
-        Currently not implemented
-        
+URL : ``/api/info/<ticker>/<datum>``<br/>
 
-### Info on Income Statement 
+datum :
+```json
+"is_keys": [
+  "sector",
+  "industry",
+  "description",
+  "name",
+  "desc"
+  "employees"
+  "address"
+]
+```
+
+
+### Info on Income Statement
 URL : ``/api/info/<ticker>/is/<datum>/<int:year>``<br/>
 
 year : Eg. 2016, 20160630 etc.  
@@ -81,10 +93,10 @@ is_keys: [
 ]
 ```
 
-### Info on Balance Sheet 
+### Info on Balance Sheet
 URL : ``/api/info/<ticker>/bs/<datum>/<int:year>``<br/>
 
-datum : 
+datum :
 ```json
 Assets: [
     "total_investment_advances",
@@ -119,7 +131,7 @@ Liabilities: [
 ### Info on Cashflow Statement
 URL : ``/api/info/<ticker>/cf/<datum>/<int:year>``<br/>
 
-datum : 
+datum :
 ```json
 Operating Activity: [
     "net_operating_cashflow"
@@ -142,7 +154,7 @@ Financing Activity: [
 
 ### Quote Data
 URL : ``/api/info/<ticker>/quote/<field>/<date>``
-date : 2016-07-15. Not giving date will return latest quote. 
+date : 2016-07-15. Not giving date will return latest quote.
 
 field :
 ```json
@@ -151,25 +163,25 @@ field :
 
 
 
-## Returns a list 
+## Returns a list
 These set of urls provides various lists
 
 ### Companies List
 URL : `/api/list/<industry>/<sector>/company_list/<xchange>`
 
 This is the most useful function. xchange set to None will give companies from all exchanges. Can also specify xchange like HK. Currently comma
-separated list is not supported. Will implement this later. 
+separated list is not supported. Will implement this later.
 
 ### Industry List
 URL : ``/api/list/industry_list``
 
-Returns a comma separated list of industries. 
+Returns a comma separated list of industries.
 
-### Sector List 
+### Sector List
 URL : ``/api/list/<industry>/sector_list'``
 
 Returns a comma separated list of sectors of
-specified industry. 
+specified industry.
 
 
 

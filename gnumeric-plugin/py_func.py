@@ -54,6 +54,15 @@ def square_me( a ):
 def api_call( ticker, field ):
 	url_db = {}
 	url_db['name'] = '/api/info/%s' %(ticker)
+	url_db['industry'] = '/api/info/%s/industry' %(ticker)
+	url_db['sector'] = '/api/info/%s/sector' %(ticker)
+	url_db['employees'] = '/api/info/%s/employees' %(ticker)
+	url_db['description'] = '/api/info/%s/description' %(ticker)
+	url_db['address'] = '/api/info/%s/address' %(ticker)
+	
+
+
+
 	url_db['quote_lastclose'] = '/api/info/%s/quote/close' %(ticker)
 	url_db['lastclose'] = url_db['quote_lastclose']
 	url_db['quote_lastvolume'] = '/api/info/%s/quote/volume' %(ticker)

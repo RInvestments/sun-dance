@@ -49,6 +49,21 @@ class MongoQueries:
     def getTickerDescription( self, ticker ):
         return self.getCompanyDescription( ticker )
 
+        # More timeless info on the company
+    def getTickerEmployeesNumber( self, ticker ):
+        p = self.db.find_one( {'ticker':'%s' %(ticker), 'type1':'Profile', 'type2':'Company Info', 'type3':'Employees'} )
+        try:
+            return p['val']
+        except:
+            return None
+
+    def getTickerStreetAddress( self, ticker ):
+        p = self.db.find_one( {'ticker':'%s' %(ticker), 'type1':'Profile', 'type2':'Contact Address'} )
+        try:
+            return p['value_string']
+        except:
+            return None
+
 
     ## Returns list of industry as string array
     def getIndustryList(self, bourse='HK'):
@@ -78,7 +93,7 @@ class MongoQueries:
         query =  {'type1':'Profile', 'type2':'companyName'}
 
         #TODO Current bourse can only be 1 exchange. Implement bourse to be a comma separated list
-        # and correspondingly do a or query if multiple items. 
+        # and correspondingly do a or query if multiple items.
         if bourse is not None:
             query['bourse'] = bourse
 

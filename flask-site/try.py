@@ -21,6 +21,7 @@ ave = MongoQueries(client)
 print ave.getTickerDailyQuote( "2208.HK", '2017-07-05', 'close' )
 
 print ave.getTickerBalanceSheetAssetsDetails( "2333.HK", 2016, "Total Assets")
+print ave.getTickerEmployeesNumber( '2333.HK')
 quit()
 
 # ary = ave.getCompanyRevenue(bourse='BSE')

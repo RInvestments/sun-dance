@@ -40,7 +40,37 @@ def lookup_ticker( ticker ):
 
 @app.route( '/api/info/<ticker>/<datum>')
 def lookup_ticker_timeless_info( ticker, datum ):
-    f=0
+    f='%s %s' %(ticker, datum)
+
+    alias = {} #list of functions. all functions can be called like f( ticker )
+    alias['name'] = ave.getTickerName
+    alias['industry'] = ave.getTickerIndustry
+    alias['sector'] = ave.getTickerSector
+    alias['desc'] = ave.getTickerDescription
+    alias['description'] = ave.getTickerDescription
+
+    alias['employees'] = ave.getTickerEmployeesNumber
+    alias['address'] = ave.getTickerStreetAddress
+
+
+    if datum in alias.keys():
+        return str( (alias[datum])( str(ticker) ) )
+    else:
+        if datum == '_list_':
+            return str( alias.keys() )
+        if datum == '_list_col_':
+            s = ""
+            for k in alias.keys():
+                s += k+ '\n'
+            return s
+        if datum == '_json_':
+            _XX_ = OrderedDict()
+            _XX_['is_keys'] = alias.keys()
+
+            return json.dumps( _XX_ )
+        return "#N/A %s" %(datum)
+
+    return f
     return "Not Implemented"
     # Can return things like sector, industry, name, description, website url, employees, address
     # and other info which has no time associated with it.
