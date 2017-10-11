@@ -565,7 +565,12 @@ class SourceWSJ:
 
         soup = BeautifulSoup(str(raw_html_str), 'lxml')
 
-        balance_sheet = soup.find_all( 'div', attrs={'data-module-id': 3 } )[0]
+        balance_sheet = soup.find_all( 'div', attrs={'data-module-id': 3 } )
+	if len(balance_sheet) < 1:
+            self._error( '_parse_balance_sheet doesnot seem to contain data table. balance_sheet')
+            return False
+        balance_sheet = balance_sheet[0]
+	    
         tmp = balance_sheet.find_all( 'table', class_='cr_dataTable')
         if len(tmp) < 1:
             self._error( '_parse_balance_sheet doesnot seem to contain data table')
