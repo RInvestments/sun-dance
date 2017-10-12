@@ -609,7 +609,11 @@ class SourceWSJ:
             return
         soup = BeautifulSoup(str(raw_html), 'lxml')
 
-        income_statement = soup.find_all( attrs={'data-module-id': 3 } )[0]
+        income_statement = soup.find_all( attrs={'data-module-id': 3 } )
+	if len(income_statement) < 1:
+            self._error( '_parse_income_statement doesnot seem to contain data table')
+            return False
+	income_statement = income_statement[0]
         data_table = income_statement.find_all( 'table', class_='cr_dataTable' )
         if len(data_table) < 1:
             self._error( '_parse_income_statement doesnot seem to contain data table')
