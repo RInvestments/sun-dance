@@ -17,28 +17,31 @@ Transfer some of the machine learning techniques to analyse and potentially make
 buck or two. 
 
 ## Core Usage 
-python -i data_retriver.py  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
+python data_retriver.py  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
 
 python data_parser.py --wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
 
-python data_inserter.py (currently no commandline parsing. adjust db_prefix param)
+python data_inserter.py --wsj -db equities_db/data__N -l equities_db/lists/ --xhkex --xbse --xnse
 
 #### Delete Raw (WSJ)
 python data_parser.py --delete_raw_wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
 
 #### Daily Quote Data (currently only for HKEX, NSE)
-python -i data_retriver.py -sd equities_db/data__quotes -ld equities_db/lists --yahoo_historical --xnse --xhkex
+python  data_retriver.py -sd equities_db/data__quotes -ld equities_db/lists --yahoo_historical --xnse --xhkex
 
-python -i  daily_quote_inserter.py (currently no commandline parsing. adjust db_prefix and should work)
+python  daily_quote_inserter.py -db equities_db/data__quotes -ld equities_db/lists --xnse --xhkex 
+
 #### Verbose
-python -i data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
+python data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
 
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse
 
 #### First time usage 
 Populate list of stocks from various exchanges. You might also want to look at `test_pkg.py` which is a cummulation of all the required pakages.
 
-python test_lister.py 
+```
+python init_lister.py
+```
 
 ## MongoDB Schema
 I insert individual elements into flat mongodb structure. Note that the code might not be exactlty as described in document, but is more or less consistent. 

@@ -21,8 +21,12 @@ from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
 
 # ticker = 'ELECTCAST.NSE'
-ticker = '2333.HK'
-stock_prefix = 'equities_db/data_quotes/'+ticker+'/'
+# ticker = '2333.HK'
+ticker = 'MMM.NYSE'
+# ticker = 'ZYNE.NASDAQ'
+# ticker = 'FAX.AMEX'
+# ticker = '4333.TYO'
+stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -39,11 +43,11 @@ stock_prefix = 'equities_db/data_quotes/'+ticker+'/'
 
 
 
-s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
 # s_yahoo.download_quick_quote()
 # s_yahoo.load_pickle()
 # s_yahoo.download_historical_quote()
-qqq = s_yahoo.load_quote()
+# qqq = s_yahoo.load_quote()
 
 
 # y_obj = Share( ticker )
@@ -51,11 +55,11 @@ qqq = s_yahoo.load_quote()
 # print a[0]
 # print a[-1]
 
-# s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
 # s_wsj.parse_financial_statements()
 
-# # s_wsj.download_url()
-# s_wsj.parse()
+s_wsj.download_url()
+s_wsj.parse()
 # print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()

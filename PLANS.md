@@ -30,6 +30,35 @@ a long term hold exchange
 **http://quotes.wsj.com/IN/XNSE/EQHDFCBANK**
 
 
+### TYO, Japan
+http://www.jpx.co.jp/english/markets/statistics-equities/misc/01.html
+**http://quotes.wsj.com/JP/5406**
+
+
+### Other Asia - Taiwan, Korea
+http://www.twse.com.tw/en/page/listed/listed_company/new_listing.html
+**http://quotes.wsj.com/TW/XTAI/3045/**
+
+
+
+
+### London (LSE)
+no symbols :/
+http://www.londonstockexchange.com/statistics/companies-and-issuers/companies-and-issuers.htm
+**http://quotes.wsj.com/UK/XLON/AIEA**
+
+
+### Continental Europe - Frankfurt, Euronext
+http://www.deutsche-boerse-cash-market.com/dbcm-en/instruments-statistics/statistics/listes-companies
+**http://quotes.wsj.com/XE/AOF**
+
+
+euronext 
+https://www.euronext.com/en/equities-directory
+**http://quotes.wsj.com/FR/ENX**
+
+
+
 # NoSQL
 Storage of data into a nosql db for easy and efficient retrival
 

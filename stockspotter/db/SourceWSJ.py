@@ -32,8 +32,91 @@ class URLFactoryWSJ:
         # print 'xchange : ', self.xchange
         # print 'ticker :  ', self.ticker_p
 
+        self.financials = {}
+        self.financials['HK']   = 'http://quotes.wsj.com/HK/XHKG/%s/financials'
+        self.financials['BSE']  = 'http://quotes.wsj.com/IN/%s/financials'
+        self.financials['NSE']  = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials'
+        self.financials['NYSE'] = 'http://quotes.wsj.com/%s/financials'
+        self.financials['NASDAQ'] = 'http://quotes.wsj.com/%s/financials'
+        self.financials['AMEX'] = 'http://quotes.wsj.com/%s/financials'
+        self.financials['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials'
+
+
+        self.wsj_profile = {}
+        self.wsj_profile['HK']   = 'http://quotes.wsj.com/HK/XHKG/%s/company-people'
+        self.wsj_profile['BSE']  = 'http://quotes.wsj.com/IN/%s/company-people'
+        self.wsj_profile['NSE']  = 'http://quotes.wsj.com/IN/XNSE/EQ%s/company-people'
+        self.wsj_profile['NYSE'] = 'http://quotes.wsj.com/%s/company-people'
+        self.wsj_profile['NASDAQ'] = 'http://quotes.wsj.com/%s/company-people'
+        self.wsj_profile['AMEX'] = 'http://quotes.wsj.com/%s/company-people'
+        self.wsj_profile['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/company-people'
+
+
+        # Annual Income Statement
+        self.ic_a = {}
+        self.ic_a['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/income-statement'
+        self.ic_a['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/annual/income-statement'
+        self.ic_a['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/income-statement'
+        self.ic_a['NYSE'] = 'http://quotes.wsj.com/%s/financials/annual/income-statement'
+        self.ic_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/income-statement'
+        self.ic_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/income-statement'
+        self.ic_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/income-statement'
+
+        self.ic_q = {}
+        self.ic_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement'
+        self.ic_q['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/quarter/income-statement'
+        self.ic_q['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/income-statement'
+        self.ic_q['NYSE'] = 'http://quotes.wsj.com/%s/financials/quarter/income-statement'
+        self.ic_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/income-statement'
+        self.ic_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/income-statement'
+        self.ic_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/income-statement'
+
+        # Annual Balance Sheet
+        self.bs_a = {}
+        self.bs_a['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/balance-sheet'
+        self.bs_a['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/annual/balance-sheet'
+        self.bs_a['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/balance-sheet'
+        self.bs_a['NYSE'] = 'http://quotes.wsj.com/%s/financials/annual/balance-sheet'
+        self.bs_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/balance-sheet'
+        self.bs_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/balance-sheet'
+        self.bs_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/balance-sheet'
+
+        self.bs_q = {}
+        self.bs_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet'
+        self.bs_q['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/quarter/balance-sheet'
+        self.bs_q['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/balance-sheet'
+        self.bs_q['NYSE'] = 'http://quotes.wsj.com/%s/financials/quarter/balance-sheet'
+        self.bs_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/balance-sheet'
+        self.bs_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/balance-sheet'
+        self.bs_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/balance-sheet'
+
+        # Cash Flow Statement
+        self.cfs_a = {}
+        self.cfs_a['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/cash-flow'
+        self.cfs_a['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/annual/cash-flow'
+        self.cfs_a['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/cash-flow'
+        self.cfs_a['NYSE'] = 'http://quotes.wsj.com/%s/financials/annual/cash-flow'
+        self.cfs_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/cash-flow'
+        self.cfs_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/cash-flow'
+        self.cfs_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/cash-flow'
+
+        self.cfs_q = {}
+        self.cfs_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow'
+        self.cfs_q['BSE'] = 'http://quotes.wsj.com/IN/%s/financials/quarter/cash-flow'
+        self.cfs_q['NSE'] = 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/quarter/cash-flow'
+        self.cfs_q['NYSE'] = 'http://quotes.wsj.com/%s/financials/quarter/cash-flow'
+        self.cfs_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/cash-flow'
+        self.cfs_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/cash-flow'
+        self.cfs_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/cash-flow'
+
 
     def get_url_financials(self):
+        if self.xchange in self.financials.keys():
+            return self.financials[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -42,30 +125,54 @@ class URLFactoryWSJ:
         elif self.xchange == 'NSE':
             #eg: http://quotes.wsj.com/IN/XNSE/EQHDFCBANK/financials
             return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials' %(self.ticker_p)
+        elif self.xchange == 'NYSE':
+            #eg: http://quotes.wsj.com/DDD/financials
+            return 'http://quotes.wsj.com/%s/financials' %(self.ticker_p)
         else:
             return None
 
     def get_url_wsj_profile(self):
+        if self.xchange in self.wsj_profile.keys():
+            return self.wsj_profile[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/company-people' %(self.ticker_p)
         elif self.xchange == 'BSE':
             return 'http://quotes.wsj.com/IN/%s/company-people' %(self.ticker_p)
         elif self.xchange == 'NSE':
             return 'http://quotes.wsj.com/IN/XNSE/EQ%s/company-people' %(self.ticker_p)
+        elif self.xchange == 'NYSE':
+            return 'http://quotes.wsj.com/%s/company-people' %(self.ticker_p)
         else:
             return None
 
     def get_url_income_statement(self):
+        if self.xchange in self.ic_a.keys():
+            return self.ic_a[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/income-statement' %(self.ticker_p)
         elif self.xchange == 'BSE':
             return 'http://quotes.wsj.com/IN/%s/financials/annual/income-statement' %(self.ticker_p)
         elif self.xchange == 'NSE':
             return 'http://quotes.wsj.com/IN/XNSE/EQ%s/financials/annual/income-statement' %(self.ticker_p)
+
         else:
             return None
 
     def get_url_balance_sheet(self):
+        if self.xchange in self.bs_a.keys():
+            return self.bs_a[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/balance-sheet' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -76,6 +183,12 @@ class URLFactoryWSJ:
             return None
 
     def get_url_cash_flow_statement(self):
+        if self.xchange in self.cfs_a.keys():
+            return self.cfs_a[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/annual/cash-flow' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -87,6 +200,12 @@ class URLFactoryWSJ:
 
 
     def get_url_income_statement_q(self):
+        if self.xchange in self.ic_q.keys():
+            return self.ic_q[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -97,6 +216,12 @@ class URLFactoryWSJ:
             return None
 
     def get_url_balance_sheet_q(self):
+        if self.xchange in self.bs_q.keys():
+            return self.bs_q[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -107,6 +232,12 @@ class URLFactoryWSJ:
             return None
 
     def get_url_cash_flow_statement_q(self):
+        if self.xchange in self.cfs_q.keys():
+            return self.cfs_q[self.xchange] %(self.ticker_p)
+        else:
+            return None
+
+        # OLD - Mark for removal
         if self.xchange == 'HK':
             return 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow' %(self.ticker_p)
         elif self.xchange == 'BSE':
@@ -570,7 +701,7 @@ class SourceWSJ:
             self._error( '_parse_balance_sheet doesnot seem to contain data table. balance_sheet')
             return False
         balance_sheet = balance_sheet[0]
-	    
+
         tmp = balance_sheet.find_all( 'table', class_='cr_dataTable')
         if len(tmp) < 1:
             self._error( '_parse_balance_sheet doesnot seem to contain data table')

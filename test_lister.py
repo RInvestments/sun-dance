@@ -19,11 +19,20 @@ from stockspotter.db.SourceWSJ import URLFactoryWSJ
 
 
 lister = TickerLister('equities_db/lists/', 1)
-full_list_bse = lister.list_full_bse(False)
-full_list_nse = lister.list_full_nse(False)
-full_list_hkex = lister.list_full_hkex(False)
-full_list = full_list_bse[0:3] + full_list_nse[0:3] + full_list_hkex[0:3]
-print full_list
+#full_list_bse = lister.list_full_bse(False)
+#full_list_nse = lister.list_full_nse(False)
+#full_list_hkex = lister.list_full_hkex(False)
+#full_list = full_list_bse[0:3] + full_list_nse[0:3] + full_list_hkex[0:3]
+# print full_list
+
+# full_list_nyse = lister.list_full_nyse(True)
+# full_list_nasdaq = lister.list_full_nasdaq(True)
+# full_list_amex = lister.list_full_amex(True)
+
+# full_list_sse = lister.list_full_sse(True) #issue with excel file
+# full_list_szse = lister.list_full_szse( False )
+
+full_list_tyo = lister.list_full_tyo( True )
 
 # for l in full_list_nse[0:3]:
 #     print l
