@@ -291,8 +291,12 @@ class SourceQuotesQuandl:
 
         # Iterate
         output['quotes_daily'] = collections.OrderedDict()
-        self._debug( 'Data from %s to %s' %(data_json['data'][0][0], data_json['data'][-1][0]) )
-        self._printer( 'Data from %s to %s' %(data_json['data'][0][0], data_json['data'][-1][0]) )
+        try:
+            self._debug( 'Data from %s to %s' %(data_json['data'][0][0], data_json['data'][-1][0]) )
+            self._printer( 'Data from %s to %s' %(data_json['data'][0][0], data_json['data'][-1][0]) )
+        except:
+            self._error( 'No Quotes data inside' )
+            
         for d in data_json['data']:
             _date =     str(d[0])
             _open =     str(d[1])

@@ -183,12 +183,14 @@ for i,l in enumerate(full_list):
     #     s_yahoo.download_quick_quote()
 
     if args.quotes_full:
-        s_yahoo_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_yahoo_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        s_quotes_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_quotes_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        #TODO : Add a commandline option for remove raw
 
     if args.quotes_recent:
-        s_yahoo_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_yahoo_historical.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        s_quotes_recent100 = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_quotes_recent100.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        #TODO : Add a commandline option for remove raw
 
 
     # Download Reuters
