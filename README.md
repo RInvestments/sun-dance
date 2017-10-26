@@ -10,8 +10,9 @@ balance sheet, cashflow statements).
 
 Read books especially from value investors like Ben Graham etc. Other
 sources like investopedia etc to build scripts that can scan all the listings of 
-HKEX. It is easy to add more source (need work).
-Currently can do HKEX, BSE(India), NSE(India)
+HKEX. 
+
+Currently avaialble exchanges : HK, NSE(India), BSE(India), NYSE, NASDAQ, AMEX, TYO (Tokyo)
 
 Transfer some of the machine learning techniques to analyse and potentially make a
 buck or two. 
@@ -27,9 +28,11 @@ python data_inserter.py --wsj -db equities_db/data__N -l equities_db/lists/ --xh
 python data_parser.py --delete_raw_wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
 
 #### Daily Quote Data (currently only for HKEX, NSE)
-python  data_retriver.py -sd equities_db/data__quotes -ld equities_db/lists --yahoo_historical --xnse --xhkex
+python  data_retriver.py -sd equities_db/data__quotes_N -ld equities_db/lists --quotes_full --xnse --xhkex
 
-python  daily_quote_inserter.py -db equities_db/data__quotes -ld equities_db/lists --xnse --xhkex 
+python  data_retriver.py -sd equities_db/data__quotes_N -ld equities_db/lists --quotes_recent --xnse --xhkex
+
+python  daily_quote_inserter.py -db equities_db/data__quotes_N -ld equities_db/lists --xnse --xhkex 
 
 #### Verbose
 python data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse

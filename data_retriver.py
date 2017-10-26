@@ -12,15 +12,15 @@
 
 import sys
 import os.path
-import urllib2
+# import urllib2
 import pprint
 import os
 
 import time
 from datetime import datetime
 
-from bs4 import BeautifulSoup
-from yahoo_finance import Share
+# from bs4 import BeautifulSoup
+# from yahoo_finance import Share
 
 import pickle
 import argparse
@@ -52,8 +52,10 @@ parser = argparse.ArgumentParser()
 # TODO Later have this all in a config file instead of commandline as difference exchanges will have different data sources
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable retrival of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable retrival of WSJ data' )
-parser.add_argument( '--yahoo', default=False, action='store_true', help='Enable retrival of Yahoo Quote data (price+volume)' )
-parser.add_argument( '--yahoo_historical', default=False, action='store_true', help='Yahoo historical data. It is recommeded to download historical data stand alone, cause being the adjusted data for splits being present' )
+# parser.add_argument( '--yahoo', default=False, action='store_true', help='Enable retrival of Yahoo Quote data (price+volume)' )
+parser.add_argument( '--quotes_full', default=False, action='store_true', help='Historical quotes data' )
+parser.add_argument( '--quotes_recent', default=False, action='store_true', help='recent 100 days quotes data' )
+
 parser.add_argument( '--reuters', default=False, action='store_true', help='Enable retrival of Reuters company officers data' )
 
 # Bourse
@@ -81,15 +83,20 @@ if args.wsj:
 else:
     print tcol.HEADER, 'Disable : WSJ', tcol.ENDC
 
-if args.yahoo:
-    print tcol.HEADER, 'Enable  : Yahoo', tcol.ENDC
-else:
-    print tcol.HEADER, 'Disable : Yahoo', tcol.ENDC
+# if args.yahoo:
+#     print tcol.HEADER, 'Enable  : Yahoo', tcol.ENDC
+# else:
+#     print tcol.HEADER, 'Disable : Yahoo', tcol.ENDC
 
-if args.yahoo_historical:
-    print tcol.HEADER, 'Enable  : Yahoo Historical', tcol.ENDC
+if args.quotes_full:
+    print tcol.HEADER, 'Enable  : Historical Daily Quotes', tcol.ENDC
 else:
-    print tcol.HEADER, 'Disable : Yahoo Historical', tcol.ENDC
+    print tcol.HEADER, 'Disable : Historical Daily Quotes', tcol.ENDC
+
+if args.quotes_recent:
+    print tcol.HEADER, 'Enable  : Recent 100d Daily Quotes', tcol.ENDC
+else:
+    print tcol.HEADER, 'Disable : Recent 100d Daily Quotes', tcol.ENDC
 
 if args.reuters:
     print tcol.HEADER, 'Enable  : Reuters', tcol.ENDC
@@ -102,7 +109,6 @@ if args.store_dir:
 
 if args.lists_db_dir:
     print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
-
 
 
 startTime = time.time()
@@ -172,14 +178,17 @@ for i,l in enumerate(full_list):
         #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
 
 
-    if args.yahoo: #yahoo no more provides data
-        s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_yahoo.download_quick_quote()
+    # if args.yahoo: #yahoo no more provides data - TODO mark for removal. deactivate this option.
+    #     s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+    #     s_yahoo.download_quick_quote()
 
-    if args.yahoo_historical:
+    if args.quotes_full:
         s_yahoo_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-        s_yahoo_historical.download_historical_quote(skip_if_exist=not args.force_download)
+        s_yahoo_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
 
+    if args.quotes_recent:
+        s_yahoo_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_yahoo_historical.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
 
 
     # Download Reuters

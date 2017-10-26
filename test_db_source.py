@@ -17,15 +17,19 @@ tcol = TerminalColors.bcolors()
 # Processor Classes:
 from stockspotter.db.SourceHKEXProfile import SourceHKEXProfile
 from stockspotter.db.SourceReuters import SourceReuters
-from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
+
+from stockspotter.db.SourceYahoo import SourceYahoo
+from stockspotter.db.SourceQuotesAlphaVantage import SourceQuotesAlphaVantage
+from stockspotter.db.SourceQuotesQuandl import SourceQuotesQuandl
 
 # ticker = 'ELECTCAST.NSE'
 # ticker = '2333.HK'
-ticker = 'MMM.NYSE'
+# ticker = 'MMM.NYSE'
 # ticker = 'ZYNE.NASDAQ'
 # ticker = 'FAX.AMEX'
-# ticker = '4333.TYO'
+ticker = '4333.TYO'
+# ticker = '532540.BSE'
 stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
@@ -41,13 +45,16 @@ stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # s_reuters.parse_financials()
 
 
+# s_quote = SourceQuotesAlphaVantage( ticker, stock_prefix , 1)
+# s_quote = SourceQuotesQuandl( ticker, stock_prefix , 1)
+# s_quote.retrive_www(n=1003, rm_raw=True)
+# Q = s_quote.load()
 
-
-# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
 # s_yahoo.download_quick_quote()
 # s_yahoo.load_pickle()
-# s_yahoo.download_historical_quote()
-# qqq = s_yahoo.load_quote()
+s_yahoo.download_historical_quote()
+qqq = s_yahoo.load_quote()
 
 
 # y_obj = Share( ticker )
@@ -55,11 +62,11 @@ stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # print a[0]
 # print a[-1]
 
-s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+# s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
 # s_wsj.parse_financial_statements()
 
-s_wsj.download_url()
-s_wsj.parse()
+# s_wsj.download_url()
+# s_wsj.parse()
 # print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()

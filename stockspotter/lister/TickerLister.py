@@ -248,7 +248,7 @@ class TickerLister:
         ticker_list = []
         for i,r in enumerate(recs):
             self._debug( '%4d] Symbol : %s ; name: %s' %(i,r[0], r[1]), 3)
-            tmp = TickerPoint( ticker='%s.%s' %(r[0], xname),   name=r[1].strip() )
+            tmp = TickerPoint( ticker='%s.%s' %(r[0].strip(), xname),   name=r[1].strip() )
             ticker_list.append( tmp )
 
         self._debug( 'items:')
@@ -307,7 +307,7 @@ class TickerLister:
                 pass
             else:
                 self._debug( '%d %d %s %s' %(i, stock_id, stock_name, section), 2 )
-                tmp = TickerPoint( ticker='%s.TYO' %(stock_id), name=stock_name.strip() )
+                tmp = TickerPoint( ticker='%s.TYO' %(str(stock_id).strip()), name=stock_name.strip() )
                 ticker_list.append( tmp )
 
 
@@ -407,7 +407,7 @@ class TickerLister:
 
             self._debug( '%s %s' %(stock_id, stock_name), 3 )
 
-            tmp = TickerPoint( ticker='%s.SZ' %(stock_id), name=stock_name.strip() )
+            tmp = TickerPoint( ticker='%s.SZ' %(stock_id.strip()), name=stock_name.strip() )
             ticker_list.append( tmp )
 
 
