@@ -1,4 +1,4 @@
-## Data acquisition from alphavantage. Provides for NYSE, AMEX, NASDAQ, NSE, HKEX 
+## Data acquisition from alphavantage. Provides for NYSE, AMEX, NASDAQ, NSE, HKEX
 
 import sys
 import os.path
@@ -207,10 +207,10 @@ class SourceQuotesAlphaVantage:
                 self._debug( 'written to : '+ fname )
 
         except urllib2.HTTPError, e:
-            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            self._printer( 'ERROR : '+str(e) )
             return False
         except urllib2.URLError, e:
-            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            self._printer( 'ERROR : '+str(e) )
             return False
 
 

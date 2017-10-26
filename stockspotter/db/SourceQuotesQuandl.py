@@ -249,10 +249,10 @@ class SourceQuotesQuandl:
                 self._debug( 'written to : '+ fname )
 
         except urllib2.HTTPError, e:
-            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            self._printer( 'ERROR : '+str(e) )
             return False
         except urllib2.URLError, e:
-            self._printer( 'ERROR : '+str(e.code)+':'+e.reason )
+            self._printer( 'ERROR : '+str(e) )
             return False
 
 
@@ -296,7 +296,7 @@ class SourceQuotesQuandl:
             self._printer( 'Data from %s to %s' %(data_json['data'][0][0], data_json['data'][-1][0]) )
         except:
             self._error( 'No Quotes data inside' )
-            
+
         for d in data_json['data']:
             _date =     str(d[0])
             _open =     str(d[1])
