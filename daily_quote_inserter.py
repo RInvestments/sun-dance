@@ -30,6 +30,11 @@ parser.add_argument( '-db', '--quotes_data_dir', required=True, help='Specify qu
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
 parser.add_argument( '--xbse', default=False, action='store_true', help='List all Bombay Stock Ex (BSE) Stocks' )
 parser.add_argument( '--xnse', default=False, action='store_true', help='List all National Stock Ex India (NSE) Stocks' )
+parser.add_argument( '--xnyse', default=False, action='store_true', help='List all New York Stock Exchange (NYSE) Stocks' )
+parser.add_argument( '--xnasdaq', default=False, action='store_true', help='List all NASDAQ Stocks' )
+parser.add_argument( '--xamex', default=False, action='store_true', help='List all Amex Stocks' )
+parser.add_argument( '--xtyo', default=False, action='store_true', help='List all Japan Exchange (Tokyo) Stocks' )
+
 
 args = parser.parse_args()
 
@@ -66,12 +71,24 @@ if args.xhkex:
     full_list += lister.list_full_hkex( use_cached=True)#[0:100]
 if args.xbse:
     print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_bse( use_cached=True )#[0:100]
-    print tcol.FAIL, 'No quotes data for BSE current TODO. Try without BSE...quiting', tcol.ENDC
-    quit()
+    full_list += lister.list_full_bse( use_cached=True )#[0:5]
 if args.xnse:
     print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
     full_list += lister.list_full_nse( use_cached=True )#[0:100]
+if args.xnyse:
+    print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_nyse( use_cached=True )#[0:3]
+if args.xnasdaq:
+    print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
+    full_list += lister.list_full_nasdaq( use_cached=True )#[0:3]
+if args.xamex:
+    print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
+    full_list += lister.list_full_amex( use_cached=True )#[0:3]
+if args.xtyo:
+    print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
+    full_list += lister.list_full_tyo( use_cached=True )#[0:3]
+
+
 
 # Loop on List
 # db_prefix = 'equities_db/data_quotes_20170716/'
@@ -131,3 +148,4 @@ for i,l in enumerate(full_list):
 
     print 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime )
 print 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal)
+print 'Finished on ', time.ctime()
