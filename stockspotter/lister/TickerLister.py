@@ -7,6 +7,8 @@ import os.path
 import os
 
 import urllib2
+import urllib #for GET encoding in sse listing
+
 from zipfile import ZipFile
 import csv
 
@@ -26,6 +28,8 @@ tcolor = tcol
 from TickerPoint import TickerPoint
 
 import xlrd #For reading xls and xlsx files
+import json
+
 
 class TickerLister:
     def __init__(self, lists_db, verbosity=0):
@@ -345,24 +349,102 @@ class TickerLister:
 
         if use_cached==False:
             # Download
-            url = 'http://query.sse.com.cn/listedcompanies/companylist/downloadCompanyInfoList.do'
-            self._debug( 'Attempt to download: %s' %(url) )
-            save_fname = self.priv_dir+xdir+'/sse_CompanyList.xls'
+            # curl 'http://query.sse.com.cn/commonQuery.do?jsonCallBack=jQuery111207434857396997545_1509964283162&isPagination=false&sqlId=COMMON_SSE_LISTEDCOMPANIES_COMPANYLIST_EN_L_NEW&pageHelp.pageSize=15&pageHelp.pageNo=1&pageHelp.beginPage=1&pageHelp.cacheSize=1&pageHelp.endPage=11&_=1509964283177' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.8' -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36' -H 'Accept: */*' -H 'Referer: http://english.sse.com.cn/products/equities/overview/' -H 'Cookie: yfx_c_g_u_id_10000042=_ck17102913365312697322453131531; VISITED_MENU=%5B%228748%22%2C%228528%22%5D; yfx_f_l_v_t_10000042=f_t_1509255413159__r_t_1509963543299__v_t_1509964560210__r_c_1' -H 'Connection: keep-alive' --compressed
 
-            # os.system( 'wget -O %s --referer=http://english.sse.com.cn/listed/company/ %s' %(save_fname, url) )
-            req = urllib2.Request( url )
-            req.add_header( 'Referer', 'http://english.sse.com.cn/listed/company/' )
-            response = urllib2.urlopen( req )
-            content = response.read()
+            url = 'http://query.sse.com.cn/commonQuery.do?'
+            query_args = { 'jsonCallBack': 'jQuery111207434857396997545_1509964283162',\
+                            'isPagination': 'false',\
+                            'sqlId': 'COMMON_SSE_LISTEDCOMPANIES_COMPANYLIST_EN_L_NEW',\
+                            'pageHelp.pageSize': '15',\
+                            'pageHelp.pageNo': '1',\
+                            'pageHelp.beginPage': '1',\
+                            'pageHelp.cacheSize': '1',\
+                            'pageHelp.endPage': '11',\
+                            '_': '1509964283177'}
+            data = urllib.urlencode( query_args )
+
+            req = urllib2.Request( url+data )
+            req.add_header('Accept-Encoding', 'gzip, deflate')
+            req.add_header('Accept-Language', 'en-US,en;q=0.8')
+            req.add_header('User-Agent', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36')
+            req.add_header('Accept', '*/*')
+            req.add_header('Referer', 'http://english.sse.com.cn/products/equities/overview/')
+            # req.add_header('Accept': '*/*')
+            # req.add_header('Accept': '*/*')
+
+            self._debug( 'Open HTTP request to : '+url )
+            try:
+                res = urllib2.urlopen( req )
+                html = res.read()
+            except:
+                self._error( 'HTML error when requesting to SSE web' )
+                return None
+
+            # Cleapup received raw response
+            jj = html.index( '(' )
+            html = html[jj+1:-1]
+
+            # Convert to json
+            try: #Validate json
+                response_json = json.loads( html )
+            except:
+                self._error( 'Invalid JSON received from SSE. Quit...')
+                return None
+
+            save_fname = self.priv_dir+xdir+'/sse_httpresponse.json'
             self._debug( 'Save to file: %s' %(save_fname) )
             f = open( save_fname , 'w' )
-            f.write( content )
+            f.write( html )
             f.close()
 
-        #This file is bad xls, it is likely csv with missing commas, check chinese version probably
-        open_fname = self.priv_dir+xdir+'/sse_CompanyList.xls'
-        self._debug( 'Open XLS file : %s' %(open_fname) )
-        self._generic_xls_reading( open_fname )
+
+        # Open file
+        open_fname = self.priv_dir+xdir+'/sse_httpresponse.json'
+        self._debug( 'Open file : %s' %(open_fname) )
+        try:
+            fp = open( open_fname )
+            json_data = json.loads( fp.read() )
+        except IOError:
+            self._error( 'Cannot open cached-file containing sse data. You probably want to call this function with use_cached=False. ')
+            return None
+        except:
+            self._error( 'JSON error. Something wrong with cached json file for sse')
+            return None
+
+        if 'result' not in json_data.keys():
+            self._error( 'The SSE json does not contain \'result\' ' )
+            return None
+
+        ticker_list = []
+        for en in json_data['result']:
+            english_name = en['ENGLISHNAME'].strip()
+            stock_ticker = en['PRODUCTID'].strip()
+            # Other available keys : SHORTNAME, PRODUCTNAME, PRODUCTID, TEL, WEBSITE, ENGLISHNAME
+
+            # Sometimes no english names
+            if english_name == '-':
+                english_name = stock_ticker+'.SH'
+
+
+            self._debug( '%s %s' %(stock_ticker, english_name), 3 )
+
+            tmp = TickerPoint( ticker='%s.SH' %(stock_ticker.strip()), name=english_name.strip() )
+            ticker_list.append( tmp )
+
+
+
+        self._debug( 'items:')
+        self._debug( str(ticker_list[0]) )
+        self._debug( str(ticker_list[1]) )
+        self._debug( '...' )
+        self._debug( '...' )
+        self._debug( str(ticker_list[-2]) )
+        self._debug( str(ticker_list[-1]) )
+        self._debug( 'return %d items' %(len(ticker_list)) )
+        return ticker_list
+
+
+
 
 
 
