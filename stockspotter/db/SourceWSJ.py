@@ -40,6 +40,8 @@ class URLFactoryWSJ:
         self.financials['NASDAQ'] = 'http://quotes.wsj.com/%s/financials'
         self.financials['AMEX'] = 'http://quotes.wsj.com/%s/financials'
         self.financials['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials'
+        self.financials['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials'
+        self.financials['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials'
 
 
         self.wsj_profile = {}
@@ -50,6 +52,8 @@ class URLFactoryWSJ:
         self.wsj_profile['NASDAQ'] = 'http://quotes.wsj.com/%s/company-people'
         self.wsj_profile['AMEX'] = 'http://quotes.wsj.com/%s/company-people'
         self.wsj_profile['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/company-people'
+        self.wsj_profile['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/company-people'
+        self.wsj_profile['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/company-people'
 
 
         # Annual Income Statement
@@ -61,6 +65,8 @@ class URLFactoryWSJ:
         self.ic_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/income-statement'
         self.ic_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/income-statement'
         self.ic_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/income-statement'
+        self.ic_a['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/annual/income-statement'
+        self.ic_a['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/annual/income-statement'
 
         self.ic_q = {}
         self.ic_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/income-statement'
@@ -70,6 +76,8 @@ class URLFactoryWSJ:
         self.ic_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/income-statement'
         self.ic_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/income-statement'
         self.ic_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/income-statement'
+        self.ic_q['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/quarter/income-statement'
+        self.ic_q['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/quarter/income-statement'
 
         # Annual Balance Sheet
         self.bs_a = {}
@@ -80,6 +88,8 @@ class URLFactoryWSJ:
         self.bs_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/balance-sheet'
         self.bs_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/balance-sheet'
         self.bs_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/balance-sheet'
+        self.bs_a['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/annual/balance-sheet'
+        self.bs_a['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/annual/balance-sheet'
 
         self.bs_q = {}
         self.bs_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/balance-sheet'
@@ -89,6 +99,8 @@ class URLFactoryWSJ:
         self.bs_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/balance-sheet'
         self.bs_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/balance-sheet'
         self.bs_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/balance-sheet'
+        self.bs_q['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/quarter/balance-sheet'
+        self.bs_q['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/quarter/balance-sheet'
 
         # Cash Flow Statement
         self.cfs_a = {}
@@ -99,6 +111,8 @@ class URLFactoryWSJ:
         self.cfs_a['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/annual/cash-flow'
         self.cfs_a['AMEX'] = 'http://quotes.wsj.com/%s/financials/annual/cash-flow'
         self.cfs_a['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/annual/cash-flow'
+        self.cfs_a['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/annual/cash-flow'
+        self.cfs_a['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/annual/cash-flow'
 
         self.cfs_q = {}
         self.cfs_q['HK'] = 'http://quotes.wsj.com/HK/XHKG/%s/financials/quarter/cash-flow'
@@ -108,6 +122,8 @@ class URLFactoryWSJ:
         self.cfs_q['NASDAQ'] = 'http://quotes.wsj.com/%s/financials/quarter/cash-flow'
         self.cfs_q['AMEX'] = 'http://quotes.wsj.com/%s/financials/quarter/cash-flow'
         self.cfs_q['TYO'] = 'http://quotes.wsj.com/JP/XTKS/%s/financials/quarter/cash-flow'
+        self.cfs_q['SH'] = 'http://quotes.wsj.com/CN/XSHG/%s/financials/quarter/cash-flow'
+        self.cfs_q['SZ'] = 'http://quotes.wsj.com/CN/XSHE/%s/financials/quarter/cash-flow'
 
 
     def get_url_financials(self):
