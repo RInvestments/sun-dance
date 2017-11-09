@@ -441,34 +441,35 @@ db = client.universalData
 # Get List
 lister = TickerLister( args.lists_db_dir )
 full_list = []
+n=3
 print tcol.HEADER, ' : Exchanges :', tcol.ENDC
 if args.xhkex:
     print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
 if args.xbse:
     print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_bse( use_cached=True )#[0:100]
+    full_list += lister.list_full_bse( use_cached=True )#[0:n]
 if args.xnse:
     print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
-    full_list += lister.list_full_nse( use_cached=True )#[0:100]
+    full_list += lister.list_full_nse( use_cached=True )#[0:n]
 if args.xnyse:
     print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_nyse( use_cached=True )#[0:3]
+    full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
     print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
-    full_list += lister.list_full_nasdaq( use_cached=True )#[0:3]
+    full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
 if args.xamex:
     print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_amex( use_cached=True )#[0:3]
+    full_list += lister.list_full_amex( use_cached=True )#[0:n]
 if args.xtyo:
     print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
-    full_list += lister.list_full_tyo( use_cached=True )#[0:3]
+    full_list += lister.list_full_tyo( use_cached=True )#[0:n]
 if args.xsse:
     print tcol.HEADER, '\t(SH) Shanghai Stock Exchange, China', tcol.ENDC
-    full_list += lister.list_full_sse( use_cached=True )#[0:3]
+    full_list += lister.list_full_sse( use_cached=True )#[0:n]
 if args.xszse:
     print tcol.HEADER, '\t(SZ) Shenzen Stock Exchange, China', tcol.ENDC
-    full_list += lister.list_full_szse( use_cached=True )#[0:3]
+    full_list += lister.list_full_szse( use_cached=True )#[0:n]
 
 
 
@@ -480,7 +481,8 @@ db_prefix = args.data_dir
 cur_dict = {}
 
 # l = full_list[9]
-startTimeTotal = time.time()
+startTimeTotal = datetime.time()
+proc_started = time.now()
 for i,l in enumerate(full_list):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
@@ -539,7 +541,8 @@ for i,l in enumerate(full_list):
 
     print 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime )
 
-
+print tcol.OKGREEN, 'PID: ', os.getpid(), tcol.ENDC
+print tcol.OKGREEN, 'Started  on ', str(proc_started), tcol.ENDC
 print tcol.OKGREEN, 'Finished on ', str(datetime.now()), tcol.ENDC
 print 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal)
 

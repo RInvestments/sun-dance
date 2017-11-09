@@ -2,6 +2,7 @@
   <global>
     <store_dir>equities_db/test_db/</store_dir>
     <list_db>equities_db/lists/</list_db>
+    <log_dir>equities_db/test_db/</log_dir>
     <verbosity>0</verbosity>
   </global>
 
@@ -10,18 +11,21 @@
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xhkex</exchange>
+    <proc_level>0</proc_level>
   </process>
 
   <process>
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xnse</exchange>
+    <proc_level>0</proc_level>
   </process>
 
   <process>
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xbse</exchange>
+    <proc_level>0</proc_level>
   </process>
 
 
@@ -29,6 +33,7 @@
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xnyse</exchange>
+    <proc_level>0</proc_level>
   </process>
 
 
@@ -36,6 +41,7 @@
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xnasdaq</exchange>
+    <proc_level>0</proc_level>
   </process>
 
 
@@ -43,11 +49,14 @@
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xamex,xtyo</exchange>
+    <proc_level>0</proc_level>
   </process>
 
   <process>
     <type>retriver</type>
     <task>wsj</task>
     <exchange>xsse,xszse</exchange>
+    <proc_level>0</proc_level>
   </process>
+
 </xml>

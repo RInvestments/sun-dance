@@ -3,6 +3,7 @@
     <store_dir>equities_db/test_db/</store_dir>
     <list_db>equities_db/lists/</list_db>
     <verbosity>0</verbosity>
+    <log_dir>equities_db/test_db/</log_dir>
   </global>
 
   <!-- Specify Independent Processes -->
