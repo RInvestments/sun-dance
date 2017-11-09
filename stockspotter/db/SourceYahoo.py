@@ -120,6 +120,11 @@ class SourceYahoo:
             self.obb = SourceQuotesQuandl( ticker, stock_prefix, verbosity )
             return
 
+        self._debug( 'Invalid xchange name')
+        self._error( 'Invalid xchange name')
+        self.obb = None
+        return
+
 
     # # Mark for removal
     # def load_pickle(self):

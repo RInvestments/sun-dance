@@ -29,8 +29,8 @@ lister = TickerLister('equities_db/lists/', 1)
 # full_list_nasdaq = lister.list_full_nasdaq(True)
 # full_list_amex = lister.list_full_amex(True)
 
-full_list_sse = lister.list_full_sse(False) #issue with excel file
-# full_list_szse = lister.list_full_szse( False )
+full_list_sse = lister.list_full_sse(True) #issue with excel file
+full_list_szse = lister.list_full_szse( True )
 
 # full_list_tyo = lister.list_full_tyo( True )
 

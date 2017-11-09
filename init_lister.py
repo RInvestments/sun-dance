@@ -24,6 +24,7 @@ print_y( '-------------------------------------------------')
 
 
 lister = TickerLister('equities_db/lists/', 0)
+
 print_y( 'Init HKEX' )
 full_list_hkex = lister.list_full_hkex(False)
 print 'HKEX: %d stocks' %(len(full_list_hkex))
@@ -45,12 +46,19 @@ print 'NASDAQ: %d stocks' %(len(full_list_nasdaq))
 print 'AMEX: %d stocks' %(len(full_list_amex))
 print_g( 'Done!')
 
-print_y( 'Init JPX (Tokyo)')
+print_y( 'Init Japanese Exchange (Tokyo)')
 full_list_tyo = lister.list_full_tyo( False )
 print 'TYO: %d stocks' %(len(full_list_tyo))
 print_g( 'Done!')
 
 
+print_y( 'Init China Exchanges - Shanghai (SH), Shenzen (SZ)' )
+full_list_sse = lister.list_full_sse(False) #issue with excel file
+full_list_szse = lister.list_full_szse( False )
+print 'SH: %d stocks' %(len(full_list_sse))
+print 'SZ: %d stocks' %(len(full_list_szse))
+
+print_g( 'Done!')
 # full_list = full_list_bse[0:3] + full_list_nse[0:3] + full_list_hkex[0:3]
 # print full_list
 

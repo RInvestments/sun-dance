@@ -28,8 +28,11 @@ from stockspotter.db.SourceQuotesQuandl import SourceQuotesQuandl
 # ticker = 'MMM.NYSE'
 # ticker = 'ZYNE.NASDAQ'
 # ticker = 'FAX.AMEX'
-ticker = '4333.TYO'
+# ticker = '4333.TYO'
 # ticker = '532540.BSE'
+
+# ticker = '600298.SH' #shanghai
+ticker = '000898.SZ' #shenzen
 stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
@@ -50,23 +53,19 @@ stock_prefix = 'equities_db/test_db/'+ticker+'/'
 # s_quote.retrive_www(n=1003, rm_raw=True)
 # Q = s_quote.load()
 
-s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
+# s_yahoo = SourceYahoo( ticker, stock_prefix, 1 )
 # s_yahoo.download_quick_quote()
 # s_yahoo.load_pickle()
-s_yahoo.download_historical_quote()
-qqq = s_yahoo.load_quote()
+# s_yahoo.download_historical_quote()
+# qqq = s_yahoo.load_quote()
 
 
-# y_obj = Share( ticker )
-# a = y_obj.get_historical( '2010-07-12', '2017-01-29' )
-# print a[0]
-# print a[-1]
 
-# s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+s_wsj.download_url()
 # s_wsj.parse_financial_statements()
 
-# s_wsj.download_url()
-# s_wsj.parse()
+s_wsj.parse()
 # print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()
