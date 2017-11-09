@@ -1,0 +1,43 @@
+<xml>
+  <global>
+    <store_dir>my/path/to/db</store_dir>
+    <list_db>my/ist/list/path</list_db>
+    <verbosity>0</verbosity>
+  </global>
+
+  <!-- Specify Independent Processes -->
+  <process>
+    <type>retriver</type>
+    <task>wsj</task>
+    <exchange>amex,hk</exchange>
+    <verbosity>1</verbosity>
+  </process>
+
+  <process>
+    <type>parser</type>
+    <task>wsj</task>
+    <exchange>nse,bse</exchange>
+  </process>
+
+  <process>
+    <type>retriver</type>
+    <task>wsj</task>
+    <exchange>tyo,amex,bse</exchange>
+    <verbosity>2</verbosity>
+  </process>
+
+
+  <process>
+    <type>inserter</type>
+    <task>wsj</task>
+    <exchange>tyo</exchange>
+    <verbosity>2</verbosity>
+  </process>
+
+
+  <process>
+    <type>quote_inserter</type>
+    <exchange>tyo</exchange>
+  </process>
+
+</xml>
