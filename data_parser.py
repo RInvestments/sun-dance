@@ -61,6 +61,8 @@ parser.add_argument( '--xnyse', default=False, action='store_true', help='List a
 parser.add_argument( '--xnasdaq', default=False, action='store_true', help='List all NASDAQ Stocks' )
 parser.add_argument( '--xamex', default=False, action='store_true', help='List all AMEX stocks' )
 parser.add_argument( '--xtyo', default=False, action='store_true', help='List all Tokyo Ex Stocks' )
+parser.add_argument( '--xsse', default=False, action='store_true', help='List all Shanghai Ex Stocks' )
+parser.add_argument( '--xszse', default=False, action='store_true', help='List all Shenzen Ex Stocks' )
 
 
 parser.add_argument( '--delete_raw', default=False, action='store_true', help='Delete the raw .html after parsing' )
@@ -112,26 +114,31 @@ full_list = []
 print tcol.HEADER, ' : Exchanges :', tcol.ENDC
 if args.xhkex:
     print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)
+    full_list += lister.list_full_hkex( use_cached=True)#[0:3]
 if args.xbse:
     print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_bse( use_cached=True )
+    full_list += lister.list_full_bse( use_cached=True )#[0:3]
 if args.xnse:
     print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
-    full_list += lister.list_full_nse( use_cached=True )
+    full_list += lister.list_full_nse( use_cached=True )#[0:3]
 if args.xnyse:
     print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_nyse( use_cached=True )
+    full_list += lister.list_full_nyse( use_cached=True )#[0:3]
 if args.xnasdaq:
     print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
-    full_list += lister.list_full_nasdaq( use_cached=True )
+    full_list += lister.list_full_nasdaq( use_cached=True )#[0:3]
 if args.xamex:
     print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_amex( use_cached=True )
+    full_list += lister.list_full_amex( use_cached=True )#[0:3]
 if args.xtyo:
     print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
-    full_list += lister.list_full_tyo( use_cached=True )
-
+    full_list += lister.list_full_tyo( use_cached=True )#[0:3]
+if args.xsse:
+    print tcol.HEADER, '\t(TYO) Shanghai Stock Exchange, China', tcol.ENDC
+    full_list += lister.list_full_sse( use_cached=True )#[0:3]
+if args.xszse:
+    print tcol.HEADER, '\t(TYO) Shenzen Stock Exchange, China', tcol.ENDC
+    full_list += lister.list_full_szse( use_cached=True )#[0:3]
 
 
 for i,l in enumerate(full_list):

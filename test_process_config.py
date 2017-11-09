@@ -10,7 +10,7 @@ def _debug( msg ):
 
 
 def config_to_cmd( fname ):
-    self._debug( 'Open XML config : %s' %(fname) )
+    _debug( 'Open XML config : %s' %(fname) )
 
     doc = etree.parse( fname )
     global_ele = doc.find( 'global' )
@@ -18,10 +18,6 @@ def config_to_cmd( fname ):
     # Iterate over each process
     for p in doc.findall( 'process' ):
         print '---'
-        # print p.find( 'type' ).text
-        # print p.find( 'source' ).text
-        # print p.find( 'exchange' ).text
-        # print p.find( 'verbosity' ).text
 
         if p.find( 'type' ).text.strip() == 'retriver':
 
@@ -180,5 +176,5 @@ def config_to_cmd( fname ):
             print 'python daily_quote_inserter.py -sd %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
 
 
-fname = 'config/simple.config.xml'
+fname = 'config/retrive_wsj.config.xml'
 cmd_list = config_to_cmd( fname )

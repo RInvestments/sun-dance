@@ -1,7 +1,7 @@
 <xml>
   <global>
-    <store_dir>my/path/to/db</store_dir>
-    <list_db>my/ist/list/path</list_db>
+    <store_dir>equities_db/test_db/</store_dir>
+    <list_db>equities_db/lists/</list_db>
     <verbosity>0</verbosity>
   </global>
 

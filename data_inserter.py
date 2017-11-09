@@ -411,6 +411,8 @@ parser.add_argument( '--xnyse', default=False, action='store_true', help='List a
 parser.add_argument( '--xnasdaq', default=False, action='store_true', help='List all NASDAQ Stocks' )
 parser.add_argument( '--xamex', default=False, action='store_true', help='List all AMEX stocks' )
 parser.add_argument( '--xtyo', default=False, action='store_true', help='List all Tokyo Ex Stocks' )
+parser.add_argument( '--xsse', default=False, action='store_true', help='List all Shanghai Ex Stocks' )
+parser.add_argument( '--xszse', default=False, action='store_true', help='List all Shenzen Ex Stocks' )
 
 
 args = parser.parse_args()
@@ -461,6 +463,13 @@ if args.xamex:
 if args.xtyo:
     print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
     full_list += lister.list_full_tyo( use_cached=True )#[0:3]
+if args.xsse:
+    print tcol.HEADER, '\t(TYO) Shanghai Stock Exchange, China', tcol.ENDC
+    full_list += lister.list_full_sse( use_cached=True )#[0:3]
+if args.xszse:
+    print tcol.HEADER, '\t(TYO) Shenzen Stock Exchange, China', tcol.ENDC
+    full_list += lister.list_full_szse( use_cached=True )#[0:3]
+
 
 
 # db_prefix = 'equities_db/data__N/'
