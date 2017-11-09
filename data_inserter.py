@@ -464,10 +464,10 @@ if args.xtyo:
     print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
     full_list += lister.list_full_tyo( use_cached=True )#[0:3]
 if args.xsse:
-    print tcol.HEADER, '\t(TYO) Shanghai Stock Exchange, China', tcol.ENDC
+    print tcol.HEADER, '\t(SH) Shanghai Stock Exchange, China', tcol.ENDC
     full_list += lister.list_full_sse( use_cached=True )#[0:3]
 if args.xszse:
-    print tcol.HEADER, '\t(TYO) Shenzen Stock Exchange, China', tcol.ENDC
+    print tcol.HEADER, '\t(SZ) Shenzen Stock Exchange, China', tcol.ENDC
     full_list += lister.list_full_szse( use_cached=True )#[0:3]
 
 
