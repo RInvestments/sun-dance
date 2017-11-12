@@ -23,24 +23,31 @@ import TerminalColors
 tcol = TerminalColors.bcolors()
 
 class SourceHKEXProfile:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
-        print tcol.OKBLUE, 'SourceHKEXProfile :', tcol.ENDC, txt
+        # print tcol.OKBLUE, 'SourceHKEXProfile :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceHKEXProfile :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'SourceHKEXProfile(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            # print tcol.OKBLUE, 'SourceHKEXProfile(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'SourceHKEXProfile(Debug=%2d) :' %(lvl)+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceHKEXProfile(Error) :', tcol.ENDC, txt
+        # print tcol.FAIL, 'SourceHKEXProfile(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'SourceHKEXProfile(Error) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
-        print tcol.OKBLUE, 'SourceHKEXProfile(time) :', tcol.ENDC, txt
+        # print tcol.OKBLUE, 'SourceHKEXProfile(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceHKEXProfile(time) :'+ tcol.ENDC+ txt )
 
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
@@ -50,6 +57,11 @@ class SourceHKEXProfile:
         self.stock_prefix = stock_prefix
         self.priv_dir = self.stock_prefix + '/hkex_profile/'
         self.raw_html_str = None
+
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
         self._debug( 'setting ticker : '+ ticker )
         self._debug( 'setting stock_prefix : '+ stock_prefix )
@@ -113,7 +125,6 @@ class SourceHKEXProfile:
 
         if self.raw_html_str is None:
             status = self._load_raw_file()
-            # self._printer( 'self.raw_html_str is None. You should call the function load_file() \
             # before calling the parse() function' )
             if status == False:
                 return False
@@ -129,7 +140,6 @@ class SourceHKEXProfile:
             return False
 
         findata_tree = self._process_table_financial_info( table[5] )
-        # print self.ticker, '-', data_dict['Industry Classification']
 
         dividend_tree = self._process_dividents_table( table[6] )
 
@@ -215,10 +225,8 @@ class SourceHKEXProfile:
                 value = all_td[1].get_text().encode('utf-8').replace('\n', '').replace(':', '').replace('\xc2\xa0','').strip()
                 data_dict[key] = value
                 data_tree[key] = value
-                # print i,')',key, ":", value
 
         # json_string = json.dumps(data_tree, indent=4)
-        # print json_string
 
         return data_tree
 
@@ -245,11 +253,8 @@ class SourceHKEXProfile:
             if len(all_td) == 6:
 
                 if len(header) == 0:
-                    # print tcol.BOLD,
                     for td in all_td:
-                        # print td.text.strip()
                         header.append(td.text.strip())
-                    # print tcol.ENDC
                     continue
 
 
@@ -260,7 +265,6 @@ class SourceHKEXProfile:
                 tree[all_td[0].text.strip()][header[5]] = all_td[5].text.strip()
 
         # json_string = json.dumps(tree, indent=4)
-        # print json_string
 
         return tree
 
@@ -302,7 +306,6 @@ class SourceHKEXProfile:
             return None
 
         json_data = json.loads( open( json_file ).read() )
-        # pprint ( json_data )
         return json_data
 
     def load_hkex_profile( self ):

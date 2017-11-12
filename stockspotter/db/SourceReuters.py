@@ -35,23 +35,30 @@ def Tree():
     return collections.defaultdict(Tree)
 
 class SourceReuters:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceReuters :', tcol.ENDC, txt
+        #print tcol.OKBLUE, 'SourceReuters :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceReuters :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+            #print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'SourceReuters(Debug) :'+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceReuters(Error) :', tcol.ENDC, txt
+        #print tcol.FAIL, 'SourceReuters(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'SourceReuters(Error) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceReuters(time) :', tcol.ENDC, txt
+        #print tcol.OKBLUE, 'SourceReuters(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceReuters(time) :'+ tcol.ENDC+ txt )
 
     def _download_and_save( self, url, fname ):
         if url is None:
@@ -90,11 +97,16 @@ class SourceReuters:
 
 
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None ):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
         self.verbosity = range(verbosity)
+
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
         # print 'constructor'
         self.ticker = ticker
