@@ -38,12 +38,15 @@ from stockspotter.db.SourceWSJ import SourceWSJ
 # Lister class
 from stockspotter.lister.TickerLister import TickerLister
 
+def __write( msg ):
+    print msg
+
 def make_folder_if_not_exist(folder):
     if not os.path.exists(folder):
-        print tcol.OKGREEN, 'Make Directory : ', folder, tcol.ENDC
+        __write( tcol.OKGREEN+ 'Make Directory : '+ folder+ tcol.ENDC )
         os.makedirs(folder)
     else:
-        print tcol.WARNING, 'Directory already exists : Not creating :', folder, tcol.ENDC
+        __write( tcol.WARNING+ 'Directory already exists : Not creating :'+ folder+ tcol.ENDC )
 
 
 parser = argparse.ArgumentParser()
@@ -75,25 +78,25 @@ parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0
 args = parser.parse_args()
 
 if args.hkex:
-    print tcol.HEADER, 'Enable  : HKEx', tcol.ENDC
+    __write( tcol.HEADER+ 'Enable  : HKEx'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : HKEx', tcol.ENDC
+    __write( tcol.HEADER+ 'Disable : HKEx'+ tcol.ENDC )
 
 if args.wsj:
-    print tcol.HEADER, 'Enable  : WSJ', tcol.ENDC
+    __write( tcol.HEADER+ 'Enable  : WSJ'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : WSJ', tcol.ENDC
+    __write( tcol.HEADER+ 'Disable : WSJ'+ tcol.ENDC )
 
 if args.reuters:
-    print tcol.HEADER, 'Enable  : Reuters', tcol.ENDC
+    __write( tcol.HEADER+ 'Enable  : Reuters'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : Reuters', tcol.ENDC
+    __write( tcol.HEADER+ 'Disable : Reuters'+ tcol.ENDC )
 
 if args.store_dir:
-    print tcol.HEADER, 'store_dir : ', args.store_dir, tcol.ENDC
+    __write( tcol.HEADER+ 'store_dir : '+ args.store_dir+ tcol.ENDC )
 
 if args.lists_db_dir:
-    print tcol.HEADER, 'store_dir : ', args.lists_db_dir, tcol.ENDC
+    __write( tcol.HEADER+ 'store_dir : '+ args.lists_db_dir+ tcol.ENDC )
 
 
 
@@ -103,8 +106,8 @@ startTime = time.time()
 
 db_prefix = args.store_dir #'equities_db/data__N'#2017_Feb_26'
 if not os.path.exists(db_prefix):
-    print tcol.FAIL, 'Non existant database dir : '+db_prefix
-    print 'Ensure the directory exists and has the data. Can be downloaded with data_retriver', tcol.ENDC
+    __write( tcol.FAIL+ 'Non existant database dir : '+db_prefix )
+    __write( 'Ensure the directory exists and has the data. Can be downloaded with data_retriver'+ tcol.ENDC )
     quit()
 
 
@@ -112,38 +115,38 @@ if not os.path.exists(db_prefix):
 lister = TickerLister( args.lists_db_dir )
 full_list = []
 n=3
-print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+__write(  tcol.HEADER +' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
-    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
+    __write(  tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
+    full_list += lister.list_full_hkex( use_cached=True)[0:n]
 if args.xbse:
-    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]
 if args.xnse:
-    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(NSE) National Stock Exchange of India'+ tcol.ENDC )
     full_list += lister.list_full_nse( use_cached=True )#[0:n]
 if args.xnyse:
-    print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(NYSE) New York Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
-    print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
     full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
 if args.xamex:
-    print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_amex( use_cached=True )#[0:n]
 if args.xtyo:
-    print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(TYO) Japan Exchange Group, Tokyo'+ tcol.ENDC )
     full_list += lister.list_full_tyo( use_cached=True )#[0:n]
 if args.xsse:
-    print tcol.HEADER, '\t(SH) Shanghai Stock Exchange, China', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(SH) Shanghai Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_sse( use_cached=True )#[0:n]
 if args.xszse:
-    print tcol.HEADER, '\t(SZ) Shenzen Stock Exchange, China', tcol.ENDC
+    __write(  tcol.HEADER+ '\t(SZ) Shenzen Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_szse( use_cached=True )#[0:n]
 
 proc_started = datetime.now()
 for i,l in enumerate(full_list):
-    print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
+    __write(  tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l) + tcol.ENDC )
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'
@@ -174,7 +177,7 @@ for i,l in enumerate(full_list):
         s_reuters.parse(delete_raw=args.delete_raw)
 
 
-print tcol.OKGREEN, 'PID: ', os.getpid(), tcol.ENDC
-print tcol.OKGREEN, 'Started: ', str(proc_started), tcol.ENDC
-print tcol.OKGREEN, 'Finished: ', str(datetime.now()), tcol.ENDC
-print tcol.OKGREEN, 'Total time: %5.2f sec' %( time.time() - startTime ), tcol.ENDC
+__write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'Started: '+ str(proc_started)+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'Finished: '+ str(datetime.now())+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'Total time: %5.2f sec' %( time.time() - startTime )+ tcol.ENDC )

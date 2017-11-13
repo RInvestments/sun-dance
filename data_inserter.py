@@ -13,7 +13,7 @@
 import sys
 import os.path
 import urllib2
-import pprint
+# import pprint
 import os
 import locale
 import json
@@ -40,14 +40,13 @@ import code
 
 
 
-
+def __write( msg ):
+    print msg
 
 def get_uuid( cur_dict ):
     od = collections.OrderedDict(sorted(cur_dict.items()))
 
     json_data_obj =  json.dumps(od)
-    # print json_data_obj
-    # print type(json_data_obj)
     digest = uuid.uuid3(uuid.NAMESPACE_DNS, json_data_obj)
     return str(digest)
 
@@ -57,19 +56,9 @@ def add_to_db(cur_dict):
     cur_dict['id'] = get_uuid( cur_dict )
     json_cur_dict = json.dumps(cur_dict)
 
-    # print str(cur_dict)
 
 
-    #
-    # ########################
-    # #### Solr Insertion ####
-    # ########################
-    # req = urllib2.Request(url='http://localhost:8983/solr/universalData/update/json/docs',
-    #                       data=json_cur_dict)
-    #
-    # req.add_header('Content-type', 'application/json')
-    # f = urllib2.urlopen(req)
-    # print 'Solr Response : ', f.read()
+
 
 
 
@@ -83,12 +72,12 @@ def add_to_db(cur_dict):
         cur_dict['last_modified'] = datetime.now()
         db.universalData.insert( cur_dict )
     except pymongo.errors.DuplicateKeyError, e:
-        # print 'Dup licate'
+        # Dup licate'
         uiii= 0 #silently ignore this. may be report only in a verbose setting
     except Exception as e:
         #TODO catch the `Duplicate key insertion`. This denotes this data already exists
-        print str(e), e
-        print tcol.FAIL, 'MOngoDB insert failed', tcol.ENDC
+        __write( str(e)  )
+        __write( tcol.FAIL+ 'MOngoDB insert failed'+ tcol.ENDC )
 
     # del cur_dict
 
@@ -96,8 +85,8 @@ def add_to_db(cur_dict):
 def solr_commit():
     req = urllib2.Request(url='http://localhost:8983/solr/universalData/update?commit=true')
     f = urllib2.urlopen(req)
-    print f.read()
-    print "Solr Commit Done !!!"
+    __write( f.read() )
+    __write( "Solr Commit Done !!!" )
 
 
 # h_string : '12 M' or '123 B' or '1.2 T'. Space is important
@@ -179,7 +168,6 @@ def insert_financials_data(base_dict, json_financials):
     base_dict['type1'] = 'Financials'
     for h1 in json_financials:
         for h2 in json_financials[h1]:
-            #print ty1, '::', ty2, ':::', json_data_financials[ty1][ty2]
             n_cur_dict = base_dict.copy()
             n_cur_dict['type2']=h1
             n_cur_dict['type3']=h2
@@ -256,7 +244,6 @@ def insert_executives_data(base_dict, json_executives):
             except ValueError:
                 np_cur_dict['val'] = 0
             add_to_db(np_cur_dict)
-            # print json_executives[i_str][attr]
 
 
 
@@ -277,7 +264,6 @@ def str_to_float( r ):
             # code.interact( local=locals() )
             return f
         except:
-        #     print 'EEEEE'
             return 0.0
 
 # Million returns 1; Thousand returns 0.001; Billion returns 1000;
@@ -326,7 +312,7 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
             except:
                 l2_dict['type4'] = tag_components[1]
     else:
-        print "FATAL ERROR : INVALID TAG"
+        __write( "FATAL ERROR : INVALID TAG" )
 
 
     A = json_loader_func( tag ) #note that these statements are having data in _E3M5_ tag
@@ -342,7 +328,6 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
     for h1 in A:
         if h1 == '_HEADER_': continue #avoid _HEADER_ / use it for verification
         # if h1 == '_FISCAL_NOTE_': continue #TODO
-        # print h1, A[h1]['_E3M5_'], str_to_float( A[h1]['_E3M5_'] )
         l2_dict['type5'] = h1
         l2_dict['type6'] = str(None)
         l2_dict['type7'] = str(None)
@@ -352,7 +337,6 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
         add_to_db( l2_dict.copy() )
         for h2 in A[h1]:
             if h2 == '_E3M5_': continue #found data
-            # print '    ', h2, A[h1][h2]['_E3M5_'], str_to_float( A[h1][h2]['_E3M5_'] )
             l2_dict['type5'] = h1
             l2_dict['type6'] = h2
             l2_dict['type7'] = str(None)
@@ -361,7 +345,6 @@ def insert_statement_data( statement_name, base_dict, tag, json_loader_func ):
             add_to_db( l2_dict.copy() )
             for h3 in A[h1][h2]:
                 if h3 == '_E3M5_': continue
-                # print '        ',h3, A[h1][h2][h3]['_E3M5_'], str_to_float(A[h1][h2][h3]['_E3M5_'] )
                 l2_dict['type5'] = h1
                 l2_dict['type6'] = h2
                 l2_dict['type7'] = h3
@@ -383,15 +366,11 @@ def insert_all_financial_sheets( s_wsj, base_dict ):
 
     for period in ['a', 'q']:
         for st_name in loaders: #iterative over statement name
-            # print st_name
             for sub_st_name in components[st_name]: #iterate over sub-statement names
-                # print '    ', sub_st_name
                 tag_list = s_wsj.ls( period, st_name, sub_st_name)
                 json_loader_func = loaders[st_name]
 
-                # print tag_list
                 for tag in tag_list: #iteraive over each sheet
-                    # print 'insert_statement_data( base, %s, %s )' %(tag, json_loader_func)
                     insert_statement_data( st_name, base_dict.copy(), tag, json_loader_func )
 
 
@@ -418,13 +397,13 @@ parser.add_argument( '--xszse', default=False, action='store_true', help='List a
 args = parser.parse_args()
 
 if args.lists_db_dir:
-    print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
+    __write( tcol.HEADER+ 'lists_db_dir : '+ args.lists_db_dir+ tcol.ENDC )
 
 if args.data_dir:
-    print tcol.HEADER, 'data_dir : ', args.data_dir, tcol.ENDC
+    __write( tcol.HEADER+ 'data_dir : '+ args.data_dir+ tcol.ENDC )
 
 # if args.verbosity:
-print tcol.HEADER, 'verbosity : ', args.verbosity, tcol.ENDC
+__write( tcol.HEADER+ 'verbosity : '+ args.verbosity+ tcol.ENDC )
 
 
 
@@ -442,33 +421,33 @@ db = client.universalData
 lister = TickerLister( args.lists_db_dir )
 full_list = []
 n=3
-print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+__write( tcol.HEADER+ ' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
-    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
+    __write( tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_hkex( use_cached=True)#[0:n]
 if args.xbse:
-    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    __write( tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]
 if args.xnse:
-    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    __write( tcol.HEADER+ '\t(NSE) National Stock Exchange of India'+ tcol.ENDC )
     full_list += lister.list_full_nse( use_cached=True )#[0:n]
 if args.xnyse:
-    print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
+    __write( tcol.HEADER+ '\t(NYSE) New York Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
-    print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
+    __write( tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
     full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
 if args.xamex:
-    print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
+    __write( tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_amex( use_cached=True )#[0:n]
 if args.xtyo:
-    print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
+    __write( tcol.HEADER+ '\t(TYO) Japan Exchange Group, Tokyo'+ tcol.ENDC )
     full_list += lister.list_full_tyo( use_cached=True )#[0:n]
 if args.xsse:
-    print tcol.HEADER, '\t(SH) Shanghai Stock Exchange, China', tcol.ENDC
+    __write( tcol.HEADER+ '\t(SH) Shanghai Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_sse( use_cached=True )#[0:n]
 if args.xszse:
-    print tcol.HEADER, '\t(SZ) Shenzen Stock Exchange, China', tcol.ENDC
+    __write( tcol.HEADER+ '\t(SZ) Shenzen Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_szse( use_cached=True )#[0:n]
 
 
@@ -486,7 +465,7 @@ proc_started = time.now()
 for i,l in enumerate(full_list):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
-    print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
+    __write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l)+ tcol.ENDC )
 
     s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity)
     json_wsj_profile = s_wsj.load_json_profile()
@@ -539,11 +518,11 @@ for i,l in enumerate(full_list):
     insert_all_financial_sheets( s_wsj, base_dict.copy() )
 
 
-    print 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime )
+    __write( 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime ) )
 
-print tcol.OKGREEN, 'PID: ', os.getpid(), tcol.ENDC
-print tcol.OKGREEN, 'Started  on ', str(proc_started), tcol.ENDC
-print tcol.OKGREEN, 'Finished on ', str(datetime.now()), tcol.ENDC
-print 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal)
+__write( tcol.OKGREEN, 'PID: '+ str(os.getpid())+ tcol.ENDC )
+__write( tcol.OKGREEN, 'Started  on '+ str(proc_started)+ tcol.ENDC )
+__write( tcol.OKGREEN, 'Finished on '+ str(datetime.now())+ tcol.ENDC )
+__write( 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal) )
 
 # solr_commit()
