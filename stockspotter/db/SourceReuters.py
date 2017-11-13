@@ -268,7 +268,6 @@ class SourceReuters:
 
         T = Tree()
         for i in range(len(sd)):
-            # print sd[i][0], '|', bd[i][0], '|', cbd[i][0], '|', cod[i][0]
 
             exec_name = str(i) #sd[i][0]
             T[exec_name]['order'] = str(i)
@@ -306,17 +305,14 @@ class SourceReuters:
         all_tr = table.find_all('tr')
 
         all_th = all_tr[0].find_all('th')
-        # print '# headers : ', len(all_th)
         headers = []
         for th in all_th:
-            # print th.text
             headers.append(th.text.strip())
 
 
         pt = []
         for tr in all_tr[1:]:
             all_td = tr.find_all('td')
-            # print all_td[0].text.strip()
             d = []
             for td in all_td:
                 txt = td.text.strip().replace( u'\xa0', ' ')
@@ -344,7 +340,6 @@ class SourceReuters:
             return None
 
         json_data = json.loads( open( json_file ).read() )
-        # pprint ( json_data )
         return json_data
 
     def load_executives( self ):

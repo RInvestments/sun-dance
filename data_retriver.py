@@ -136,7 +136,7 @@ n=3
 log_write( tcol.HEADER+ ' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
     log_write( tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
+    full_list += lister.list_full_hkex( use_cached=True)[0:n]
 if args.xbse:
     log_write( tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]
@@ -148,7 +148,7 @@ if args.xnyse:
     full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
     log_write( tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
-    full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
+    full_list += lister.list_full_nasdaq( use_cached=True )[0:n]
 if args.xamex:
     log_write( tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_amex( use_cached=True )#[0:n]

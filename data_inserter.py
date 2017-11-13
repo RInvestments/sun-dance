@@ -413,7 +413,7 @@ if args.data_dir:
     __write( tcol.HEADER+ 'data_dir : '+ args.data_dir+ tcol.ENDC )
 
 # if args.verbosity:
-__write( tcol.HEADER+ 'verbosity : '+ args.verbosity+ tcol.ENDC )
+__write( tcol.HEADER+ 'verbosity : '+ str(args.verbosity)+ tcol.ENDC )
 
 
 
@@ -470,8 +470,8 @@ db_prefix = args.data_dir
 cur_dict = {}
 
 # l = full_list[9]
-startTimeTotal = datetime.time()
-proc_started = time.now()
+startTimeTotal = time.time()
+proc_started = datetime.now()
 for i,l in enumerate(full_list):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
@@ -530,9 +530,9 @@ for i,l in enumerate(full_list):
 
     __write( 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime ) )
 
-__write( tcol.OKGREEN, 'PID: '+ str(os.getpid())+ tcol.ENDC )
-__write( tcol.OKGREEN, 'Started  on '+ str(proc_started)+ tcol.ENDC )
-__write( tcol.OKGREEN, 'Finished on '+ str(datetime.now())+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'Started  on '+ str(proc_started)+ tcol.ENDC )
+__write( tcol.OKGREEN+ 'Finished on '+ str(datetime.now())+ tcol.ENDC )
 __write( 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal) )
 
 # solr_commit()
