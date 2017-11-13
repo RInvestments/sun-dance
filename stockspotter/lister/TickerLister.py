@@ -32,7 +32,12 @@ import json
 
 
 class TickerLister:
-    def __init__(self, lists_db, verbosity=0):
+    def __init__(self, lists_db, verbosity=0, logfile=None):
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
+
         self.verbosity = verbosity
         self._debug( 'Setting Verbosity : %d' %(verbosity) )
 
@@ -41,23 +46,28 @@ class TickerLister:
         self._debug( "Set priv_dir : %s" %(self.priv_dir))
         self._make_folder_if_not_exist( self.priv_dir )
 
+    def __write( self, msg ):
+        # print msg
+        self.logfile.write( txt +'\n' )
+
+
 
     def _printer( self, txt ):
-        print tcol.OKBLUE, 'TickerLister :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'TickerLister :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         # to_print = [0,1,2,3,4,5]
         to_print = range(self.verbosity)
         if lvl in to_print:
-            print tcol.OKBLUE, 'TickerLister(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'TickerLister(Debug=%2d) :' %(lvl)+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'TickerLister(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'TickerLister(Error) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
-        print tcol.OKBLUE, 'TickerLister(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'TickerLister(time) :'+ tcol.ENDC+ txt )
 
 
     ############# Helpers ##############
