@@ -35,23 +35,30 @@ def Tree():
     return collections.defaultdict(Tree)
 
 class SourceReuters:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceReuters :', tcol.ENDC, txt
+        #print tcol.OKBLUE, 'SourceReuters :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceReuters :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+            #print tcol.OKBLUE, 'SourceReuters(Debug) :', tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'SourceReuters(Debug) :'+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceReuters(Error) :', tcol.ENDC, txt
+        #print tcol.FAIL, 'SourceReuters(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'SourceReuters(Error) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceReuters(time) :', tcol.ENDC, txt
+        #print tcol.OKBLUE, 'SourceReuters(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceReuters(time) :'+ tcol.ENDC+ txt )
 
     def _download_and_save( self, url, fname ):
         if url is None:
@@ -90,11 +97,16 @@ class SourceReuters:
 
 
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None ):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
         self.verbosity = range(verbosity)
+
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
         # print 'constructor'
         self.ticker = ticker
@@ -256,7 +268,6 @@ class SourceReuters:
 
         T = Tree()
         for i in range(len(sd)):
-            # print sd[i][0], '|', bd[i][0], '|', cbd[i][0], '|', cod[i][0]
 
             exec_name = str(i) #sd[i][0]
             T[exec_name]['order'] = str(i)
@@ -294,17 +305,14 @@ class SourceReuters:
         all_tr = table.find_all('tr')
 
         all_th = all_tr[0].find_all('th')
-        # print '# headers : ', len(all_th)
         headers = []
         for th in all_th:
-            # print th.text
             headers.append(th.text.strip())
 
 
         pt = []
         for tr in all_tr[1:]:
             all_td = tr.find_all('td')
-            # print all_td[0].text.strip()
             d = []
             for td in all_td:
                 txt = td.text.strip().replace( u'\xa0', ' ')
@@ -332,7 +340,6 @@ class SourceReuters:
             return None
 
         json_data = json.loads( open( json_file ).read() )
-        # pprint ( json_data )
         return json_data
 
     def load_executives( self ):

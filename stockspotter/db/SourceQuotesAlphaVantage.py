@@ -19,36 +19,43 @@ from collections import OrderedDict
 
 
 class SourceQuotesAlphaVantage:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceQuotesAlphaVantage :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceQuotesAlphaVantage :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         if lvl in self.verbosity:
-            print tcol.OKBLUE, 'SourceQuotesAlphaVantage(Debug) :', tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'SourceQuotesAlphaVantage(Debug) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceQuotesAlphaVantage(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceQuotesAlphaVantage(time) :'+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceQuotesAlphaVantage(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'SourceQuotesAlphaVantage(Error) :'+ tcol.ENDC+ txt )
 
 
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
         self.verbosity = range(verbosity)
 
 
-        # print 'constructor'
         self.ticker = ticker
         self.stock_prefix = stock_prefix
         self.priv_dir = stock_prefix + '/quotes_data/'
+
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
         self._debug( 'setting ticker : '+ ticker )
         self._debug( 'setting stock_prefix : '+ stock_prefix )
@@ -178,7 +185,6 @@ class SourceQuotesAlphaVantage:
 
     	try:
             json_data = json.loads( open( json_file ).read(), object_pairs_hook=OrderedDict )
-            # pprint ( json_data )
             return json_data
     	except:
     	    self._error( "no json" )

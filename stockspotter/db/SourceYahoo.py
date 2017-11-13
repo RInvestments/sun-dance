@@ -27,22 +27,25 @@ def Tree():
     return collections.defaultdict(Tree)
 
 class SourceYahoo:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceYahoo :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceYahoo :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         if lvl in self.verbosity:
-            print tcol.OKBLUE, 'SourceYahoo(Debug) :', tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'SourceYahoo(Debug) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceYahoo(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceYahoo(time) :'+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceYahoo(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL + 'SourceYahoo(Error) :'+ tcol.ENDC+ txt )
 
 
     # # Mark for removal
@@ -91,12 +94,16 @@ class SourceYahoo:
     #     return True
 
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
         """
         self.verbosity = range(verbosity)
 
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
         # print 'constructor'
         self.ticker = ticker
@@ -112,12 +119,12 @@ class SourceYahoo:
 
         if self.xchange in ['HK', 'NSE', 'NYSE', 'NASDAQ', 'AMEX']:
             self._debug( 'Init AlphaVantage')
-            self.obb = SourceQuotesAlphaVantage( ticker, stock_prefix, verbosity )
+            self.obb = SourceQuotesAlphaVantage( ticker, stock_prefix, verbosity, logfile )
             return
 
         if self.xchange in ['TYO', 'BSE']:
             self._debug( 'Init Quandl')
-            self.obb = SourceQuotesQuandl( ticker, stock_prefix, verbosity )
+            self.obb = SourceQuotesQuandl( ticker, stock_prefix, verbosity, logfile )
             return
 
         self._debug( 'Invalid xchange name')

@@ -17,7 +17,7 @@ import pickle
 
 import collections
 import json
-from pprint import pprint
+#from pprint import pprint
 def Tree():
     return collections.defaultdict(Tree)
 
@@ -265,23 +265,31 @@ class URLFactoryWSJ:
 
 
 class SourceWSJ:
+    def __write( self, txt ):
+        self.logfile.write( txt +'\n' )
+
     def _printer( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceWSJ :', tcol.ENDC, txt
+        # print tcol.OKBLUE, 'SourceWSJ :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceWSJ :'+ tcol.ENDC+ txt )
+
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'SourceWSJ(Error) :', tcol.ENDC, txt
+        # print tcol.FAIL, 'SourceWSJ(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'SourceWSJ(Error) :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         to_print = self.verbosity
         if lvl in to_print:
-            print tcol.OKBLUE, 'SourceWSJ(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            # print tcol.OKBLUE, 'SourceWSJ(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            self.__write(tcol.OKBLUE+ 'SourceWSJ(Debug=%2d) :' %(lvl)+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
         """ """
-        print tcol.OKBLUE, 'SourceWSJ(time) :', tcol.ENDC, txt
+        # print tcol.OKBLUE, 'SourceWSJ(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'SourceWSJ(time) :'+ tcol.ENDC+ txt )
 
     def _download_and_save( self, url, fname ):
         if url is None:
@@ -330,18 +338,22 @@ class SourceWSJ:
             self._debug( 'Attempted to remove non-existant raw file : ', file_path)
             return False
 
-    def __init__(self, ticker, stock_prefix, verbosity=0):
+    def __init__(self, ticker, stock_prefix, verbosity=0, logfile=None):
         """ ticker : Stock ticker eg. 2333.HK
         stock_prefix : Storage directory eg. eq_db/data_2016_Dec_09/0175.HK/
+        logfile : Give a file descriptor. If none will display to stdout
         """
         self.verbosity = range(verbosity)
 
-        # print 'constructor'
         self.ticker = ticker
         self.stock_prefix = stock_prefix
         self.priv_dir = stock_prefix + '/wsj/'
         self.raw_html_str = None
 
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
 
 
         self._debug( 'setting ticker : '+ ticker )
@@ -492,7 +504,6 @@ class SourceWSJ:
             self._error( 'No address ')
             return False
         for ln in contact_addr[0].find_all('span'):
-            # print ln.string
             if ln.string is not None:
                 out_address.append( ln.string.strip() )
         out_address = ','.join(out_address)
@@ -503,7 +514,6 @@ class SourceWSJ:
         all_data_lbl = dat_overview[0].find_all( 'span', class_='data_lbl' )
         all_data_data = dat_overview[0].find_all( 'span', class_='data_data' )
         for i in range( len(all_data_lbl) ):
-            # print all_data_lbl[i].text, ':', all_data_data[i].text
             wsj_profile_tree['Company Info'][all_data_lbl[i].text.strip()] = all_data_data[i].text.strip()
 
 
@@ -518,7 +528,6 @@ class SourceWSJ:
         else:
             out_description = 'N/A'
         wsj_profile_tree['Description'] = out_description.strip()
-        # print out_description
 
 
         # Company Full Legal Name
@@ -540,7 +549,6 @@ class SourceWSJ:
 
 
         # Ownership
-        # print '---'
         dat_ownership = soup.find(  'div', attrs={'data-module-id': 9 } )
         tables = dat_ownership.find_all( 'div', class_='scrollBox' )
         if len(tables) != 2:
@@ -585,9 +593,7 @@ class SourceWSJ:
         else:
             lbl = earnings_estimates[0].find_all( 'span', class_='data_lbl' )
             dat = earnings_estimates[0].find_all( 'span', class_='data_data' )
-            # print tcolor.HEADER, 'Earning and Estimates', tcolor.ENDC
             for i in range(len(lbl)):
-                # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
                 tree['Earning and Estimates'][lbl[i].get_text().strip()] = dat[i].get_text().strip()
 
 
@@ -597,9 +603,7 @@ class SourceWSJ:
         else:
             lbl = per_share_data[0].find_all( 'span', class_='data_lbl' )
             dat = per_share_data[0].find_all( 'span', class_='data_data' )
-            # print tcolor.HEADER, 'Per Share Data', tcolor.ENDC
             for i in range(len(lbl)):
-                # print tcolor.BOLD, lbl[i].get_text(), tcolor.ENDC, dat[i].get_text()
                 tree['Per Share Data'][lbl[i].get_text()] = dat[i].get_text()
 
 
@@ -609,16 +613,13 @@ class SourceWSJ:
             self._error( 'data module 7 not found in parse_financials')
         else:
             all_tr = ratios_n_margin[0].find_all( 'tr' )
-            # print tcolor.HEADER, 'Ratios and Margins', tcolor.ENDC
             for tr in all_tr:
                 lbl = tr.find( 'span', class_='data_lbl' ).text.strip()
                 data = tr.find( 'span', class_='data_data' ).text.strip()
-                # print tcolor.BOLD, lbl, tcolor.ENDC, data
                 tree[ 'Ratios and Margins'][lbl] = data
 
 
         json_string = json.dumps(tree, indent=4)
-        # print json_string
         json_fname = self.priv_dir+'/financials.json'
         json.dump( tree, open(json_fname, 'w') )
         self._debug( "File Written : "+json_fname)
@@ -643,9 +644,7 @@ class SourceWSJ:
             tree[all_td[0].text]['Change In Shares'] = all_td[3].text
             tree[all_td[0].text]['Percent of Assets'] = all_td[4].text
             tree[all_td[0].text]['As of Date'] = all_td[5].text
-            # for td in all_td:
-            #     print td.text,
-            # print ''
+
         return tree
 
 
@@ -835,35 +834,35 @@ class SourceWSJ:
         return forest
 
 
-    ##TODO: This is a deprecated function. Remove this.
-    def __parse_crTable_bak( self, data_table ):
-        #HEADER
-        header = data_table.find_all( 'thead' )[0].find_all('th')
-        for u in range(1,len(header)-1):
-            print u, header[u].string #1,2,3,4,5 are valid value
-
-        #Other data
-        all_tr = BeautifulSoup(str(data_table), 'lxml').find_all( 'tbody' )[0].find_all('tr', recursive=False )
-        for u in range(0,len(all_tr)):
-            all_td = all_tr[u].find_all( 'td' )
-            tag = all_td[0].string.strip()
-            tag_class = all_td[0].get('class')[0]
-            #TODO: number of data cols can be determinted based pm number of headers
-            data_1 = all_td[1].string
-            data_2 = all_td[2].string
-            data_3 = all_td[3].string
-            data_4 = all_td[4].string
-            if 'indent2' in tag_class:
-                tab = '<  >'+'<  >'
-            elif 'indent' in tag_class:
-                tab = '<  >'
-            else:
-                tab = ''
-
-            if tab is not '':
-                print '%02d |%s| |%s|' %(u, tab, tag), data_1#,data_2,data_3,data_4
-            else:
-                print '%02d |%s|' %(u, tag), data_1#,data_2,data_3,data_4
+    # ##TODO: This is a deprecated function. Remove this.
+    # def __parse_crTable_bak( self, data_table ):
+    #     #HEADER
+    #     header = data_table.find_all( 'thead' )[0].find_all('th')
+    #     for u in range(1,len(header)-1):
+    #         print u, header[u].string #1,2,3,4,5 are valid value
+    #
+    #     #Other data
+    #     all_tr = BeautifulSoup(str(data_table), 'lxml').find_all( 'tbody' )[0].find_all('tr', recursive=False )
+    #     for u in range(0,len(all_tr)):
+    #         all_td = all_tr[u].find_all( 'td' )
+    #         tag = all_td[0].string.strip()
+    #         tag_class = all_td[0].get('class')[0]
+    #         #TODO: number of data cols can be determinted based pm number of headers
+    #         data_1 = all_td[1].string
+    #         data_2 = all_td[2].string
+    #         data_3 = all_td[3].string
+    #         data_4 = all_td[4].string
+    #         if 'indent2' in tag_class:
+    #             tab = '<  >'+'<  >'
+    #         elif 'indent' in tag_class:
+    #             tab = '<  >'
+    #         else:
+    #             tab = ''
+    #
+    #         if tab is not '':
+    #             print '%02d |%s| |%s|' %(u, tab, tag), data_1#,data_2,data_3,data_4
+    #         else:
+    #             print '%02d |%s|' %(u, tag), data_1#,data_2,data_3,data_4
 
 
     ## Delete raw html files
@@ -929,7 +928,6 @@ class SourceWSJ:
             return None
 
         json_data = json.loads( open( json_file ).read() )
-        # pprint ( json_data )
         return json_data
 
     ##eg-tag : a.2015

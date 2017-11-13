@@ -38,13 +38,15 @@ from stockspotter.db.SourceWSJ import SourceWSJ
 
 # Lister class
 from stockspotter.lister.TickerLister import TickerLister
+def log_write( msg ):
+    fp_logfile.write( msg+'\n' )
 
 def make_folder_if_not_exist(folder):
     if not os.path.exists(folder):
-        print tcol.OKGREEN, 'Make Directory : ', folder, tcol.ENDC
+        log_write( tcol.OKGREEN+ 'Make Directory : '+ folder+ tcol.ENDC )
         os.makedirs(folder)
     else:
-        print tcol.WARNING, 'Directory already exists : Not creating :', folder, tcol.ENDC
+        log_write( tcol.WARNING+ 'Directory already exists : Not creating :'+ folder+ tcol.ENDC )
 
 
 parser = argparse.ArgumentParser()
@@ -73,46 +75,51 @@ parser.add_argument( '--xszse', default=False, action='store_true', help='List a
 parser.add_argument( '-f', '--force_download', default=False, action='store_true', help='Force download. Default : False' )
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
+parser.add_argument(  '--logfile', default=None, help='Logging file name' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
 args = parser.parse_args()
 
-if args.hkex:
-    print tcol.HEADER, 'Enable  : HKEx', tcol.ENDC
+if args.logfile is None:
+    fp_logfile = sys.stdout
 else:
-    print tcol.HEADER, 'Disable : HKEx', tcol.ENDC
+    fp_logfile = open( args.logfile, 'w' )
+    print 'LOGFILE NAME : ', args.logfile
+    log_write( '```\n' + ' '.join( sys.argv ) + '\n```' )
+
+
+if args.hkex:
+    log_write( tcol.HEADER+ 'Enable  : HKEx'+ tcol.ENDC )
+else:
+    log_write( tcol.HEADER+ 'Disable : HKEx'+ tcol.ENDC )
 
 if args.wsj:
-    print tcol.HEADER, 'Enable  : WSJ', tcol.ENDC
+    log_write( tcol.HEADER+ 'Enable  : WSJ'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : WSJ', tcol.ENDC
+    log_write( tcol.HEADER+ 'Disable : WSJ'+ tcol.ENDC )
 
-# if args.yahoo:
-#     print tcol.HEADER, 'Enable  : Yahoo', tcol.ENDC
-# else:
-#     print tcol.HEADER, 'Disable : Yahoo', tcol.ENDC
+
 
 if args.quotes_full:
-    print tcol.HEADER, 'Enable  : Historical Daily Quotes', tcol.ENDC
+    log_write( tcol.HEADER+ 'Enable  : Historical Daily Quotes'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : Historical Daily Quotes', tcol.ENDC
+    log_write( tcol.HEADER+ 'Disable : Historical Daily Quotes'+ tcol.ENDC )
 
 if args.quotes_recent:
-    print tcol.HEADER, 'Enable  : Recent 100d Daily Quotes', tcol.ENDC
+    log_write( tcol.HEADER+ 'Enable  : Recent 100d Daily Quotes'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : Recent 100d Daily Quotes', tcol.ENDC
+    log_write( tcol.HEADER+ 'Disable : Recent 100d Daily Quotes'+ tcol.ENDC )
 
 if args.reuters:
-    print tcol.HEADER, 'Enable  : Reuters', tcol.ENDC
+    log_write( tcol.HEADER+ 'Enable  : Reuters'+ tcol.ENDC )
 else:
-    print tcol.HEADER, 'Disable : Reuters', tcol.ENDC
+    log_write( tcol.HEADER+ 'Disable : Reuters'+ tcol.ENDC )
 
 if args.store_dir:
-    print tcol.HEADER, 'store_dir : ', args.store_dir, tcol.ENDC
+    log_write( tcol.HEADER+ 'store_dir : '+ args.store_dir+ tcol.ENDC )
 
 
 if args.lists_db_dir:
-    print tcol.HEADER, 'lists_db_dir : ', args.lists_db_dir, tcol.ENDC
-
+    log_write( tcol.HEADER+ 'lists_db_dir : '+ args.lists_db_dir+ tcol.ENDC )
 
 startTime = time.time()
 
@@ -126,33 +133,33 @@ make_folder_if_not_exist( db_prefix )
 lister = TickerLister( args.lists_db_dir )
 full_list = []
 n=3
-print tcol.HEADER, ' : Exchanges :', tcol.ENDC
+log_write( tcol.HEADER+ ' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
-    print tcol.HEADER, '\t(HKEX) Hong Kong Stock Exchange', tcol.ENDC
-    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
+    log_write( tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
+    full_list += lister.list_full_hkex( use_cached=True)[0:n]
 if args.xbse:
-    print tcol.HEADER, '\t(BSE) Bombay Stock Exchange', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]
 if args.xnse:
-    print tcol.HEADER, '\t(NSE) National Stock Exchange of India', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(NSE) National Stock Exchange of India'+ tcol.ENDC )
     full_list += lister.list_full_nse( use_cached=True )#[0:n]
 if args.xnyse:
-    print tcol.HEADER, '\t(NYSE) New York Stock Exchange', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(NYSE) New York Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
-    print tcol.HEADER, '\t(NASDAQ) NASDAQ, USA', tcol.ENDC
-    full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
+    log_write( tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
+    full_list += lister.list_full_nasdaq( use_cached=True )[0:n]
 if args.xamex:
-    print tcol.HEADER, '\t(AMEX) American Stock Exchange', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_amex( use_cached=True )#[0:n]
 if args.xtyo:
-    print tcol.HEADER, '\t(TYO) Japan Exchange Group, Tokyo', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(TYO) Japan Exchange Group, Tokyo'+ tcol.ENDC )
     full_list += lister.list_full_tyo( use_cached=True )#[0:n]
 if args.xsse:
-    print tcol.HEADER, '\t(SH) Shanghai Stock Exchange, China', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(SH) Shanghai Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_sse( use_cached=True )#[0:n]
 if args.xszse:
-    print tcol.HEADER, '\t(SZ) Shenzen Stock Exchange, China', tcol.ENDC
+    log_write( tcol.HEADER+ '\t(SZ) Shenzen Stock Exchange, China'+ tcol.ENDC )
     full_list += lister.list_full_szse( use_cached=True )#[0:n]
 
 
@@ -161,7 +168,7 @@ if args.xszse:
 # Main Loop
 proc_started = datetime.now()
 for i,l in enumerate(full_list):
-    print tcol.OKGREEN, i,'of %d' %(len(full_list)), l, tcol.ENDC
+    log_write( tcol.OKGREEN+ str(i)+' of %d' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'
@@ -170,7 +177,7 @@ for i,l in enumerate(full_list):
 
     # Download HKEX
     if args.hkex:
-        s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_hkex.download_url(skip_if_exist=not args.force_download)
         # s_hkex.parse()
         # A = s_hkex.load_hkex_profile()
@@ -180,7 +187,7 @@ for i,l in enumerate(full_list):
 
     # Download WSJ
     if args.wsj:
-        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_wsj.download_url(skip_if_exist=not args.force_download)
         # # s_wsj.parse()
         # # s_wsj.parse_profile()
@@ -195,23 +202,23 @@ for i,l in enumerate(full_list):
     #     s_yahoo.download_quick_quote()
 
     if args.quotes_full:
-        s_quotes_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_quotes_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_quotes_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
         #TODO : Add a commandline option for remove raw
 
     if args.quotes_recent:
-        s_quotes_recent100 = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_quotes_recent100 = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_quotes_recent100.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
         #TODO : Add a commandline option for remove raw
 
 
     # Download Reuters
     if args.reuters:
-        s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_reuters.download_url()
 
 
-print tcol.OKGREEN, 'PID: ', os.getpid(), tcol.ENDC
-print tcol.OKGREEN, 'Started: ', str(proc_started), tcol.ENDC
-print tcol.OKGREEN, 'Finished: ', str(datetime.now()), tcol.ENDC
-print tcol.OKGREEN, 'Total time: %5.2f sec' %( time.time() - startTime ), tcol.ENDC
+log_write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
+log_write( tcol.OKGREEN+ 'Started: '+ str(proc_started)+ tcol.ENDC )
+log_write( tcol.OKGREEN+ 'Finished: '+ str(datetime.now())+ tcol.ENDC )
+log_write( tcol.OKGREEN+ 'Total time: %5.2f sec' %( time.time() - startTime )+ tcol.ENDC )

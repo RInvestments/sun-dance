@@ -32,7 +32,12 @@ import json
 
 
 class TickerLister:
-    def __init__(self, lists_db, verbosity=0):
+    def __init__(self, lists_db, verbosity=0, logfile=None):
+        if logfile is None:
+            self.logfile = sys.stdout
+        else:
+            self.logfile = logfile
+
         self.verbosity = verbosity
         self._debug( 'Setting Verbosity : %d' %(verbosity) )
 
@@ -41,23 +46,28 @@ class TickerLister:
         self._debug( "Set priv_dir : %s" %(self.priv_dir))
         self._make_folder_if_not_exist( self.priv_dir )
 
+    def __write( self, msg ):
+        # print msg
+        self.logfile.write( txt +'\n' )
+
+
 
     def _printer( self, txt ):
-        print tcol.OKBLUE, 'TickerLister :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'TickerLister :'+ tcol.ENDC+ txt )
 
     def _debug( self, txt, lvl=0 ):
         """ """
         # to_print = [0,1,2,3,4,5]
         to_print = range(self.verbosity)
         if lvl in to_print:
-            print tcol.OKBLUE, 'TickerLister(Debug=%2d) :' %(lvl), tcol.ENDC, txt
+            self.__write( tcol.OKBLUE+ 'TickerLister(Debug=%2d) :' %(lvl)+ tcol.ENDC+ txt )
 
     def _error( self, txt ):
         """ """
-        print tcol.FAIL, 'TickerLister(Error) :', tcol.ENDC, txt
+        self.__write( tcol.FAIL+ 'TickerLister(Error) :'+ tcol.ENDC+ txt )
 
     def _report_time( self, txt ):
-        print tcol.OKBLUE, 'TickerLister(time) :', tcol.ENDC, txt
+        self.__write( tcol.OKBLUE+ 'TickerLister(time) :'+ tcol.ENDC+ txt )
 
 
     ############# Helpers ##############
@@ -88,7 +98,7 @@ class TickerLister:
         soup = BeautifulSoup(html, 'lxml')
         table = soup.find('table', {"class" : 'table_grey_border'} )
 
-        #print out.prettify()
+
         all_tr = table.find_all( 'tr' )
 
         # there are 7 td in each tr. 1st row, ie. header row contains 4
@@ -99,20 +109,14 @@ class TickerLister:
         ticker_list = []
         for i in range(1,si):
             all_td = all_tr[i].find_all( 'td' )
-            # print '----'
             ticker = all_td[0].string[1:]+'.HK'
             name = all_td[1].string
 
 
             # lot_size = int(all_td[2].string.replace(',',''))
 
-            # print 'Stock Ticker:', ticker
-            # print ticker, name
             tmp = TickerPoint( name=name, ticker=ticker)
             ticker_list.append( tmp )
-            # print 'Lot size :', lot_size
-            # print 'URL : ', hkex_profile_url
-            # print 'flags : ', all_td[3].string, all_td[4].string, all_td[5].string, all_td[6].string
 
         return ticker_list
 
@@ -193,7 +197,6 @@ class TickerLister:
         ticker_list = []
         for r in recs:
             if r[1] == 'EQ':
-                # print r[0]
                 tmp = TickerPoint( ticker='%s.NSE' %(r[0].strip()), name=r[0].strip() )
                 ticker_list.append( tmp )
 
@@ -300,7 +303,6 @@ class TickerLister:
         # [text:u'Effective Date', text:u'Local Code', text:u'Name (English)', text:u'Section/Products', text:u'33 Sector(Code)', text:u'33 Sector(name)', text:u'17 Sector(Code)', text:u'17 Sector(name)', text:u'Size Code (New Index Series)', text:u'Size (New Index Series)']
         for i in range(1,xl_sheet.nrows):
             row = xl_sheet.row(i)
-            # print i, row
             stock_id = int(row[1].value)
             stock_name = row[2].value
             section = row[3].value
@@ -483,7 +485,6 @@ class TickerLister:
         # [text:u'Effective Date', text:u'Local Code', text:u'Name (English)', text:u'Section/Products', text:u'33 Sector(Code)', text:u'33 Sector(name)', text:u'17 Sector(Code)', text:u'17 Sector(name)', text:u'Size Code (New Index Series)', text:u'Size (New Index Series)']
         for i in range(1,xl_sheet.nrows):
             row = xl_sheet.row(i)
-            # print i, row
             stock_id = str(row[0].value)
             stock_name = row[1].value
 
