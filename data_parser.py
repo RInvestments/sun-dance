@@ -39,7 +39,8 @@ from stockspotter.db.SourceWSJ import SourceWSJ
 from stockspotter.lister.TickerLister import TickerLister
 
 def __write( msg ):
-    print msg
+    # print msg
+    fp_logfile.write( msg +'\n')
 
 def make_folder_if_not_exist(folder):
     if not os.path.exists(folder):
@@ -75,7 +76,18 @@ parser.add_argument( '--delete_raw_wsj', default=False, action='store_true', hel
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
+parser.add_argument(  '--logfile', default=None, help='Logging file name' )
+
 args = parser.parse_args()
+
+if args.logfile is None:
+    fp_logfile = sys.stdout
+else:
+    fp_logfile = open( args.logfile, 'w' )
+    print 'LOGFILE NAME : ', args.logfile
+    __write( '```\n' + ' '.join( sys.argv ) + '\n```' )
+
+
 
 if args.hkex:
     __write( tcol.HEADER+ 'Enable  : HKEx'+ tcol.ENDC )
@@ -155,25 +167,25 @@ for i,l in enumerate(full_list):
 
     # Parse HKEX
     if args.hkex:
-        s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_hkex = SourceHKEXProfile(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_hkex.parse(delete_raw=args.delete_raw)
 
 
     # Parse WSJ
     if args.wsj:
-        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_wsj.parse(delete_raw=args.delete_raw)
 
 
     # Delete WSJ Raw files
     if args.delete_raw_wsj:
-        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_wsj.rm_raw()
 
 
     # Parse Reuters
     if args.reuters:
-        s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
+        s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_reuters.parse(delete_raw=args.delete_raw)
 
 

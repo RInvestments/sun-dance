@@ -41,7 +41,8 @@ import code
 
 
 def __write( msg ):
-    print msg
+    # print msg
+    fp_logfile.write( msg +'\n')
 
 def get_uuid( cur_dict ):
     od = collections.OrderedDict(sorted(cur_dict.items()))
@@ -381,6 +382,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory (eg. equities_db/lists/)' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
 parser.add_argument( '-db', '--data_dir', required=True, help='Specify database directory (eg. equities_db/data__N/)' )
+parser.add_argument(  '--logfile', default=None, help='Logging file name' )
 
 # Bourse
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
@@ -395,6 +397,14 @@ parser.add_argument( '--xszse', default=False, action='store_true', help='List a
 
 
 args = parser.parse_args()
+
+if args.logfile is None:
+    fp_logfile = sys.stdout
+else:
+    fp_logfile = open( args.logfile, 'w' )
+    print 'LOGFILE NAME : ', args.logfile
+    __write( '```\n' + ' '.join( sys.argv ) + '\n```' )
+
 
 if args.lists_db_dir:
     __write( tcol.HEADER+ 'lists_db_dir : '+ args.lists_db_dir+ tcol.ENDC )
@@ -467,7 +477,7 @@ for i,l in enumerate(full_list):
     folder = db_prefix+'/'+l.ticker+'/'
     __write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l)+ tcol.ENDC )
 
-    s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity)
+    s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile)
     json_wsj_profile = s_wsj.load_json_profile()
     json_financials = s_wsj.load_financials()
 
