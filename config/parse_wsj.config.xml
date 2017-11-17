@@ -2,7 +2,7 @@
   <global>
     <store_dir>equities_db/data_20171113/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <log_dir>equities_db/data_20171113/parser_</log_dir>
+    <!-- <log_dir>equities_db/data_20171113/parser_</log_dir> -->
     <verbosity>0</verbosity>
   </global>
 

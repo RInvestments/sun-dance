@@ -2,47 +2,52 @@
   <global>
     <store_dir>equities_db/data_20171113/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <!-- <log_dir>equities_db/data_20171113/inserter_</log_dir> -->
+    <!--<log_dir>equities_db/data_20171113/quotes_insert</log_dir>-->
     <verbosity>0</verbosity>
   </global>
 
   <!-- Specify Independent Processes -->
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
     <exchange>xhkex</exchange>
   </process>
 
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
     <exchange>xnse</exchange>
   </process>
 
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
     <exchange>xbse</exchange>
   </process>
 
 
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
     <exchange>xnyse</exchange>
   </process>
 
 
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
     <exchange>xnasdaq</exchange>
   </process>
 
 
   <process>
-    <type>inserter</type>
-    <exchange>xamex,xtyo</exchange>
+    <type>quote_inserter</type>
+    <exchange>xamex</exchange>
   </process>
 
   <process>
-    <type>inserter</type>
+    <type>quote_inserter</type>
+    <exchange>xtyo</exchange>
+  </process>
+<!--
+  <process>
+    <type>quote_inserter</type>
     <exchange>xsse,xszse</exchange>
   </process>
-
+-->
 </xml>

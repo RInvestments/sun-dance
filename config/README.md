@@ -3,6 +3,15 @@ These are the process-config files. Intended to be used with sundance.py script.
 This script essentially is a wrapper for the underlying cli.
 Documentation for writing it is as follows.
 
+## Sequence in which, these configs are expected to be run
+- python sundance.py -f retrive_wsj.config.xml
+- python sundance.py -f parse_wsj.config.xml
+- python sundance.py -f delete_raw_wsj.config.xml
+- python sundance.py -f insert_wsj.config.xml
+- python sundance.py -f retrive_recent_quotes.config.xml
+- python sundance.py -f insert_quotes.config.xml
+
+
 ## Example / Documentation
 ```
 <xml>
@@ -20,7 +29,8 @@ Documentation for writing it is as follows.
     <verbosity>0</verbosity>
 
     <!-- Directory where the log files need to be put. (optional)
-        if this is unspecified than store_dir is used. This can only be set globally
+        if this is unspecified than store_dir is used, with file prefix as
+        process[-1].type . This can only be set globally
     -->
     <log_dir>equities_db/test_db/</log_dir>
   </global>

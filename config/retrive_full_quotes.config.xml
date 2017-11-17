@@ -1,29 +1,27 @@
+<!-- Dont use this too often. This should ideally be done only once to get all data
+    of 10+ years. Every now and then get recent 100 days data. 100 days
+    data can be got with config `recent_quotes.config.xml`
+  -->
 <xml>
   <global>
-    <store_dir>equities_db/data_20171113/</store_dir>
+    <store_dir>equities_db/data_full_quotes/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <!-- <log_dir>equities_db/data_20171113/retriver_</log_dir> -->
+    <!-- <log_dir>equities_db/data_full_quotes/quotes_retrive_</log_dir> -->
     <verbosity>0</verbosity>
   </global>
 
   <!-- Specify Independent Processes -->
   <process>
     <type>retriver</type>
-    <task>wsj</task>
-    <exchange>xhkex</exchange>
+    <task>quotes_full</task>
+    <exchange>xhkex,xnse</exchange>
     <proc_level>0</proc_level>
   </process>
 
-  <process>
-    <type>retriver</type>
-    <task>wsj</task>
-    <exchange>xnse</exchange>
-    <proc_level>0</proc_level>
-  </process>
 
   <process>
     <type>retriver</type>
-    <task>wsj</task>
+    <task>quotes_full</task>
     <exchange>xbse</exchange>
     <proc_level>0</proc_level>
   </process>
@@ -31,7 +29,7 @@
 
   <process>
     <type>retriver</type>
-    <task>wsj</task>
+    <task>quotes_full</task>
     <exchange>xnyse</exchange>
     <proc_level>0</proc_level>
   </process>
@@ -39,7 +37,7 @@
 
   <process>
     <type>retriver</type>
-    <task>wsj</task>
+    <task>quotes_full</task>
     <exchange>xnasdaq</exchange>
     <proc_level>0</proc_level>
   </process>
@@ -47,16 +45,17 @@
 
   <process>
     <type>retriver</type>
-    <task>wsj</task>
+    <task>quotes_full</task>
     <exchange>xamex,xtyo</exchange>
     <proc_level>0</proc_level>
   </process>
 
+  <!-- NOT AVAILABLE YET FOR China's exchanges
   <process>
     <type>retriver</type>
-    <task>wsj</task>
+    <task>quotes_recent</task>
     <exchange>xsse,xszse</exchange>
     <proc_level>0</proc_level>
-  </process>
+  </process>-->
 
 </xml>

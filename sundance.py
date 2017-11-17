@@ -234,7 +234,9 @@ def config_to_cmd( fname ):
             log_dir = global_ele.find( 'store_dir' ).text.strip()
         except:
             log_dir = '/tmp/'
-    return cmd_list, log_dir
+
+    return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
+    # return cmd_list, log_dir
 
 
 def _proc_print( pid, msg ):
