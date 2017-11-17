@@ -2,7 +2,7 @@
   <global>
     <store_dir>equities_db/test_db/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <log_dir>equities_db/test_db/</log_dir>
+    <log_dir>equities_db/test_db/quotes_retrive_</log_dir>
     <verbosity>1</verbosity>
   </global>
 
@@ -52,11 +52,11 @@
     <proc_level>0</proc_level>
   </process>
 
-  <process>
+  <!--<process>
     <type>retriver</type>
     <task>quotes_recent</task>
     <exchange>xsse,xszse</exchange>
     <proc_level>0</proc_level>
-  </process>
+  </process>-->
 
 </xml>

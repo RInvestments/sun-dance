@@ -2,61 +2,47 @@
   <global>
     <store_dir>equities_db/data_20171113/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <log_dir>equities_db/data_20171113/retriver_</log_dir>
+    <log_dir>equities_db/data_20171113/inserter_</log_dir>
     <verbosity>0</verbosity>
   </global>
 
   <!-- Specify Independent Processes -->
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xhkex</exchange>
-    <proc_level>0</proc_level>
   </process>
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xnse</exchange>
-    <proc_level>0</proc_level>
   </process>
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xbse</exchange>
-    <proc_level>0</proc_level>
   </process>
 
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xnyse</exchange>
-    <proc_level>0</proc_level>
   </process>
 
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xnasdaq</exchange>
-    <proc_level>0</proc_level>
   </process>
 
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xamex,xtyo</exchange>
-    <proc_level>0</proc_level>
   </process>
 
   <process>
-    <type>retriver</type>
-    <task>wsj</task>
+    <type>inserter</type>
     <exchange>xsse,xszse</exchange>
-    <proc_level>0</proc_level>
   </process>
 
 </xml>

@@ -55,6 +55,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument( '--hkex', default=False, action='store_true', help='Enable parsing of HKEX data' )
 parser.add_argument( '--wsj', default=False, action='store_true', help='Enable parsing of WSJ data' )
 parser.add_argument( '--reuters', default=False, action='store_true', help='Enable parsing of Reuters data (people data)' )
+parser.add_argument( '--delete_raw_wsj', default=False, action='store_true', help='Delete the raw .html after parsing' )
 
 
 # Bourse
@@ -70,7 +71,6 @@ parser.add_argument( '--xszse', default=False, action='store_true', help='List a
 
 
 parser.add_argument( '--delete_raw', default=False, action='store_true', help='Delete the raw .html after parsing' )
-parser.add_argument( '--delete_raw_wsj', default=False, action='store_true', help='Delete the raw .html after parsing' )
 
 
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
@@ -130,7 +130,7 @@ n=3
 __write(  tcol.HEADER +' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
     __write(  tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_hkex( use_cached=True)[0:n]
+    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
 if args.xbse:
     __write(  tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]

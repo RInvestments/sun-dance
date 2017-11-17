@@ -41,12 +41,18 @@ from stockspotter.lister.TickerLister import TickerLister
 def log_write( msg ):
     fp_logfile.write( msg+'\n' )
 
+def log_debug( msg, lvl=1 ):
+    if lvl in range( args.verbosity ):
+        log_write( '[DEBUG=%d]' %(lvl)+msg )
+
 def make_folder_if_not_exist(folder):
     if not os.path.exists(folder):
-        log_write( tcol.OKGREEN+ 'Make Directory : '+ folder+ tcol.ENDC )
+        # log_write( tcol.OKGREEN+ 'Make Directory : '+ folder+ tcol.ENDC )
+        print( tcol.OKGREEN+ 'Make Directory : '+ folder+ tcol.ENDC )
         os.makedirs(folder)
     else:
-        log_write( tcol.WARNING+ 'Directory already exists : Not creating :'+ folder+ tcol.ENDC )
+        # log_write( tcol.WARNING+ 'Directory already exists : Not creating :'+ folder+ tcol.ENDC )
+        print( tcol.WARNING+ 'Directory already exists : Not creating :'+ folder+ tcol.ENDC )
 
 
 parser = argparse.ArgumentParser()
@@ -78,6 +84,9 @@ parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists
 parser.add_argument(  '--logfile', default=None, help='Logging file name' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
 args = parser.parse_args()
+
+db_prefix = args.store_dir #'equities_db/data__N'#2017_Feb_26'
+make_folder_if_not_exist( db_prefix )
 
 if args.logfile is None:
     fp_logfile = sys.stdout
@@ -125,9 +134,6 @@ startTime = time.time()
 
 
 
-db_prefix = args.store_dir #'equities_db/data__N'#2017_Feb_26'
-make_folder_if_not_exist( db_prefix )
-
 
 # Get List
 lister = TickerLister( args.lists_db_dir )
@@ -136,7 +142,7 @@ n=3
 log_write( tcol.HEADER+ ' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
     log_write( tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_hkex( use_cached=True)[0:n]
+    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
 if args.xbse:
     log_write( tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_bse( use_cached=True )#[0:n]
@@ -148,7 +154,7 @@ if args.xnyse:
     full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
     log_write( tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
-    full_list += lister.list_full_nasdaq( use_cached=True )[0:n]
+    full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
 if args.xamex:
     log_write( tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
     full_list += lister.list_full_amex( use_cached=True )#[0:n]
@@ -168,7 +174,7 @@ if args.xszse:
 # Main Loop
 proc_started = datetime.now()
 for i,l in enumerate(full_list):
-    log_write( tcol.OKGREEN+ str(i)+' of %d' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
+    log_write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'

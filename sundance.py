@@ -176,13 +176,6 @@ def config_to_cmd( fname ):
                 except:
                     verbosity = 0
 
-            # Data Source
-            task = p.find( 'task' ).text.strip()
-            task_arg = ''
-            for src in task.split( ',' ):
-                task_arg += ' --%s ' %(src.strip())
-
-
 
             # Exchange
             exchange = p.find( 'exchange' ).text.strip()
@@ -191,7 +184,7 @@ def config_to_cmd( fname ):
                 exchange_arg += ' --%s ' %(ex.strip())
 
 
-            cmd = 'python data_inserter.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
+            cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2)
             cmd_list.append( cmd )
 
@@ -227,7 +220,7 @@ def config_to_cmd( fname ):
                 exchange_arg += ' --%s ' %(ex.strip())
 
 
-            cmd = 'python daily_quote_inserter.py -sd %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
+            cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2 )
             cmd_list.append( cmd )
 
@@ -248,9 +241,10 @@ def _proc_print( pid, msg ):
     print '[PID=%5d] %s' %(pid, msg)
 
 def exec_task( cmd, log_dir ):
+
     p = multiprocessing.current_process()
     startT = datetime.now()
-    log_file = log_dir+'/%s.log' %(p.pid)
+    log_file = log_dir+'%s.log' %( str(p.pid) )
 
 
     _proc_print( p.pid, 'Start at %s' %(str(startT)) )
@@ -259,7 +253,7 @@ def exec_task( cmd, log_dir ):
 
 
 
-    process = subprocess.Popen( cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    process = subprocess.Popen( cmd+' --logfile=%s' %(log_file), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -275,7 +269,7 @@ def exec_task( cmd, log_dir ):
         # Show what we received from standard output.
         while not stdout_queue.empty():
             line = stdout_queue.get()
-            print line,
+            # print line,
 
         # Show what we received from standard error.
         while not stderr_queue.empty():
@@ -292,7 +286,7 @@ def exec_task( cmd, log_dir ):
     # Close subprocess' file descriptors.
     process.stdout.close()
     process.stderr.close()
-    _proc_print( p.pid, 'Complete!' )
+    _proc_print( p.pid, 'Complete on %s' %( str(datetime.now())   ) )
 
 
 
