@@ -316,7 +316,10 @@ fname = args.config_file
 
 _printer( 'Open Config : %s' %(fname) )
 cmd_list, log_dir = config_to_cmd( fname )
-
+#TODO : Also return proc_level list. This will let me put the entire config together.
+# Basically all the <process>...</process> with same proc_level can be executed together.
+# The process with proc_level as `i` can be excecuted only after all the proceses
+# with proc_level in {0,1,...,i-1} are complete
 jobs = []
 for cmd in cmd_list:
     _printer( cmd )
