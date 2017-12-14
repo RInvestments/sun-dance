@@ -1,0 +1,16 @@
+<xml>
+  <global>
+    <store_dir>equities_db/test_db/</store_dir>
+    <list_db>equities_db/lists/</list_db>
+    <!--<log_dir>equities_db/test_db/quotes_retrive_</log_dir>-->
+    <verbosity>0</verbosity>
+  </global>
+
+  <!-- aastocks data only for .HK stocks -->
+  <process>
+    <type>retriver</type>
+    <task>aastocks</task>
+    <exchange>xhkex</exchange>
+  </process>
+
+</xml>

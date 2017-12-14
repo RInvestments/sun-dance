@@ -18,22 +18,29 @@ tcol = TerminalColors.bcolors()
 from stockspotter.db.SourceHKEXProfile import SourceHKEXProfile
 from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceWSJ import SourceWSJ
+from stockspotter.db.SourceAAStocks import SourceAAStocks
+
 
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceQuotesAlphaVantage import SourceQuotesAlphaVantage
 from stockspotter.db.SourceQuotesQuandl import SourceQuotesQuandl
 
 # ticker = 'ELECTCAST.NSE'
-# ticker = '2333.HK'
+ticker = '1133.HK'
 # ticker = 'MMM.NYSE'
 # ticker = 'ZYNE.NASDAQ'
 # ticker = 'FAX.AMEX'
 # ticker = '4333.TYO'
-# ticker = '532540.BSE'
+ticker = '532540.BSE'
 
 # ticker = '600298.SH' #shanghai
-ticker = '000898.SZ' #shenzen
+# ticker = '000898.SZ' #shenzen
 stock_prefix = 'equities_db/test_db/'+ticker+'/'
+
+s_aastocks = SourceAAStocks( ticker, stock_prefix, 5 )
+s_aastocks.retrive_detailed_company_profile()
+
+
 # s_hkex = SourceHKEXProfile( ticker, stock_prefix )
 # s_hkex.download_url()
 # s_hkex.parse()
@@ -61,11 +68,11 @@ stock_prefix = 'equities_db/test_db/'+ticker+'/'
 
 
 
-s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
-s_wsj.download_url()
+# s_wsj = SourceWSJ( ticker, stock_prefix, 1 )
+# s_wsj.download_url()
 # s_wsj.parse_financial_statements()
 
-s_wsj.parse()
+# s_wsj.parse()
 # print s_wsj.ls( 'a', 'income_statement')
 # # s_wsj.parse_profile()
 # s_wsj.parse_financials()

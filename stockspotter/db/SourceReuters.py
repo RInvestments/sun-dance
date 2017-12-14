@@ -1,4 +1,4 @@
-""" Processor for AAStocks
+""" Processor for Reuters
         Sample :
         http://www.reuters.com/finance/stocks/overview?symbol=2333.HK
         http://www.reuters.com/finance/stocks/companyNews?symbol=2333.HK

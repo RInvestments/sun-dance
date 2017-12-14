@@ -34,6 +34,7 @@ from stockspotter.db.SourceHKEXProfile import SourceHKEXProfile
 from stockspotter.db.SourceReuters import SourceReuters
 from stockspotter.db.SourceYahoo import SourceYahoo
 from stockspotter.db.SourceWSJ import SourceWSJ
+from stockspotter.db.SourceAAStocks import SourceAAStocks
 
 
 # Lister class
@@ -64,7 +65,9 @@ parser.add_argument( '--wsj', default=False, action='store_true', help='Enable r
 parser.add_argument( '--quotes_full', default=False, action='store_true', help='Historical quotes data' )
 parser.add_argument( '--quotes_recent', default=False, action='store_true', help='recent 100 days quotes data' )
 
+
 parser.add_argument( '--reuters', default=False, action='store_true', help='Enable retrival of Reuters company officers data' )
+parser.add_argument( '--aastocks', default=False, action='store_true', help='Enable retrival of aastocks data' )
 
 # Bourse
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
@@ -222,6 +225,11 @@ for i,l in enumerate(full_list):
     if args.reuters:
         s_reuters = SourceReuters(ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_reuters.download_url()
+
+    if args.aastocks:
+        s_aastocks = SourceAAStocks( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
+        s_aastocks.download_url()
+
 
 
 log_write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
