@@ -146,8 +146,12 @@ class SourceAAStocks:
             os.makedirs( self.priv_dir )
 
     def download_url( self, skip_if_exist=True ):
+        startTime = time.time()
         self.retrive_detailed_company_profile(skip_if_exist=skip_if_exist)
         # Have more calls here as need be
+
+        self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
+
 
     def retrive_detailed_company_profile(self, skip_if_exist=True):
         """ Get the detailed company profile.
