@@ -219,42 +219,12 @@ class SourceAAStocks:
 
 
 
-    # def download_url(self, skip_if_exist=True):
-    #     """ Having known the ticker and stock_prefix, download the files into the folder """
-    #     # mkdir a folder within the stock_prefix (if not exits)
-    #     if not os.path.exists(self.priv_dir):
-    #         os.makedirs( self.priv_dir )
-    #
-    #     #TODO: Instead of just checking exisitence of overview, put this code in _download_and_save() to check for exisitence of each file
-    #     if skip_if_exist and os.path.isfile( self.priv_dir+'/companyOfficers.html' ):
-    #         self._debug( "Raw html Exists:" +self.priv_dir+'/companyOfficers.html' + "...SKIP" )
-    #         return True
-    #
-    #     # Setup the url(s). I care more about 1st 3
-    #     # url_overview = 'http://www.reuters.com/finance/stocks/overview?symbol='+self.ticker
-    #     # url_financials = 'http://www.reuters.com/finance/stocks/financialHighlights?symbol='+self.ticker
-    #     # url_keydev = 'http://www.reuters.com/finance/stocks/'+self.ticker+'/key-developments?pn=1'
-    #
-    #     # url_companyNews = 'http://www.reuters.com/finance/stocks/companyNews?symbol='+self.ticker
-    #     url_companyOfficers = 'http://www.reuters.com/finance/stocks/companyOfficers?symbol='+self.ticker
-    #     # url_analyst = 'http://www.reuters.com/finance/stocks/analyst?symbol='+self.ticker
-    #
-    #     # url_incomeStatement = 'http://www.reuters.com/finance/stocks/incomeStatement?symbol='+self.ticker
-    #     # url_incomeStatementAnn = 'http://www.reuters.com/finance/stocks/incomeStatement?perType=ANN&symbol='+self.ticker
-    #
-    #
-    #     # retrive file and write file
-    #     startTime = time.time()
-    #     self._debug( 'Download : '+url_companyOfficers )
-    #     # status_1 = self._download_and_save( url_overview, self.priv_dir+'/overview.html')
-    #     # status_2 = self._download_and_save( url_financials, self.priv_dir+'/financials.html')
-    #     # status_3 = self._download_and_save( url_keydev, self.priv_dir+'/keydev.html')
-    #
-    #     # status_4 = self._download_and_save( url_companyNews, self.priv_dir+'/companyNews.html')
-    #     status_5 = self._download_and_save( url_companyOfficers, self.priv_dir+'/companyOfficers.html')
-    #     # status_6 = self._download_and_save( url_analyst, self.priv_dir+'/analyst.html')
-    #
-    #     # status_7 = self._download_and_save( url_incomeStatement, self.priv_dir+'/incomeStatement.html')
-    #     # status_7 = self._download_and_save( url_incomeStatementAnn, self.priv_dir+'/incomeStatementAnnual.html')
-    #
-    #     self._report_time( 'Downloaded in %4.2f sec' %(time.time()-startTime) )
+    def open_detailed_company_profile_json(self):
+        self._debug( 'Open json: '+self.priv_dir+'/detailed_company_profile.json' )
+        try:
+            with open( self.priv_dir+'/detailed_company_profile.json', 'r' ) as f:
+                data = json.load( f )
+            return data
+        except:
+            self._error( 'Cannot open file '+self.priv_dir+'/detailed_company_profile.json')
+            return None
