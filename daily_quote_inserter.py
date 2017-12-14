@@ -79,28 +79,29 @@ db = client.sun_dance.stock_quotes #mongodb collection
 # Get List
 lister = TickerLister( args.lists_db_dir )
 full_list = []
+n=3
 __write( tcol.HEADER+ ' : Exchanges :'+ tcol.ENDC )
 if args.xhkex:
     __write( tcol.HEADER+ '\t(HKEX) Hong Kong Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_hkex( use_cached=True)#[0:100]
+    full_list += lister.list_full_hkex( use_cached=True)#[0:n]
 if args.xbse:
     __write( tcol.HEADER+ '\t(BSE) Bombay Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_bse( use_cached=True )#[0:5]
+    full_list += lister.list_full_bse( use_cached=True )#[0:n]
 if args.xnse:
     __write( tcol.HEADER+ '\t(NSE) National Stock Exchange of India'+ tcol.ENDC )
-    full_list += lister.list_full_nse( use_cached=True )#[0:100]
+    full_list += lister.list_full_nse( use_cached=True )#[0:n]
 if args.xnyse:
     __write( tcol.HEADER+ '\t(NYSE) New York Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_nyse( use_cached=True )#[0:3]
+    full_list += lister.list_full_nyse( use_cached=True )#[0:n]
 if args.xnasdaq:
     __write( tcol.HEADER+ '\t(NASDAQ) NASDAQ, USA'+ tcol.ENDC )
-    full_list += lister.list_full_nasdaq( use_cached=True )[0:3]
+    full_list += lister.list_full_nasdaq( use_cached=True )#[0:n]
 if args.xamex:
     __write( tcol.HEADER+ '\t(AMEX) American Stock Exchange'+ tcol.ENDC )
-    full_list += lister.list_full_amex( use_cached=True )#[0:3]
+    full_list += lister.list_full_amex( use_cached=True )#[0:n]
 if args.xtyo:
     __write( tcol.HEADER+ '\t(TYO) Japan Exchange Group, Tokyo'+ tcol.ENDC )
-    full_list += lister.list_full_tyo( use_cached=True )#[0:3]
+    full_list += lister.list_full_tyo( use_cached=True )#[0:n]
 
 
 
@@ -149,10 +150,15 @@ for i,l in enumerate(full_list):
             failed_inserts += 1
             # pass
             break;
+        except:
+            failed_inserts += 1
             #TODO: Consider break here. as soon as you start getting DuplicateKeyErrors means that previous data already exists. Probably no point looking ahead
 
-    __write( 'Dates : '+ daily_list.keys()[-1]+ '-'+ daily_list.keys()[0]+ ',', )
-    __write( 'nPoints : %4d, Failed Inserts : %4d' %( len(daily_list.keys()) , failed_inserts ) )
+    try:
+        __write( 'Dates : '+ daily_list.keys()[-1]+ '-'+ daily_list.keys()[0]+ ',', )
+        __write( 'nPoints : %4d, Failed Inserts : %4d' %( len(daily_list.keys()) , failed_inserts ) )
+    except:
+        __write( '[Error]daily_list was possibly empty')
 
 
     __write( 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime ) )

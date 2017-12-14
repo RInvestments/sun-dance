@@ -51,8 +51,12 @@ def get_uuid( cur_dict ):
     digest = uuid.uuid3(uuid.NAMESPACE_DNS, json_data_obj)
     return str(digest)
 
+def log_debug( msg, lvl=1 ):
+    if lvl in range( args.verbosity ):
+        __write( '[DEBUG=%d]' %(lvl)+msg )
+
 def add_to_db(cur_dict):
-    #global db
+    global total_ok, per_ticker_ok, total_fail, per_ticker_fail
 
     cur_dict['id'] = get_uuid( cur_dict )
     json_cur_dict = json.dumps(cur_dict)
@@ -74,13 +78,24 @@ def add_to_db(cur_dict):
         db.universalData.insert( cur_dict )
     except pymongo.errors.DuplicateKeyError, e:
         # Dup licate'
-        uiii= 0 #silently ignore this. may be report only in a verbose setting
+        log_debug( str(e), lvl=4 )
+        log_debug( tcol.FAIL + 'DuplicateKeyError' + tcol.ENDC, lvl=3 )
+        # uiii+= 1  #silently ignore this. may be report only in a verbose setting
+        total_fail += 1
+        per_ticker_fail += 1
+        return False
     except Exception as e:
         #TODO catch the `Duplicate key insertion`. This denotes this data already exists
-        __write( str(e)  )
-        __write( tcol.FAIL+ 'MOngoDB insert failed'+ tcol.ENDC )
+        log_debug( str(e)  )
+        log_debug( tcol.FAIL+ 'MOngoDB insert failed'+ tcol.ENDC, lvl=3 )
+        total_fail += 1
+        per_ticker_fail += 1
+        return False
 
     # del cur_dict
+    total_ok += 1
+    per_ticker_ok += 1
+    return True
 
 
 def solr_commit():
@@ -469,10 +484,18 @@ db_prefix = args.data_dir
 # Loop Over the list
 cur_dict = {}
 
+total_fail = 0
+total_ok = 0
+per_ticker_fail = 0
+per_ticker_ok = 0
+
 # l = full_list[9]
 startTimeTotal = time.time()
 proc_started = datetime.now()
 for i,l in enumerate(full_list):
+    per_ticker_fail = 0
+    per_ticker_ok = 0
+
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
     __write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l)+ tcol.ENDC )
@@ -527,9 +550,10 @@ for i,l in enumerate(full_list):
     # Financial Statements
     insert_all_financial_sheets( s_wsj, base_dict.copy() )
 
-
+    __write( 'Inserts Succeed : %d, Inserts Failed : %d' %(per_ticker_ok, per_ticker_fail) )
     __write( 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime ) )
 
+__write(  tcol.OKGREEN+'Total Inserts Succeed : %d, Total Inserts Failed : %d' %(total_ok, total_fail) + tcol.ENDC )
 __write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
 __write( tcol.OKGREEN+ 'Started  on '+ str(proc_started)+ tcol.ENDC )
 __write( tcol.OKGREEN+ 'Finished on '+ str(datetime.now())+ tcol.ENDC )

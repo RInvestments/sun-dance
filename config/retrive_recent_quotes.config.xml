@@ -1,25 +1,19 @@
 <xml>
   <global>
-    <store_dir>equities_db/test_db/</store_dir>
+    <store_dir>equities_db/data_20171113/</store_dir>
     <list_db>equities_db/lists/</list_db>
-    <log_dir>equities_db/test_db/</log_dir>
-    <verbosity>1</verbosity>
+    <!--<log_dir>equities_db/test_db/quotes_retrive_</log_dir>-->
+    <verbosity>0</verbosity>
   </global>
 
   <!-- Specify Independent Processes -->
   <process>
     <type>retriver</type>
     <task>quotes_recent</task>
-    <exchange>xhkex</exchange>
+    <exchange>xhkex,xnse</exchange>
     <proc_level>0</proc_level>
   </process>
 
-  <process>
-    <type>retriver</type>
-    <task>quotes_recent</task>
-    <exchange>xnse</exchange>
-    <proc_level>0</proc_level>
-  </process>
 
   <process>
     <type>retriver</type>
@@ -52,11 +46,12 @@
     <proc_level>0</proc_level>
   </process>
 
+  <!-- NOT AVAILABLE YET FOR China's exchanges
   <process>
     <type>retriver</type>
     <task>quotes_recent</task>
     <exchange>xsse,xszse</exchange>
     <proc_level>0</proc_level>
-  </process>
+  </process>-->
 
 </xml>

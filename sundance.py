@@ -176,13 +176,6 @@ def config_to_cmd( fname ):
                 except:
                     verbosity = 0
 
-            # Data Source
-            task = p.find( 'task' ).text.strip()
-            task_arg = ''
-            for src in task.split( ',' ):
-                task_arg += ' --%s ' %(src.strip())
-
-
 
             # Exchange
             exchange = p.find( 'exchange' ).text.strip()
@@ -191,7 +184,7 @@ def config_to_cmd( fname ):
                 exchange_arg += ' --%s ' %(ex.strip())
 
 
-            cmd = 'python data_inserter.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
+            cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2)
             cmd_list.append( cmd )
 
@@ -227,7 +220,7 @@ def config_to_cmd( fname ):
                 exchange_arg += ' --%s ' %(ex.strip())
 
 
-            cmd = 'python daily_quote_inserter.py -sd %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
+            cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2 )
             cmd_list.append( cmd )
 
@@ -241,16 +234,19 @@ def config_to_cmd( fname ):
             log_dir = global_ele.find( 'store_dir' ).text.strip()
         except:
             log_dir = '/tmp/'
-    return cmd_list, log_dir
+
+    return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
+    # return cmd_list, log_dir
 
 
 def _proc_print( pid, msg ):
     print '[PID=%5d] %s' %(pid, msg)
 
 def exec_task( cmd, log_dir ):
+
     p = multiprocessing.current_process()
     startT = datetime.now()
-    log_file = log_dir+'/%s.log' %(p.pid)
+    log_file = log_dir+'%s.log' %( str(p.pid) )
 
 
     _proc_print( p.pid, 'Start at %s' %(str(startT)) )
@@ -259,7 +255,7 @@ def exec_task( cmd, log_dir ):
 
 
 
-    process = subprocess.Popen( cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    process = subprocess.Popen( cmd+' --logfile=%s' %(log_file), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -275,7 +271,7 @@ def exec_task( cmd, log_dir ):
         # Show what we received from standard output.
         while not stdout_queue.empty():
             line = stdout_queue.get()
-            print line,
+            # print line,
 
         # Show what we received from standard error.
         while not stderr_queue.empty():
@@ -292,7 +288,7 @@ def exec_task( cmd, log_dir ):
     # Close subprocess' file descriptors.
     process.stdout.close()
     process.stderr.close()
-    _proc_print( p.pid, 'Complete!' )
+    _proc_print( p.pid, 'Complete on %s' %( str(datetime.now())   ) )
 
 
 
@@ -320,7 +316,10 @@ fname = args.config_file
 
 _printer( 'Open Config : %s' %(fname) )
 cmd_list, log_dir = config_to_cmd( fname )
-
+#TODO : Also return proc_level list. This will let me put the entire config together.
+# Basically all the <process>...</process> with same proc_level can be executed together.
+# The process with proc_level as `i` can be excecuted only after all the proceses
+# with proc_level in {0,1,...,i-1} are complete
 jobs = []
 for cmd in cmd_list:
     _printer( cmd )
