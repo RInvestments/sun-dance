@@ -135,7 +135,7 @@ for i,l in enumerate(full_list):
         json_data['ticker'] = l.ticker
         json_data['name'] = l.name
 
-        __write( '  Chairman: %s' %(json_data['Chairman']) )
+        # __write( '  Chairman: %s' %(json_data['Chairman']) ) #Issue printing non-ascii characters
         add_to_db( json_data )
 
     __write( 'Time taken for %s : %4.2fs' %(l.ticker, time.time() - startTime ) )

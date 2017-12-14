@@ -56,8 +56,13 @@ class AsynchronousFileReader(threading.Thread):
         return not self.is_alive() and self._queue.empty()
 
 
-def config_to_cmd( fname ):
+def config_to_cmd( fname, store_dir=None ):
     _debug( 'Open XML config : %s' %(fname) )
+
+    if store_dir is None:
+        _debug( 'will use store_dir from configxml file')
+    else:
+        _debug( 'store_dir: %s' %(store_dir) )
 
     doc = etree.parse( fname )
     global_ele = doc.find( 'global' )
@@ -69,11 +74,12 @@ def config_to_cmd( fname ):
 
         if p.find( 'type' ).text.strip() == 'retriver':
 
-            # Store DIR
-            try:
-                store_dir = p.find( 'store_dir' ).text.strip()
-            except:
-                store_dir = global_ele.find( 'store_dir' ).text.strip()
+            if store_dir is None:
+                # Store DIR
+                try:
+                    store_dir = p.find( 'store_dir' ).text.strip()
+                except:
+                    store_dir = global_ele.find( 'store_dir' ).text.strip()
 
             # List DIR
             try:
@@ -112,11 +118,12 @@ def config_to_cmd( fname ):
 
 
         if p.find( 'type' ).text.strip() == 'parser':
-            # Store DIR
-            try:
-                store_dir = p.find( 'store_dir' ).text.strip()
-            except:
-                store_dir = global_ele.find( 'store_dir' ).text.strip()
+            if store_dir is None:
+                # Store DIR
+                try:
+                    store_dir = p.find( 'store_dir' ).text.strip()
+                except:
+                    store_dir = global_ele.find( 'store_dir' ).text.strip()
 
             # List DIR
             try:
@@ -156,10 +163,11 @@ def config_to_cmd( fname ):
 
         if p.find( 'type' ).text.strip() == 'inserter':
             # Store DIR
-            try:
-                store_dir = p.find( 'store_dir' ).text.strip()
-            except:
-                store_dir = global_ele.find( 'store_dir' ).text.strip()
+            if store_dir is None:
+                try:
+                    store_dir = p.find( 'store_dir' ).text.strip()
+                except:
+                    store_dir = global_ele.find( 'store_dir' ).text.strip()
 
             # List DIR
             try:
@@ -190,11 +198,12 @@ def config_to_cmd( fname ):
 
 
         if p.find( 'type' ).text.strip() == 'quote_inserter':
-            # Store DIR
-            try:
-                store_dir = p.find( 'store_dir' ).text.strip()
-            except:
-                store_dir = global_ele.find( 'store_dir' ).text.strip()
+            if store_dir is None:
+                # Store DIR
+                try:
+                    store_dir = p.find( 'store_dir' ).text.strip()
+                except:
+                    store_dir = global_ele.find( 'store_dir' ).text.strip()
 
             # List DIR
             try:
@@ -224,7 +233,31 @@ def config_to_cmd( fname ):
             _debug( cmd, 2 )
             cmd_list.append( cmd )
 
+        if p.find( 'type' ).text.strip() == 'aastocks_inserter':
+            if store_dir is None:
+                try:
+                    store_dir = p.find( 'store_dir' ).text.strip()
+                except:
+                    store_dir = global_ele.find( 'store_dir' ).text.strip()
 
+            # List DIR
+            try:
+                list_db = p.find( 'list_db' ).text.strip()
+            except:
+                list_db = global_ele.find( 'list_db' ).text.strip()
+
+            # Verbosity
+            try:
+                verbosity = int( p.find( 'verbosity' ).text.strip() )
+            except:
+                try:
+                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+                except:
+                    verbosity = 0
+
+        cmd = 'python aastocks_inserter.py -db %s -ld %s -v %d' %(store_dir, list_db, verbosity )
+        _debug( cmd, 2 )
+        cmd_list.append( cmd )
 
     # Log dir
     try:
@@ -305,6 +338,7 @@ def exec_task( cmd, log_dir ):
 # Parse cmdline arg
 parser = argparse.ArgumentParser()
 parser.add_argument( '-f', '--config_file', required=True, help='Specify XML config file' )
+parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='Overide the store_dir in config with specified. If not specified, then one specified in config will be used.' )
 args = parser.parse_args()
 
 
@@ -315,7 +349,9 @@ DEBUG_LEVEL = 0
 fname = args.config_file
 
 _printer( 'Open Config : %s' %(fname) )
-cmd_list, log_dir = config_to_cmd( fname )
+_printer( 'Store directory : %s' %(args.store_dir) )
+
+cmd_list, log_dir = config_to_cmd( fname, args.store_dir )
 #TODO : Also return proc_level list. This will let me put the entire config together.
 # Basically all the <process>...</process> with same proc_level can be executed together.
 # The process with proc_level as `i` can be excecuted only after all the proceses
