@@ -174,7 +174,8 @@ for i,l in enumerate(full_list):
     # Parse WSJ
     if args.wsj:
         s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
-        s_wsj.parse(delete_raw=args.delete_raw)
+        # s_wsj.parse(delete_raw=args.delete_raw)
+        s_wsj.parse(delete_raw=True)
 
 
     # Delete WSJ Raw files
