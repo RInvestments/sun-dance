@@ -14,6 +14,7 @@ import multiprocessing
 
 import time
 from datetime import datetime
+from datetime import timedelta
 import sys
 
 import threading
@@ -32,6 +33,13 @@ def _debug( msg, lvl=1 ):
 
 def _printer( msg ):
     print msg
+
+def _isnum( s ):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 class AsynchronousFileReader(threading.Thread):
     '''
@@ -58,230 +66,230 @@ class AsynchronousFileReader(threading.Thread):
     def eof(self):
         '''Check whether there is no more content to expect.'''
         return not self.is_alive() and self._queue.empty()
-
-
-def config_to_cmd( fname, store_dir=None ):
-    _debug( 'Open XML config : %s' %(fname) )
-
-    if store_dir is None:
-        _debug( 'will use store_dir from configxml file')
-    else:
-        _debug( 'store_dir: %s' %(store_dir) )
-
-    doc = etree.parse( fname )
-    global_ele = doc.find( 'global' )
-
-    # Iterate over each process
-    cmd_list = []
-    print 'Found %d process' %( len(doc.findall( 'process' )) )
-    for p in doc.findall( 'process' ):
-        # _debug( '---', 2 )
-
-        if p.find( 'type' ).text.strip() == 'retriver':
-
-            if store_dir is None:
-                # Store DIR
-                try:
-                    store_dir = p.find( 'store_dir' ).text.strip()
-                except:
-                    store_dir = global_ele.find( 'store_dir' ).text.strip()
-
-            # List DIR
-            try:
-                list_db = p.find( 'list_db' ).text.strip()
-            except:
-                list_db = global_ele.find( 'list_db' ).text.strip()
-
-            # Verbosity
-            try:
-                verbosity = int( p.find( 'verbosity' ).text.strip() )
-            except:
-                try:
-                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-                except:
-                    verbosity = 0
-
-            # Data Source
-            task = p.find( 'task' ).text.strip()
-            task_arg = ''
-            for src in task.split( ',' ):
-                task_arg += ' --%s ' %(src.strip())
-
-
-
-            # Exchange
-            exchange = p.find( 'exchange' ).text.strip()
-            exchange_arg = ''
-            for ex in exchange.split(','):
-                exchange_arg += ' --%s ' %(ex.strip())
-
-
-            cmd = 'python data_retriver.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
-            _debug( cmd, 2 )
-            cmd_list.append( cmd )
-
-
-
-        if p.find( 'type' ).text.strip() == 'parser':
-            if store_dir is None:
-                # Store DIR
-                try:
-                    store_dir = p.find( 'store_dir' ).text.strip()
-                except:
-                    store_dir = global_ele.find( 'store_dir' ).text.strip()
-
-            # List DIR
-            try:
-                list_db = p.find( 'list_db' ).text.strip()
-            except:
-                list_db = global_ele.find( 'list_db' ).text.strip()
-
-            # Verbosity
-            try:
-                verbosity = int( p.find( 'verbosity' ).text.strip() )
-            except:
-                try:
-                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-                except:
-                    verbosity = 0
-
-            # Data Source
-            task = p.find( 'task' ).text.strip()
-            task_arg = ''
-            for src in task.split( ',' ):
-                task_arg += ' --%s ' %(src.strip())
-
-
-
-            # Exchange
-            exchange = p.find( 'exchange' ).text.strip()
-            exchange_arg = ''
-            for ex in exchange.split(','):
-                exchange_arg += ' --%s ' %(ex.strip())
-
-
-            cmd = 'python data_parser.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
-            _debug( cmd , 2)
-            cmd_list.append( cmd )
-
-
-
-        if p.find( 'type' ).text.strip() == 'inserter':
-            # Store DIR
-            if store_dir is None:
-                try:
-                    store_dir = p.find( 'store_dir' ).text.strip()
-                except:
-                    store_dir = global_ele.find( 'store_dir' ).text.strip()
-
-            # List DIR
-            try:
-                list_db = p.find( 'list_db' ).text.strip()
-            except:
-                list_db = global_ele.find( 'list_db' ).text.strip()
-
-            # Verbosity
-            try:
-                verbosity = int( p.find( 'verbosity' ).text.strip() )
-            except:
-                try:
-                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-                except:
-                    verbosity = 0
-
-
-            # Exchange
-            exchange = p.find( 'exchange' ).text.strip()
-            exchange_arg = ''
-            for ex in exchange.split(','):
-                exchange_arg += ' --%s ' %(ex.strip())
-
-
-            cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
-            _debug( cmd, 2)
-            cmd_list.append( cmd )
-
-
-        if p.find( 'type' ).text.strip() == 'quote_inserter':
-            if store_dir is None:
-                # Store DIR
-                try:
-                    store_dir = p.find( 'store_dir' ).text.strip()
-                except:
-                    store_dir = global_ele.find( 'store_dir' ).text.strip()
-
-            # List DIR
-            try:
-                list_db = p.find( 'list_db' ).text.strip()
-            except:
-                list_db = global_ele.find( 'list_db' ).text.strip()
-
-            # Verbosity
-            try:
-                verbosity = int( p.find( 'verbosity' ).text.strip() )
-            except:
-                try:
-                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-                except:
-                    verbosity = 0
-
-
-
-            # Exchange
-            exchange = p.find( 'exchange' ).text.strip()
-            exchange_arg = ''
-            for ex in exchange.split(','):
-                exchange_arg += ' --%s ' %(ex.strip())
-
-
-            cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
-            _debug( cmd, 2 )
-            cmd_list.append( cmd )
-
-        if p.find( 'type' ).text.strip() == 'aastocks_inserter':
-            if store_dir is None:
-                try:
-                    store_dir = p.find( 'store_dir' ).text.strip()
-                except:
-                    store_dir = global_ele.find( 'store_dir' ).text.strip()
-
-            # List DIR
-            try:
-                list_db = p.find( 'list_db' ).text.strip()
-            except:
-                list_db = global_ele.find( 'list_db' ).text.strip()
-
-            # Verbosity
-            try:
-                verbosity = int( p.find( 'verbosity' ).text.strip() )
-            except:
-                try:
-                    verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-                except:
-                    verbosity = 0
-
-            cmd = 'python aastocks_inserter.py -db %s -ld %s -v %d' %(store_dir, list_db, verbosity )
-            _debug( cmd, 2 )
-            cmd_list.append( cmd )
-
-
-
-
-    # Log dir
-    if store_dir is None:
-        try:
-            log_dir = global_ele.find( 'log_dir' ).text.strip()
-        except:
-            try:
-                log_dir = global_ele.find( 'store_dir' ).text.strip()
-            except:
-                log_dir = '/tmp/'
-    else:
-        log_dir = store_dir+'/'
-
-    return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
-    # return cmd_list, log_dir
-
+#
+#
+# def config_to_cmd( fname, store_dir=None ):
+#     _debug( 'Open XML config : %s' %(fname) )
+#
+#     if store_dir is None:
+#         _debug( 'will use store_dir from configxml file')
+#     else:
+#         _debug( 'store_dir: %s' %(store_dir) )
+#
+#     doc = etree.parse( fname )
+#     global_ele = doc.find( 'global' )
+#
+#     # Iterate over each process
+#     cmd_list = []
+#     print 'Found %d process' %( len(doc.findall( 'process' )) )
+#     for p in doc.findall( 'process' ):
+#         # _debug( '---', 2 )
+#
+#         if p.find( 'type' ).text.strip() == 'retriver':
+#
+#             if store_dir is None:
+#                 # Store DIR
+#                 try:
+#                     store_dir = p.find( 'store_dir' ).text.strip()
+#                 except:
+#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
+#
+#             # List DIR
+#             try:
+#                 list_db = p.find( 'list_db' ).text.strip()
+#             except:
+#                 list_db = global_ele.find( 'list_db' ).text.strip()
+#
+#             # Verbosity
+#             try:
+#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
+#             except:
+#                 try:
+#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+#                 except:
+#                     verbosity = 0
+#
+#             # Data Source
+#             task = p.find( 'task' ).text.strip()
+#             task_arg = ''
+#             for src in task.split( ',' ):
+#                 task_arg += ' --%s ' %(src.strip())
+#
+#
+#
+#             # Exchange
+#             exchange = p.find( 'exchange' ).text.strip()
+#             exchange_arg = ''
+#             for ex in exchange.split(','):
+#                 exchange_arg += ' --%s ' %(ex.strip())
+#
+#
+#             cmd = 'python data_retriver.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
+#             _debug( cmd, 2 )
+#             cmd_list.append( cmd )
+#
+#
+#
+#         if p.find( 'type' ).text.strip() == 'parser':
+#             if store_dir is None:
+#                 # Store DIR
+#                 try:
+#                     store_dir = p.find( 'store_dir' ).text.strip()
+#                 except:
+#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
+#
+#             # List DIR
+#             try:
+#                 list_db = p.find( 'list_db' ).text.strip()
+#             except:
+#                 list_db = global_ele.find( 'list_db' ).text.strip()
+#
+#             # Verbosity
+#             try:
+#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
+#             except:
+#                 try:
+#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+#                 except:
+#                     verbosity = 0
+#
+#             # Data Source
+#             task = p.find( 'task' ).text.strip()
+#             task_arg = ''
+#             for src in task.split( ',' ):
+#                 task_arg += ' --%s ' %(src.strip())
+#
+#
+#
+#             # Exchange
+#             exchange = p.find( 'exchange' ).text.strip()
+#             exchange_arg = ''
+#             for ex in exchange.split(','):
+#                 exchange_arg += ' --%s ' %(ex.strip())
+#
+#
+#             cmd = 'python data_parser.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
+#             _debug( cmd , 2)
+#             cmd_list.append( cmd )
+#
+#
+#
+#         if p.find( 'type' ).text.strip() == 'inserter':
+#             # Store DIR
+#             if store_dir is None:
+#                 try:
+#                     store_dir = p.find( 'store_dir' ).text.strip()
+#                 except:
+#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
+#
+#             # List DIR
+#             try:
+#                 list_db = p.find( 'list_db' ).text.strip()
+#             except:
+#                 list_db = global_ele.find( 'list_db' ).text.strip()
+#
+#             # Verbosity
+#             try:
+#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
+#             except:
+#                 try:
+#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+#                 except:
+#                     verbosity = 0
+#
+#
+#             # Exchange
+#             exchange = p.find( 'exchange' ).text.strip()
+#             exchange_arg = ''
+#             for ex in exchange.split(','):
+#                 exchange_arg += ' --%s ' %(ex.strip())
+#
+#
+#             cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
+#             _debug( cmd, 2)
+#             cmd_list.append( cmd )
+#
+#
+#         if p.find( 'type' ).text.strip() == 'quote_inserter':
+#             if store_dir is None:
+#                 # Store DIR
+#                 try:
+#                     store_dir = p.find( 'store_dir' ).text.strip()
+#                 except:
+#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
+#
+#             # List DIR
+#             try:
+#                 list_db = p.find( 'list_db' ).text.strip()
+#             except:
+#                 list_db = global_ele.find( 'list_db' ).text.strip()
+#
+#             # Verbosity
+#             try:
+#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
+#             except:
+#                 try:
+#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+#                 except:
+#                     verbosity = 0
+#
+#
+#
+#             # Exchange
+#             exchange = p.find( 'exchange' ).text.strip()
+#             exchange_arg = ''
+#             for ex in exchange.split(','):
+#                 exchange_arg += ' --%s ' %(ex.strip())
+#
+#
+#             cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
+#             _debug( cmd, 2 )
+#             cmd_list.append( cmd )
+#
+#         if p.find( 'type' ).text.strip() == 'aastocks_inserter':
+#             if store_dir is None:
+#                 try:
+#                     store_dir = p.find( 'store_dir' ).text.strip()
+#                 except:
+#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
+#
+#             # List DIR
+#             try:
+#                 list_db = p.find( 'list_db' ).text.strip()
+#             except:
+#                 list_db = global_ele.find( 'list_db' ).text.strip()
+#
+#             # Verbosity
+#             try:
+#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
+#             except:
+#                 try:
+#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
+#                 except:
+#                     verbosity = 0
+#
+#             cmd = 'python aastocks_inserter.py -db %s -ld %s -v %d' %(store_dir, list_db, verbosity )
+#             _debug( cmd, 2 )
+#             cmd_list.append( cmd )
+#
+#
+#
+#
+#     # Log dir
+#     if store_dir is None:
+#         try:
+#             log_dir = global_ele.find( 'log_dir' ).text.strip()
+#         except:
+#             try:
+#                 log_dir = global_ele.find( 'store_dir' ).text.strip()
+#             except:
+#                 log_dir = '/tmp/'
+#     else:
+#         log_dir = store_dir+'/'
+#
+#     return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
+#     # return cmd_list, log_dir
+#
 
 def processgroup_2_cmd( group, global_ele, store_dir=None ):
     """
@@ -539,46 +547,100 @@ def consolidated_config_to_cmd( fname, store_dir ):
     _printer( 'Total groups :'+ str(len( all_groups )) )
 
     proc_tree = {}
-    for group_i, group in enumerate(all_groups):
-        _printer( '  group#%3d, id=%s' %(  group_i, group.attrib['id'].strip() ) )
-        cmd, log_dir = processgroup_2_cmd( group, global_ele, store_dir )
+    if len(all_groups) == 0: # File does not have a group structure and it process-flat structure (older version)
+        _printer( 'File does not have a <group> structure. Collecting all <process> to execute in parallel')
+        _debug( 'File does not have a <group> structure. Collecting all <process> to execute in parallel')
+        cmd, log_dir = processgroup_2_cmd( doc, global_ele, store_dir )
         for _c in cmd:
             _printer( '    '+_c)
-        proc_tree[ group.attrib['id'].strip() ] = (cmd, log_dir)
+        _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
+        return [(cmd, log_dir)], None
+    else:
+        for group_i, group in enumerate(all_groups):
+            _printer( '  group#%3d, id=%s' %(  group_i, group.attrib['id'].strip() ) )
+            cmd, log_dir = processgroup_2_cmd( group, global_ele, store_dir )
+            for _c in cmd:
+                _printer( '    '+_c)
+            if group.attrib['id'].strip() in proc_tree.keys():
+                _error( 'Repeated id. Groups need to have unique IDs. Please rectify the XML')
+                quit()
+            proc_tree[ group.attrib['id'].strip() ] = (cmd, log_dir)
 
-    _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
+
+    _printer( tcol.OKGREEN+'<group>s OK!'+tcol.ENDC )
 
     #
-    # Read execution
-    all_lines = doc.find( 'execution' ).findall( 'line' )
-    _printer( tcol.HEADER+'Reading <execution>s'+tcol.ENDC )
-    _printer( 'Total execution lines:'+ str( len( all_lines ) ) )
+    # Read <execution>
+    try:
+        _printer( tcol.HEADER+'Reading <execution>s'+tcol.ENDC )
+        execution_tag = doc.find( 'execution' )
+        all_lines = execution_tag.findall( 'line' )
+        _printer( 'Total execution lines:'+ str( len( all_lines ) ) )
+    except:
+        _error( 'Fail! Cannot find <execution> tag (required)')
+        quit()
 
     # Check if everything can be executed
     status = True
-    if len(all_lines) != len(proc_tree.keys()):
-        _error( 'Number of lines (in execution tag) and number of groups do not match. Make sure they match before trying again')
-        status = False
-    else:
-        for line_i, line in enumerate(all_lines):
-            # _printer( '%3d. %s' %(line_i, line.text.strip()) )
-            if line.text.strip() not in proc_tree.keys():
-                status = status and False
-                _error( 'You are asking me to execute group=`%s`, however I cannot find the defination of this group' %(line.text) )
+    for line_i, line in enumerate(all_lines):
+        # _printer( '%3d. %s' %(line_i, line.text.strip()) )
+        if line.text.strip() not in proc_tree.keys():
+            status = status and False
+            _error( 'You are asking me to execute group=`%s`, however I cannot find the defination of this group' %(line.text) )
 
 
     if status is False:
         _error( 'Fail!')
         quit()
-    _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
+    # _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
 
     X = []
     for line_i, line in enumerate(all_lines):
         _printer( '%3d. %s' %(line_i, line.text.strip()) )
         X.append( proc_tree[line.text.strip() ] )
 
+    #
+    # Check repeat in execution
+    try:
+        rt = execution_tag.attrib['repeat']
+    except:
+        return X, None
+
+
+    try:
+        repeat_count = execution_tag.attrib['times']
+        if _isnum( repeat_count ):
+            repeat_count = float(repeat_count)
+        else:
+            repeat_count = -1
+    except:
+        repeat_count = -1 # Infinite times
+
+    rt = rt.split('.')
+    time_set = ['days', 'weeks', 'months', 'year', 'seconds', 'minutes', 'hours']
+    assert( len(rt) == 2 )
+    assert( _isnum(rt[0].strip()) )
+    assert( rt[1].strip() in time_set )
+
+    if rt[1].strip() == 'days':
+        rt_sec = timedelta( days=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'weeks':
+        rt_sec = timedelta( weeks=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'months':
+        rt_sec = timedelta( months=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'years':
+        rt_sec = timedelta( year=float(rt[0]) ).total_seconds()
+
+    if rt[1].strip() == 'seconds':
+        rt_sec = timedelta( seconds=float(rt[0]) ).total_seconds()
+        if rt[1].strip() == 'minutes':
+            rt_sec = timedelta( hours=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'hours':
+        rt_sec = timedelta( hours=float(rt[0]) ).total_seconds()
+
+    _printer( tcol.HEADER+'Repeat execution every %s, ie. %d seconds' %(' '.join(rt), rt_sec )+tcol.ENDC  )
     _printer( tcol.OKGREEN+'Config file OK!'+tcol.ENDC )
-    return X
+    return X, (rt_sec, repeat_count)
 
 
 
@@ -602,7 +664,7 @@ def exec_task( cmd, log_dir ):
 
 
     # process = subprocess.Popen( cmd+' --logfile=%s' %(log_file), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-    process = subprocess.Popen( 'sleep 5s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -665,49 +727,78 @@ fname = args.config_file
 _printer( 'Open Config : %s' %(fname) )
 _printer( 'Store directory : %s' %(args.store_dir) )
 
-X = consolidated_config_to_cmd( fname, args.store_dir )
+X, _repeat_info = consolidated_config_to_cmd( fname, args.store_dir )
 
-for cmd_list, log_dir in X:
-    # x: cmd_list, log_dir
-    print log_dir
-    jobs = []
-    for cmd in cmd_list:
-        _printer( cmd )
-        d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
-        jobs.append( d )
-        # d.start()
+repeat_in_sec, repeat_count = _repeat_info
+_i = 0
 
-    if raw_input( 'Confirm (y/n): ' ) != 'y':
-        sys.stderr.write( 'Quit()\n' )
-        quit()
+print 'Repeat for %d times' %(repeat_count)
+# for _i in range( 10 ):
+while True:
+    _i += 1
+    if _i > repeat_count and repeat_count > 0:
+        break
+    _printer( '\n[Run#%d of %d]' %(_i, repeat_count) )
 
-    for j in jobs:
-        j.start()
 
-    for j in jobs:
-        j.join()
+    startTime_run = time.time()
+    for cmd_list, log_dir in X:
+        # x: cmd_list, log_dir
+        # print log_dir
+        jobs = []
+        startTime = time.time()
+        _printer( tcol.HEADER+'---'+tcol.ENDC )
+        for cmd in cmd_list:
+            _printer( cmd )
+            d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
+            jobs.append( d )
+
+
+        # if raw_input( 'Confirm (y/n): ' ) != 'y':
+            # sys.stderr.write( 'Quit()\n' )
+            # quit()
+
+        for j in jobs:
+            j.start()
+
+        for j in jobs:
+            j.join()
+
+        done_in = time.time() - startTime
+        _printer( tcol.OKBLUE+'<Line> Done in %4.2fs' %( done_in )+tcol.ENDC )
+
+
+    run_done_in = time.time() - startTime_run
+    sleep_for = repeat_in_sec - run_done_in
+    _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
+    if sleep_for > 0:
+        _printer( 'No Sleep')
+        time.sleep( sleep_for )
+
+
+
 
 
 quit()
 
-cmd_list, log_dir = config_to_cmd( fname, args.store_dir )
-#TODO : Also return proc_level list. This will let me put the entire config together.
-# Basically all the <process>...</process> with same proc_level can be executed together.
-# The process with proc_level as `i` can be excecuted only after all the proceses
-# with proc_level in {0,1,...,i-1} are complete
-jobs = []
-for cmd in cmd_list:
-    _printer( cmd )
-    d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
-    jobs.append( d )
-    # d.start()
-
-if raw_input( 'Confirm (y/n): ' ) != 'y':
-    sys.stderr.write( 'Quit()\n' )
-    quit()
-
-for j in jobs:
-    j.start()
-
-for j in jobs:
-    j.join()
+# cmd_list, log_dir = config_to_cmd( fname, args.store_dir )
+# #TODO : Also return proc_level list. This will let me put the entire config together.
+# # Basically all the <process>...</process> with same proc_level can be executed together.
+# # The process with proc_level as `i` can be excecuted only after all the proceses
+# # with proc_level in {0,1,...,i-1} are complete
+# jobs = []
+# for cmd in cmd_list:
+#     _printer( cmd )
+#     d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
+#     jobs.append( d )
+#     # d.start()
+#
+# if raw_input( 'Confirm (y/n): ' ) != 'y':
+#     sys.stderr.write( 'Quit()\n' )
+#     quit()
+#
+# for j in jobs:
+#     j.start()
+#
+# for j in jobs:
+#     j.join()

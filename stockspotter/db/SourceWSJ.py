@@ -476,7 +476,10 @@ class SourceWSJ:
         if delete_raw == True:
             for ulr in A:
                 self._debug( 'rm '+A[ulr] )
-                os.remove( A[ulr] )
+                try:
+                    os.remove( A[ulr] )
+                except:
+                    self._error( 'Cannot remove: %s' %(A[ulr]) )
 
 
     ## Parses the company-people html page
