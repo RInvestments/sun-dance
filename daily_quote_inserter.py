@@ -10,6 +10,9 @@ import time
 import pymongo
 import datetime
 import uuid
+import socket
+import os
+from datetime import datetime
 
 import TerminalColors
 tcol = TerminalColors.bcolors()
@@ -25,12 +28,22 @@ def __write( msg ):
     # print msg
     fp_logfile.write( msg +'\n')
 
+def log_write( msg ):
+    fp_logfile.write( msg+'\n' )
+
+def log_server( msg ):
+    if fp_logserver is not None:
+        fp_logserver.sendall( '[%s:%6d:%s] ' %(__file__, os.getpid(), str(datetime.now())) + msg +'\n' )
+    # fp_logfile.write( msg+'\n' )
+
+
 #----- Commandline Parsing ---#
 parser = argparse.ArgumentParser()
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory (eg. equities_db/lists/)' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
 parser.add_argument( '-db', '--quotes_data_dir', required=True, help='Specify quotes directory (eg. equities_db/data_quotes_20170716/)' )
 parser.add_argument(  '--logfile', default=None, help='Logging file name' )
+parser.add_argument(  '--logserver', default=None, help='Logging server. eg. localhost:9276' )
 
 # Bourse
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
@@ -50,6 +63,25 @@ else:
     fp_logfile = open( args.logfile, 'w' )
     print 'LOGFILE NAME : ', args.logfile
     __write( '```\n' + ' '.join( sys.argv ) + '\n```' )
+
+
+if args.logserver is None:
+    fp_logserver = None
+else:
+    print 'LOGSERVER    : ', args.logserver
+    try:
+        _host = args.logserver.split(':')[0]
+        _port = int(args.logserver.split(':')[1])
+        fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+        fp_logserver.connect( (_host,_port) )
+        # fp_logserver.sendall( 'Connected!')
+        log_server( 'Connected')
+    except:
+        print tcol.FAIL, 'Cannot connect to logserver', tcol.ENDC
+        print 'Start a forked logserver like:'
+        print '$ socat TCP4-LISTEN:9595,fork STDOUT'
+
+
 
 
 if args.lists_db_dir:
@@ -113,6 +145,7 @@ for i,l in enumerate(full_list):
     startTime = time.time()
     folder = db_prefix+'/'+l.ticker+'/'
     __write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l)+ tcol.ENDC )
+    log_server( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list))+ str(l)+ tcol.ENDC )
 
 
     s_yahoo = SourceYahoo( l.ticker, folder, args.verbosity, fp_logfile )
@@ -165,3 +198,6 @@ for i,l in enumerate(full_list):
 
 __write( 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal) )
 __write( 'Finished on '+ str(time.ctime()) )
+
+log_server( 'Total Time taken : %4.2fs' %(time.time() - startTimeTotal) )
+log_server( 'Finished on '+ str(time.ctime()) )

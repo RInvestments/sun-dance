@@ -651,10 +651,11 @@ def _proc_print( pid, msg ):
     print '[PID=%5d] %s' %(pid, msg)
 
 def exec_task( cmd, log_dir ):
-
+    global global_logserver
     p = multiprocessing.current_process()
     startT = datetime.now()
     log_file = log_dir+'%s.log' %( str(p.pid) )
+    log_server = global_logserver #"localhost:9595"
 
 
     _proc_print( p.pid, 'Start at %s' %(str(startT)) )
@@ -663,8 +664,8 @@ def exec_task( cmd, log_dir ):
 
 
 
-    # process = subprocess.Popen( cmd+' --logfile=%s' %(log_file), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-    process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    # process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -715,6 +716,8 @@ def exec_task( cmd, log_dir ):
 parser = argparse.ArgumentParser()
 parser.add_argument( '-f', '--config_file', required=True, help='Specify XML config file' )
 parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='Overide the store_dir in config with specified. If not specified, then one specified in config will be used.' )
+parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running' )
+parser.add_argument( '--logserver', required=True, help='Specify XML config file' )
 args = parser.parse_args()
 
 
@@ -724,12 +727,17 @@ DEBUG_LEVEL = 0
 # fname = 'config/recent_quotes.config.xml'
 fname = args.config_file
 
-_printer( 'Open Config : %s' %(fname) )
+_printer( 'Open Config     : %s' %(fname) )
 _printer( 'Store directory : %s' %(args.store_dir) )
+_printer( 'Log Server      : %s' %(args.logserver) )
+global_logserver = args.logserver
 
 X, _repeat_info = consolidated_config_to_cmd( fname, args.store_dir )
 
-repeat_in_sec, repeat_count = _repeat_info
+repeat_in_sec=0
+repeat_count=1
+if _repeat_info is not None:
+    repeat_in_sec, repeat_count = _repeat_info
 _i = 0
 
 print 'Repeat for %d times' %(repeat_count)
@@ -754,9 +762,10 @@ while True:
             jobs.append( d )
 
 
-        # if raw_input( 'Confirm (y/n): ' ) != 'y':
-            # sys.stderr.write( 'Quit()\n' )
-            # quit()
+        if args.interactive:
+            if raw_input( 'Confirm (y/n): ' ) != 'y':
+                sys.stderr.write( 'Quit()\n' )
+                quit()
 
         for j in jobs:
             j.start()
@@ -772,7 +781,7 @@ while True:
     sleep_for = repeat_in_sec - run_done_in
     _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
     if sleep_for > 0:
-        _printer( 'No Sleep')
+        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
         time.sleep( sleep_for )
 
 

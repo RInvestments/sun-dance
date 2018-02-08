@@ -59,86 +59,106 @@
 
       example explaination, repeat this sequence after every 20seconds for 3 times in all.
   -->
-  <execution repeat="4.weeks" times="10">
-    <line>wsj_retriver</line>
-    <line>wsj_parser</line>
-    <line>wsj_inserter</line>
+  <execution repeat="1.weeks" times="1">
+    <line>recent_quotes_retriver</line>
+    <line>recent_quotes_inserter</line>
   </execution>
 
-  <group id="wsj_retriver">
+  <group id="recent_quotes_retriver">
     <process>
       <type>retriver</type>
-      <task>wsj</task>
-      <exchange>xhkex,xsse,xszse</exchange>
+      <task>quotes_recent</task>
+      <exchange>xhkex</exchange>
+      <proc_level>0</proc_level>
     </process>
+
 
     <process>
       <type>retriver</type>
-      <task>wsj</task>
+      <task>quotes_recent</task>
       <exchange>xnse,xbse</exchange>
+      <proc_level>0</proc_level>
     </process>
+
 
     <process>
       <type>retriver</type>
-      <task>wsj</task>
-      <exchange>xnyse,xnasdaq,xamex</exchange>
+      <task>quotes_recent</task>
+      <exchange>xnyse</exchange>
+      <proc_level>0</proc_level>
     </process>
+
 
     <process>
       <type>retriver</type>
-      <task>wsj</task>
-      <exchange>xtyo</exchange>
+      <task>quotes_recent</task>
+      <exchange>xnasdaq</exchange>
+      <proc_level>0</proc_level>
     </process>
 
+
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xamex,xtyo</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+    <!-- NOT AVAILABLE YET FOR China's exchanges
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xsse,xszse</exchange>
+      <proc_level>0</proc_level>
+    </process>-->
   </group>
 
 
-  <group id="wsj_parser">
+
+  <group id="recent_quotes_inserter">
     <process>
-      <type>parser</type>
-      <task>wsj</task>
-      <exchange>xhkex,xsse,xszse</exchange>
+      <type>quote_inserter</type>
+      <exchange>xhkex</exchange>
     </process>
 
     <process>
-      <type>parser</type>
-      <task>wsj</task>
-      <exchange>xnse,xbse</exchange>
+      <type>quote_inserter</type>
+      <exchange>xnse</exchange>
     </process>
 
     <process>
-      <type>parser</type>
-      <task>wsj</task>
-      <exchange>xnyse,xnasdaq,xamex</exchange>
+      <type>quote_inserter</type>
+      <exchange>xbse</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xnyse</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xnasdaq</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xamex</exchange>
     </process>
 
     <process>
-      <type>parser</type>
-      <task>wsj</task>
+      <type>quote_inserter</type>
       <exchange>xtyo</exchange>
     </process>
-  </group>
-
-  <group id="wsj_inserter">
+  <!--
     <process>
-      <type>inserter</type>
-      <exchange>xhkex,xsse,xszse</exchange>
+      <type>quote_inserter</type>
+      <exchange>xsse,xszse</exchange>
     </process>
-
-    <process>
-      <type>inserter</type>
-      <exchange>xnse,xbse</exchange>
-    </process>
-
-    <process>
-      <type>inserter</type>
-      <exchange>xnyse,xnasdaq,xamex</exchange>
-    </process>
-
-    <process>
-      <type>inserter</type>
-      <exchange>xtyo</exchange>
-    </process>
+  -->
   </group>
 
 </xml>

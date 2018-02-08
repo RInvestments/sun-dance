@@ -15,6 +15,7 @@ import os.path
 # import urllib2
 import pprint
 import os
+import socket
 
 import time
 from datetime import datetime
@@ -41,6 +42,12 @@ from stockspotter.db.SourceAAStocks import SourceAAStocks
 from stockspotter.lister.TickerLister import TickerLister
 def log_write( msg ):
     fp_logfile.write( msg+'\n' )
+
+def log_server( msg ):
+    if fp_logserver is not None:
+        fp_logserver.sendall( '[%s:%6d:%s] ' %(__file__, os.getpid(), str(datetime.now())) + msg +'\n' )
+    # fp_logfile.write( msg+'\n' )
+
 
 def log_debug( msg, lvl=1 ):
     if lvl in range( args.verbosity ):
@@ -85,6 +92,7 @@ parser.add_argument( '-f', '--force_download', default=False, action='store_true
 parser.add_argument( '-sd', '--store_dir', required=True, help='Specify database directory (will be created) to store the data' )
 parser.add_argument( '-ld', '--lists_db_dir', required=True, help='Specify lists DB directory' )
 parser.add_argument(  '--logfile', default=None, help='Logging file name' )
+parser.add_argument(  '--logserver', default=None, help='Logging server. eg. localhost:9276' )
 parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0 is quite. 5 is most verbose' )
 args = parser.parse_args()
 
@@ -97,6 +105,25 @@ else:
     fp_logfile = open( args.logfile, 'w' )
     print 'LOGFILE NAME : ', args.logfile
     log_write( '```\n' + ' '.join( sys.argv ) + '\n```' )
+
+
+if args.logserver is None:
+    fp_logserver = None
+else:
+    print 'LOGSERVER    : ', args.logserver
+    try:
+        _host = args.logserver.split(':')[0]
+        _port = int(args.logserver.split(':')[1])
+        fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+        fp_logserver.connect( (_host,_port) )
+        # fp_logserver.sendall( 'Connected!')
+        log_server( 'Connected')
+    except:
+        print tcol.FAIL, 'Cannot connect to logserver', tcol.ENDC
+        print 'Start a forked logserver like:'
+        print '$ socat TCP4-LISTEN:9595,fork STDOUT'
+
+
 
 
 if args.hkex:
@@ -178,6 +205,7 @@ if args.xszse:
 proc_started = datetime.now()
 for i,l in enumerate(full_list):
     log_write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
+    log_server( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'
@@ -236,3 +264,7 @@ log_write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )
 log_write( tcol.OKGREEN+ 'Started: '+ str(proc_started)+ tcol.ENDC )
 log_write( tcol.OKGREEN+ 'Finished: '+ str(datetime.now())+ tcol.ENDC )
 log_write( tcol.OKGREEN+ 'Total time: %5.2f sec' %( time.time() - startTime )+ tcol.ENDC )
+
+log_server( tcol.OKGREEN+ 'Started: '+ str(proc_started)+ tcol.ENDC )
+log_server( tcol.OKGREEN+ 'Finished: '+ str(datetime.now())+ tcol.ENDC )
+log_server( tcol.OKGREEN+ 'Total time: %5.2f sec' %( time.time() - startTime )+ tcol.ENDC )
