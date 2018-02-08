@@ -160,14 +160,21 @@ class SourceQuotesAlphaVantage:
 
 
             # Step-3
-            if rm_raw is True:
-                os.remove(file_to_save_raw)
+            # It is ok to uncomment it. But the disadvantage of it is that. If you need
+            # to restart the process. EVerything is downloaded again. Since
+            # memory is cheap and not an issue, its keep the raw files
+            # if rm_raw is True:
+                # os.remove(file_to_save_raw)
+
+
         else:
             self._error( 'Invalid exchange: '+xchange)
+            return False
 
 
 
         self._report_time( 'Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
+        return True
 
 
 
@@ -220,7 +227,7 @@ class SourceQuotesAlphaVantage:
 
         if skip_if_exist and os.path.isfile(fname):
             self._debug( 'File already exists....SKIP')
-            return
+            return True
         else:
             self._debug( 'File does not exist... continue')
 

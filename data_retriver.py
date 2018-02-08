@@ -203,9 +203,10 @@ if args.xszse:
 #
 # Main Loop
 proc_started = datetime.now()
+d_status = False
 for i,l in enumerate(full_list):
     log_write( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
-    log_server( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
+
 
     # Make Folder if not exist
     folder = db_prefix+'/'+l.ticker+'/'
@@ -225,27 +226,17 @@ for i,l in enumerate(full_list):
     # Download WSJ
     if args.wsj:
         s_wsj = SourceWSJ( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
-        s_wsj.download_url(skip_if_exist=not args.force_download)
-        # # s_wsj.parse()
-        # # s_wsj.parse_profile()
-        # # s_wsj.parse_financials()
-        # json_data = s_wsj.load_json_profile()
-        # if json_data is not None:
-        #     print json_data['Company Info']['Industry'], '-', json_data['Company Info']['Sector']
+        d_status = s_wsj.download_url(skip_if_exist=not args.force_download)
 
-
-    # if args.yahoo: #yahoo no more provides data - TODO mark for removal. deactivate this option.
-    #     s_yahoo = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity )
-    #     s_yahoo.download_quick_quote()
 
     if args.quotes_full:
         s_quotes_historical = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
-        s_quotes_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        d_status = s_quotes_historical.download_historical_quote(skip_if_exist=not args.force_download, rm_raw=False)
         #TODO : Add a commandline option for remove raw
 
     if args.quotes_recent:
         s_quotes_recent100 = SourceYahoo( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
-        s_quotes_recent100.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
+        d_status = s_quotes_recent100.download_recent100d_quote(skip_if_exist=not args.force_download, rm_raw=False)
         #TODO : Add a commandline option for remove raw
 
 
@@ -258,6 +249,11 @@ for i,l in enumerate(full_list):
         s_aastocks = SourceAAStocks( ticker=l.ticker, stock_prefix=folder, verbosity=args.verbosity, logfile=fp_logfile )
         s_aastocks.download_url()
 
+    # Log Server
+    if d_status : #print in green if successful, else print in red
+        log_server( tcol.OKGREEN+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
+    else:
+        log_server( tcol.FAIL+ str(i)+' of %d ' %(len(full_list)) + ' '+str(l)+' '+ tcol.ENDC )
 
 
 log_write( tcol.OKGREEN+ 'PID: '+ str(os.getpid())+ tcol.ENDC )

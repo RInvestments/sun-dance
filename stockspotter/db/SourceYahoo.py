@@ -161,11 +161,11 @@ class SourceYahoo:
 
 
     def download_historical_quote(self, skip_if_exist=True, rm_raw=True ):
-        self.obb.retrive_www( n=1000, rm_raw=rm_raw )
+        return self.obb.retrive_www( n=1000, rm_raw=rm_raw )
 
 
     def download_recent100d_quote(self, skip_if_exist=True, rm_raw=True ):
-        self.obb.retrive_www( n=99, rm_raw=rm_raw )
+        return self.obb.retrive_www( n=99, rm_raw=rm_raw )
 
 
 

@@ -396,6 +396,7 @@ class SourceWSJ:
 
         # retrive file and write file
         startTime = time.time()
+        download_status_strict = True
         if skip_if_exist and os.path.exists(self.priv_dir+'financials.html'):
             self._debug( 'Already exists file : %s .... SKIPPING' %(self.priv_dir+'financials.html') )
         else:
@@ -426,6 +427,7 @@ class SourceWSJ:
 
 
         self._report_time( 'Downloaded in %2.4f sec' %(time.time()-startTime) )
+        return True
 
 
     def parse(self, delete_raw=False):

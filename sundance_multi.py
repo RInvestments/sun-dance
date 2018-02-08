@@ -16,6 +16,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 import sys
+import socket
 
 import threading
 import Queue
@@ -663,9 +664,10 @@ def exec_task( cmd, log_dir ):
     _proc_print( p.pid, 'log : %s' %(log_file) )
 
 
-
-    process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-    # process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    if args.simulate:
+        process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    else:
+        process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -716,8 +718,9 @@ def exec_task( cmd, log_dir ):
 parser = argparse.ArgumentParser()
 parser.add_argument( '-f', '--config_file', required=True, help='Specify XML config file' )
 parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='Overide the store_dir in config with specified. If not specified, then one specified in config will be used.' )
-parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running' )
-parser.add_argument( '--logserver', required=True, help='Specify XML config file' )
+parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running commands' )
+parser.add_argument( '-s', '--simulate', default=False, action='store_true', help='Just simulate the commands (sleep 1) instead of read commands' )
+parser.add_argument( '--logserver', required=True, help='Specify Logserver. Eg. localhost:9595. Setup a forking server like\n\t$socat TCP4-LISTEN:9595,fork STDOUT' )
 args = parser.parse_args()
 
 
@@ -727,10 +730,26 @@ DEBUG_LEVEL = 0
 # fname = 'config/recent_quotes.config.xml'
 fname = args.config_file
 
-_printer( 'Open Config     : %s' %(fname) )
-_printer( 'Store directory : %s' %(args.store_dir) )
-_printer( 'Log Server      : %s' %(args.logserver) )
+_printer( tcol.BOLD+'Open Config     : %s' %(fname)+tcol.ENDC )
+_printer( tcol.BOLD+'Store directory : %s' %(args.store_dir)+tcol.ENDC )
+_printer( tcol.BOLD+'Log Server      : %s' %(args.logserver)+tcol.ENDC )
 global_logserver = args.logserver
+# Check server
+try:
+    _host = args.logserver.split(':')[0]
+    _port = int(args.logserver.split(':')[1])
+    fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+    fp_logserver.connect( (_host,_port) )
+    fp_logserver.sendall( 'Hand Shake Success! ')
+    fp_logserver.close()
+    _printer( tcol.OKGREEN+'%s OK!' %(global_logserver)+tcol.ENDC )
+except:
+    print tcol.FAIL, 'Cannot connect to logserver', tcol.ENDC
+    print 'Start a forked logserver like:'
+    print '\t$ socat TCP4-LISTEN:9595,fork STDOUT'
+    quit()
+
+
 
 X, _repeat_info = consolidated_config_to_cmd( fname, args.store_dir )
 
@@ -780,7 +799,7 @@ while True:
     run_done_in = time.time() - startTime_run
     sleep_for = repeat_in_sec - run_done_in
     _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
-    if sleep_for > 0:
+    if sleep_for > 0 and args.simulate == False:
         _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
         time.sleep( sleep_for )
 
@@ -789,25 +808,3 @@ while True:
 
 
 quit()
-
-# cmd_list, log_dir = config_to_cmd( fname, args.store_dir )
-# #TODO : Also return proc_level list. This will let me put the entire config together.
-# # Basically all the <process>...</process> with same proc_level can be executed together.
-# # The process with proc_level as `i` can be excecuted only after all the proceses
-# # with proc_level in {0,1,...,i-1} are complete
-# jobs = []
-# for cmd in cmd_list:
-#     _printer( cmd )
-#     d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
-#     jobs.append( d )
-#     # d.start()
-#
-# if raw_input( 'Confirm (y/n): ' ) != 'y':
-#     sys.stderr.write( 'Quit()\n' )
-#     quit()
-#
-# for j in jobs:
-#     j.start()
-#
-# for j in jobs:
-#     j.join()

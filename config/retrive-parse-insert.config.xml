@@ -43,7 +43,7 @@
 
 <xml>
   <global>
-    <store_dir>equities_db/X/</store_dir>
+    <store_dir>equities_db/data_reg/</store_dir>
     <list_db>equities_db/lists/</list_db>
     <!-- <log_dir>equities_db/data_20171113/retriver_</log_dir> -->
     <verbosity>0</verbosity>

@@ -8,14 +8,33 @@ A fun project to identify under valued assets, mainly securities analysis.
 I basically built a web-crawler to retrive financial statements (income statements, 
 balance sheet, cashflow statements).
 
-Read books especially from value investors like Ben Graham etc. Other
-sources like investopedia etc to build scripts that can scan all the listings of 
-HKEX. 
+Read books especially from value investors like Ben Graham etc. I will put a list
+of interesting books and ideas later. 
 
-Currently avaialble exchanges : HK, NSE(India), BSE(India), NYSE, NASDAQ, AMEX, TYO (Tokyo)
+Currently available exchanges : HK, NSE(India), BSE(India), NYSE, NASDAQ, AMEX, TYO (Tokyo), SZSE (Shenzen), SSE (Shanghai)
 
 Transfer some of the machine learning techniques to analyse and potentially make a
 buck or two. 
+
+## Daemon Usage 
+It is possible to write config files to specify multiple processes and repeat structure. Most common config files is to retrive all the WSJ data and the 100-day quotes data. It is usually a good idea
+to log everything to an external server. 
+
+**Logging Server**
+```
+socat TCP4-LISTEN:9595,fork STDOUT
+```
+
+**WSJ Data**
+```
+python sundance_multi.py  -f config/retrive-parse-insert.config.xml --logserver localhost:9595
+```
+
+**100d Quotes Data**
+```
+python sundance_multi.py  -f config/retrive-parse-insert-recent-quotes.config.xml --logserver localhost:9595
+```
+
 
 ## Core Usage 
 python data_retriver.py  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
