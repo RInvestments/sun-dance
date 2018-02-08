@@ -37,26 +37,34 @@ python sundance_multi.py  -f config/retrive-parse-insert-recent-quotes.config.xm
 
 
 ## Core Usage 
+```
 python data_retriver.py  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
 
 python data_parser.py --wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
 
 python data_inserter.py --wsj -db equities_db/data__N -l equities_db/lists/ --xhkex --xbse --xnse
+```
 
 #### Delete Raw (WSJ)
+```
 python data_parser.py --delete_raw_wsj -sd equities_db/data__N -ld equities_db/lists/  --xhkex --xbse --xnse
+```
 
 #### Daily Quote Data (currently only for HKEX, NSE)
+```
 python  data_retriver.py -sd equities_db/data__quotes_N -ld equities_db/lists --quotes_full --xnse --xhkex
 
 python  data_retriver.py -sd equities_db/data__quotes_N -ld equities_db/lists --quotes_recent --xnse --xhkex
 
 python  daily_quote_inserter.py -db equities_db/data__quotes_N -ld equities_db/lists --xnse --xhkex 
+```
 
 #### Verbose
+```
 python data_retriver.py -v 1  -sd equities_db/data__N -ld equities_db/lists --wsj --xhkex --xbse --xnse
 
 python data_parser.py --hkex --wsj -sd equities_db/data__N -ld equities_db/lists/ -v 1 --delete_raw --xhkex --xbse --xnse
+```
 
 #### First time usage 
 Populate list of stocks from various exchanges. You might also want to look at `test_pkg.py` which is a cummulation of all the required pakages.
@@ -72,7 +80,7 @@ Details of Schema : [HERE](documents/mongodb_schema_details.md)
 
 
 ## Study Resources
-List of books, articles, other resources to learn on investing [HERE](documents/economics_theory/README.md)
+List of books, articles, other resources to learn on investing [HERE](documents/economics_theory/)
 
 ## Software Licence
 ![License ICO](documents/images/88x31.png)
@@ -85,4 +93,6 @@ For commerial license please contact the author.
 
 ## Author
 Manohar Kuse <mpkuse@connect.ust.hk>
+
+If you like this you might be interested in its [sister projects](http://github.com/RInvestments). 
 
