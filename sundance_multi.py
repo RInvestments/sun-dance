@@ -596,6 +596,12 @@ while True:
     sleep_for = repeat_in_sec - run_done_in
     _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
 
+
+    # Sleep
+    if sleep_for > 0 and args.simulate == False:
+        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
+        time.sleep( sleep_for )
+
     # Remove Raw Files
     if args.keep_raw == False:
         assert( _data_store_dir is not None and _data_store_dir != "" )
@@ -608,12 +614,6 @@ while True:
                 quit()
 
         os.system( remove_command )
-
-    # Sleep
-    if sleep_for > 0 and args.simulate == False:
-        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
-        time.sleep( sleep_for )
-
 
 
 
