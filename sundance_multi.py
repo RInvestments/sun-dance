@@ -16,6 +16,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 import sys
+import os
 import socket
 
 import threading
@@ -67,230 +68,6 @@ class AsynchronousFileReader(threading.Thread):
     def eof(self):
         '''Check whether there is no more content to expect.'''
         return not self.is_alive() and self._queue.empty()
-#
-#
-# def config_to_cmd( fname, store_dir=None ):
-#     _debug( 'Open XML config : %s' %(fname) )
-#
-#     if store_dir is None:
-#         _debug( 'will use store_dir from configxml file')
-#     else:
-#         _debug( 'store_dir: %s' %(store_dir) )
-#
-#     doc = etree.parse( fname )
-#     global_ele = doc.find( 'global' )
-#
-#     # Iterate over each process
-#     cmd_list = []
-#     print 'Found %d process' %( len(doc.findall( 'process' )) )
-#     for p in doc.findall( 'process' ):
-#         # _debug( '---', 2 )
-#
-#         if p.find( 'type' ).text.strip() == 'retriver':
-#
-#             if store_dir is None:
-#                 # Store DIR
-#                 try:
-#                     store_dir = p.find( 'store_dir' ).text.strip()
-#                 except:
-#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
-#
-#             # List DIR
-#             try:
-#                 list_db = p.find( 'list_db' ).text.strip()
-#             except:
-#                 list_db = global_ele.find( 'list_db' ).text.strip()
-#
-#             # Verbosity
-#             try:
-#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
-#             except:
-#                 try:
-#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-#                 except:
-#                     verbosity = 0
-#
-#             # Data Source
-#             task = p.find( 'task' ).text.strip()
-#             task_arg = ''
-#             for src in task.split( ',' ):
-#                 task_arg += ' --%s ' %(src.strip())
-#
-#
-#
-#             # Exchange
-#             exchange = p.find( 'exchange' ).text.strip()
-#             exchange_arg = ''
-#             for ex in exchange.split(','):
-#                 exchange_arg += ' --%s ' %(ex.strip())
-#
-#
-#             cmd = 'python data_retriver.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
-#             _debug( cmd, 2 )
-#             cmd_list.append( cmd )
-#
-#
-#
-#         if p.find( 'type' ).text.strip() == 'parser':
-#             if store_dir is None:
-#                 # Store DIR
-#                 try:
-#                     store_dir = p.find( 'store_dir' ).text.strip()
-#                 except:
-#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
-#
-#             # List DIR
-#             try:
-#                 list_db = p.find( 'list_db' ).text.strip()
-#             except:
-#                 list_db = global_ele.find( 'list_db' ).text.strip()
-#
-#             # Verbosity
-#             try:
-#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
-#             except:
-#                 try:
-#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-#                 except:
-#                     verbosity = 0
-#
-#             # Data Source
-#             task = p.find( 'task' ).text.strip()
-#             task_arg = ''
-#             for src in task.split( ',' ):
-#                 task_arg += ' --%s ' %(src.strip())
-#
-#
-#
-#             # Exchange
-#             exchange = p.find( 'exchange' ).text.strip()
-#             exchange_arg = ''
-#             for ex in exchange.split(','):
-#                 exchange_arg += ' --%s ' %(ex.strip())
-#
-#
-#             cmd = 'python data_parser.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
-#             _debug( cmd , 2)
-#             cmd_list.append( cmd )
-#
-#
-#
-#         if p.find( 'type' ).text.strip() == 'inserter':
-#             # Store DIR
-#             if store_dir is None:
-#                 try:
-#                     store_dir = p.find( 'store_dir' ).text.strip()
-#                 except:
-#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
-#
-#             # List DIR
-#             try:
-#                 list_db = p.find( 'list_db' ).text.strip()
-#             except:
-#                 list_db = global_ele.find( 'list_db' ).text.strip()
-#
-#             # Verbosity
-#             try:
-#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
-#             except:
-#                 try:
-#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-#                 except:
-#                     verbosity = 0
-#
-#
-#             # Exchange
-#             exchange = p.find( 'exchange' ).text.strip()
-#             exchange_arg = ''
-#             for ex in exchange.split(','):
-#                 exchange_arg += ' --%s ' %(ex.strip())
-#
-#
-#             cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
-#             _debug( cmd, 2)
-#             cmd_list.append( cmd )
-#
-#
-#         if p.find( 'type' ).text.strip() == 'quote_inserter':
-#             if store_dir is None:
-#                 # Store DIR
-#                 try:
-#                     store_dir = p.find( 'store_dir' ).text.strip()
-#                 except:
-#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
-#
-#             # List DIR
-#             try:
-#                 list_db = p.find( 'list_db' ).text.strip()
-#             except:
-#                 list_db = global_ele.find( 'list_db' ).text.strip()
-#
-#             # Verbosity
-#             try:
-#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
-#             except:
-#                 try:
-#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-#                 except:
-#                     verbosity = 0
-#
-#
-#
-#             # Exchange
-#             exchange = p.find( 'exchange' ).text.strip()
-#             exchange_arg = ''
-#             for ex in exchange.split(','):
-#                 exchange_arg += ' --%s ' %(ex.strip())
-#
-#
-#             cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
-#             _debug( cmd, 2 )
-#             cmd_list.append( cmd )
-#
-#         if p.find( 'type' ).text.strip() == 'aastocks_inserter':
-#             if store_dir is None:
-#                 try:
-#                     store_dir = p.find( 'store_dir' ).text.strip()
-#                 except:
-#                     store_dir = global_ele.find( 'store_dir' ).text.strip()
-#
-#             # List DIR
-#             try:
-#                 list_db = p.find( 'list_db' ).text.strip()
-#             except:
-#                 list_db = global_ele.find( 'list_db' ).text.strip()
-#
-#             # Verbosity
-#             try:
-#                 verbosity = int( p.find( 'verbosity' ).text.strip() )
-#             except:
-#                 try:
-#                     verbosity = int( global_ele.find( 'verbosity' ).text.strip() )
-#                 except:
-#                     verbosity = 0
-#
-#             cmd = 'python aastocks_inserter.py -db %s -ld %s -v %d' %(store_dir, list_db, verbosity )
-#             _debug( cmd, 2 )
-#             cmd_list.append( cmd )
-#
-#
-#
-#
-#     # Log dir
-#     if store_dir is None:
-#         try:
-#             log_dir = global_ele.find( 'log_dir' ).text.strip()
-#         except:
-#             try:
-#                 log_dir = global_ele.find( 'store_dir' ).text.strip()
-#             except:
-#                 log_dir = '/tmp/'
-#     else:
-#         log_dir = store_dir+'/'
-#
-#     return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
-#     # return cmd_list, log_dir
-#
 
 def processgroup_2_cmd( group, global_ele, store_dir=None ):
     """
@@ -541,6 +318,8 @@ def consolidated_config_to_cmd( fname, store_dir ):
         quit()
 
 
+
+
     #
     # Read Groups
     all_groups = doc.findall( 'group' )
@@ -641,7 +420,20 @@ def consolidated_config_to_cmd( fname, store_dir ):
 
     _printer( tcol.HEADER+'Repeat execution every %s, ie. %d seconds' %(' '.join(rt), rt_sec )+tcol.ENDC  )
     _printer( tcol.OKGREEN+'Config file OK!'+tcol.ENDC )
-    return X, (rt_sec, repeat_count)
+
+
+    # Get storage directory from <global>
+    if store_dir is None:
+        # Store DIR
+        try:
+            store_dir = p.find( 'store_dir' ).text.strip()
+        except:
+            store_dir = global_ele.find( 'store_dir' ).text.strip()
+
+
+
+
+    return X, (rt_sec, repeat_count), store_dir
 
 
 
@@ -718,6 +510,7 @@ def exec_task( cmd, log_dir ):
 parser = argparse.ArgumentParser()
 parser.add_argument( '-f', '--config_file', required=True, help='Specify XML config file' )
 parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='Overide the store_dir in config with specified. If not specified, then one specified in config will be used.' )
+parser.add_argument( '-k', '--keep_raw', default=False, action='store_true', help='Remove the storage directory (raw files) after every execution, unless this flag is specified' )
 parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running commands' )
 parser.add_argument( '-s', '--simulate', default=False, action='store_true', help='Just simulate the commands (sleep 1) instead of read commands' )
 parser.add_argument( '--logserver', required=True, help='Specify Logserver. Eg. localhost:9595. Setup a forking server like\n\t$socat TCP4-LISTEN:9595,fork STDOUT' )
@@ -751,7 +544,7 @@ except:
 
 
 
-X, _repeat_info = consolidated_config_to_cmd( fname, args.store_dir )
+X, _repeat_info, _data_store_dir = consolidated_config_to_cmd( fname, args.store_dir )
 
 repeat_in_sec=0
 repeat_count=1
@@ -761,6 +554,9 @@ _i = 0
 
 print 'Repeat for %d times' %(repeat_count)
 # for _i in range( 10 ):
+
+# code.interact( local=locals() )
+# quit()
 while True:
     _i += 1
     if _i > repeat_count and repeat_count > 0:
@@ -799,6 +595,21 @@ while True:
     run_done_in = time.time() - startTime_run
     sleep_for = repeat_in_sec - run_done_in
     _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
+
+    # Remove Raw Files
+    if args.keep_raw == False:
+        assert( _data_store_dir is not None and _data_store_dir != "" )
+        remove_command =  'rm -rf %s/*' %(_data_store_dir)
+        print tcol.WARNING,remove_command, tcol.ENDC
+
+        if args.interactive:
+            if raw_input( 'Confirm (y/n): ' ) != 'y':
+                sys.stderr.write( 'Not Deleting.\nQuit()\n' )
+                quit()
+
+        os.system( remove_command )
+
+    # Sleep
     if sleep_for > 0 and args.simulate == False:
         _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
         time.sleep( sleep_for )
