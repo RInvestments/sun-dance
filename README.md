@@ -73,6 +73,16 @@ Populate list of stocks from various exchanges. You might also want to look at `
 python init_lister.py
 ```
 
+## Prerequisits
+Here are some prerequist packages
+
+- Beautiful Soup 
+    `sudo pip install beautifulsoup4`
+- XLRD  
+    `sudo pip install xlrd`
+- LXML
+    `sudo pip install lxml`
+
 ## MongoDB Schema
 I insert individual elements into flat mongodb structure. Note that the code might not be exactlty as described in document, but is more or less consistent. 
 
