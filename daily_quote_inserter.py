@@ -8,7 +8,7 @@ from collections import OrderedDict
 import sys
 import time
 import pymongo
-import datetime
+# import datetime
 import uuid
 import socket
 import os
@@ -167,9 +167,9 @@ for i,l in enumerate(full_list):
         insert_query = {}
         insert_query['id'] = str(digest)
         insert_query['ticker'] = l.ticker
-        insert_query['inserted_on'] = datetime.datetime.now()
+        insert_query['inserted_on'] = datetime.now()
     	try:
-            insert_query['datetime'] = datetime.datetime.strptime( date_inst, '%Y-%m-%d')
+            insert_query['datetime'] = datetime.strptime( date_inst, '%Y-%m-%d')
     	except ValueError:
     	     __write( 'ValueError, date contains unparsed things. OK to ignore.'+ str(insert_query) )
 
