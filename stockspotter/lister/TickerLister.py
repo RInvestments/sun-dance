@@ -86,9 +86,12 @@ class TickerLister:
             html = open( self.priv_dir+'/eisdeqty.htm', 'r').read()
             #TODO if there is file not found exception download. for storage create folder hkex
         else:
-            # Read URL
-            self._debug( 'Download : http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm' )
-            html = urllib2.urlopen('http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm').read()  # List of securities
+            # Read URo
+	    hkex_url = 'http://sc.hkex.com.hk/gb/ips1.hkex/eng/market/sec_tradinfo/stockcode/eisdeqty.htm'
+            self._debug( 'Download : '+hkex_url )
+            html = urllib2.urlopen(hkex_url).read()  # List of securities
+            #self._debug( 'Download : http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm' )
+            #html = urllib2.urlopen('http://www.hkex.com.hk/eng/market/sec_tradinfo/stockcode/eisdeqty.htm').read()  # List of securities
             fp = open( self.priv_dir+'/eisdeqty.htm', 'w')
             fp.write( html )
             fp.close()
