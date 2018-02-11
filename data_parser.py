@@ -20,7 +20,7 @@ import time
 from datetime import datetime
 
 from bs4 import BeautifulSoup
-from yahoo_finance import Share
+#from yahoo_finance import Share
 
 import pickle
 import argparse
