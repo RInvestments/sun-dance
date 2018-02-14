@@ -19,6 +19,7 @@ import locale
 import json
 import collections
 import socket
+import pprint
 
 import time
 from datetime import datetime
@@ -409,6 +410,7 @@ parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0
 parser.add_argument( '-db', '--data_dir', required=True, help='Specify database directory (eg. equities_db/data__N/)' )
 parser.add_argument(  '--logfile', default=None, help='Logging file name' )
 parser.add_argument(  '--logserver', default=None, help='Logging server. eg. localhost:9276' )
+parser.add_argument(  '--mongodb', default=None, help='Specify mongodb instance. If not specified will use localhost:27017. eg mongodb://localhost:27017.' )
 
 # Bourse
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
@@ -460,7 +462,16 @@ __write( tcol.HEADER+ 'verbosity : '+ str(args.verbosity)+ tcol.ENDC )
 
 
 # Setup DB access and file accesses
-client = pymongo.MongoClient()
+if args.mongodb is None:
+    __write( tcol.HEADER + 'Mongo-Server: ' + 'mongodb://localhost:27017/' + tcol.ENDC )
+    client = pymongo.MongoClient()
+else:
+    __write( tcol.HEADER + 'Mongo-Server: ' + args.mongodb +  tcol.ENDC )
+    client = pymongo.MongoClient(args.mongodb)
+
+pprint.pprint(  client.server_info()  ) # The process will fail if cannot connect to mongodb
+
+
 db = client.universalData
 
 # lister = TickerLister( args.lists_db_dir )

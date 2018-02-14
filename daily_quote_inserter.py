@@ -13,7 +13,7 @@ import uuid
 import socket
 import os
 from datetime import datetime
-
+import pprint
 import TerminalColors
 tcol = TerminalColors.bcolors()
 
@@ -44,6 +44,7 @@ parser.add_argument( '-v', '--verbosity', type=int, default=0, help='Verbosity 0
 parser.add_argument( '-db', '--quotes_data_dir', required=True, help='Specify quotes directory (eg. equities_db/data_quotes_20170716/)' )
 parser.add_argument(  '--logfile', default=None, help='Logging file name' )
 parser.add_argument(  '--logserver', default=None, help='Logging server. eg. localhost:9276' )
+parser.add_argument(  '--mongodb', default=None, help='Specify mongodb instance. If not specified will use localhost:27017. eg mongodb://localhost:27017.' )
 
 # Bourse
 parser.add_argument( '--xhkex', default=False, action='store_true', help='List all HKEX Stocks' )
@@ -67,6 +68,7 @@ else:
 
 if args.logserver is None:
     fp_logserver = None
+    print 'LOGSERVER    : ', args.logserver
 else:
     print 'LOGSERVER    : ', args.logserver
     try:
@@ -97,8 +99,17 @@ __write( tcol.HEADER + 'verbosity : '+ str(args.verbosity) + tcol.ENDC )
 
 # ----------- MAIN -------------#
 # Setup DB access and file accesses
-client = pymongo.MongoClient()
+if args.mongodb is None:
+    __write( tcol.HEADER + 'Mongo-Server: ' + 'mongodb://localhost:27017/' + tcol.ENDC )
+    client = pymongo.MongoClient()
+else:
+    __write( tcol.HEADER + 'Mongo-Server: ' + args.mongodb +  tcol.ENDC )
+    client = pymongo.MongoClient(args.mongodb)
+
+pprint.pprint(  client.server_info()  ) # The process will fail if cannot connect to mongodb
 db = client.sun_dance.stock_quotes #mongodb collection
+
+
 
 # # Lister
 # # lister = TickerLister( 'equities_db/lists/' )
