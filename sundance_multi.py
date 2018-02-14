@@ -3,7 +3,7 @@
     data_inserter.
 
     Typical Usage:
-        sundance -f config/retrive_wsj.config.xml
+        python sundance_multi.py -f config/retrive_wsj.config.xml
 """
 
 from lxml import etree
@@ -597,13 +597,9 @@ while True:
     _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
 
 
-    # Sleep
-    if sleep_for > 0 and args.simulate == False:
-        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
-        time.sleep( sleep_for )
 
     # Remove Raw Files
-    if args.keep_raw == False:
+    if args.keep_raw == False and args.simulate == False:
         assert( _data_store_dir is not None and _data_store_dir != "" )
         remove_command =  'rm -rf %s/*' %(_data_store_dir)
         print tcol.WARNING,remove_command, tcol.ENDC
@@ -614,6 +610,12 @@ while True:
                 quit()
 
         os.system( remove_command )
+
+
+    # Sleep
+    if sleep_for > 0 and args.simulate == False:
+        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
+        time.sleep( sleep_for )
 
 
 

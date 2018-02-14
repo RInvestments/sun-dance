@@ -4,6 +4,8 @@
 
     Typical Usage:
         sundance -f config/retrive_wsj.config.xml
+
+    deprecated. Consider removal. Switched to new format in which can specify multiple execution groups.
 """
 
 from lxml import etree
