@@ -1,0 +1,164 @@
+<!-- This is consolidated XML file. All the task in a group will
+     be excuted in parallel. However groups will be executed sequencially
+     as defined in tag execution
+
+  <xml>
+    <global>
+    <store_dir>equities_db/data_20171113/</store_dir>
+    <list_db>equities_db/lists/</list_db>
+    <verbosity>0</verbosity>
+    </global>
+
+    <execution>
+      <line>retriver_group</line>
+      <line>parser_group</line>
+      .
+      .
+      <line></line>
+    </execution>
+
+    <group id="retriver_group" >
+      <process></process>
+      <process></process>
+      .
+      .
+      <process></process>
+    <group>
+
+    <group id="parser_group" >
+      <process></process>
+      <process></process>
+      .
+      .
+      <process></process>
+    <group>
+
+    .
+    .
+    .
+  </xml>
+
+
+-->
+
+<xml>
+  <global>
+    <store_dir>equities_db/data_quotes/</store_dir>
+    <list_db>equities_db/lists/</list_db>
+    <!-- <log_dir>equities_db/data_20171113/retriver_</log_dir> -->
+    <verbosity>0</verbosity>
+  </global>
+
+  <!--
+      repeat="#1.#2".
+      #1: a number
+      #2: in [days, weeks, months, year]
+
+      times="#1" (optional. If not given will go on for ever, negative number also will make it go on for ever).
+      #1: a number
+
+      example explaination, repeat this sequence after every 20seconds for 3 times in all.
+  -->
+  <execution repeat="1.weeks" times="1">
+    <line>recent_quotes_retriver</line>
+    <line>recent_quotes_inserter</line>
+  </execution>
+
+  <group id="recent_quotes_retriver">
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xhkex</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xnse,xbse</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xnyse</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xnasdaq</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xamex,xtyo</exchange>
+      <proc_level>0</proc_level>
+    </process>
+
+    <!-- NOT AVAILABLE YET FOR China's exchanges
+    <process>
+      <type>retriver</type>
+      <task>quotes_recent</task>
+      <exchange>xsse,xszse</exchange>
+      <proc_level>0</proc_level>
+    </process>-->
+  </group>
+
+
+
+  <group id="recent_quotes_inserter">
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xhkex</exchange>
+    </process>
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xnse</exchange>
+    </process>
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xbse</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xnyse</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xnasdaq</exchange>
+    </process>
+
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xamex</exchange>
+    </process>
+
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xtyo</exchange>
+    </process>
+  <!--
+    <process>
+      <type>quote_inserter</type>
+      <exchange>xsse,xszse</exchange>
+    </process>
+  -->
+  </group>
+
+</xml>

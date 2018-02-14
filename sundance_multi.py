@@ -3,9 +3,7 @@
     data_inserter.
 
     Typical Usage:
-        sundance -f config/retrive_wsj.config.xml
-
-    deprecated. Consider removal. Switched to new format in which can specify multiple execution groups.
+        python sundance_multi.py -f config/retrive_wsj.config.xml
 """
 
 from lxml import etree
@@ -16,13 +14,20 @@ import multiprocessing
 
 import time
 from datetime import datetime
+from datetime import timedelta
 import sys
+import os
+import socket
 
 import threading
 import Queue
+import code
+
+import TerminalColors
+tcol = TerminalColors.bcolors()
 
 def _error( msg ):
-    print '[ERROR] ', msg
+    print tcol.FAIL, '[ERROR] ', msg, tcol.ENDC
 
 def _debug( msg, lvl=1 ):
     if lvl in range( DEBUG_LEVEL ):
@@ -30,6 +35,13 @@ def _debug( msg, lvl=1 ):
 
 def _printer( msg ):
     print msg
+
+def _isnum( s ):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 class AsynchronousFileReader(threading.Thread):
     '''
@@ -57,22 +69,20 @@ class AsynchronousFileReader(threading.Thread):
         '''Check whether there is no more content to expect.'''
         return not self.is_alive() and self._queue.empty()
 
-
-def config_to_cmd( fname, store_dir=None ):
-    _debug( 'Open XML config : %s' %(fname) )
-
+def processgroup_2_cmd( group, global_ele, store_dir=None ):
+    """
+        This function expects the XML sub-tree.
+    """
     if store_dir is None:
         _debug( 'will use store_dir from configxml file')
     else:
         _debug( 'store_dir: %s' %(store_dir) )
 
-    doc = etree.parse( fname )
-    global_ele = doc.find( 'global' )
 
     # Iterate over each process
     cmd_list = []
-    print 'Found %d process' %( len(doc.findall( 'process' )) )
-    for p in doc.findall( 'process' ):
+    _debug( 'Found %d process in this group' %( len(group.findall( 'process' )) ) )
+    for p in group.findall( 'process' ):
         # _debug( '---', 2 )
 
         if p.find( 'type' ).text.strip() == 'retriver':
@@ -275,20 +285,170 @@ def config_to_cmd( fname, store_dir=None ):
             except:
                 log_dir = '/tmp/'
     else:
-        log_dir = store_dir+'/'
+        log_dir = store_dir
 
-    return cmd_list, log_dir+str(p.find( 'type' ).text.strip())+'_'
+    try:
+        full_log_dir = log_dir+'/'+group.attrib['id'].strip()
+    except:
+        try:
+            full_log_dir = log_dir+'/'+str(p.find( 'type' ).text.strip())+'_'
+        except:
+            RANDOM_STRING = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
+            full_log_dir = log_dir+'/'+str( RANDOM_STRING )+'_'
+
+    return cmd_list,full_log_dir
     # return cmd_list, log_dir
+
+
+def consolidated_config_to_cmd( fname, store_dir ):
+    #
+    # Read global info
+    _printer( tcol.HEADER+'Open XML config : %s' %(fname)+tcol.ENDC )
+    _debug( 'Open XML config : %s' %(fname) )
+
+    if store_dir is None:
+        _debug( 'will use store_dir from configxml file')
+    else:
+        _debug( 'store_dir: %s' %(store_dir) )
+
+    doc = etree.parse( fname )
+    global_ele = doc.find( 'global' )
+    if global_ele is None:
+        _error( 'Cannot find tag global (required)' )
+        quit()
+
+
+
+
+    #
+    # Read Groups
+    all_groups = doc.findall( 'group' )
+    _printer( tcol.HEADER+'Reading <group>s'+ tcol.ENDC )
+    _printer( 'Total groups :'+ str(len( all_groups )) )
+
+    proc_tree = {}
+    if len(all_groups) == 0: # File does not have a group structure and it process-flat structure (older version)
+        _printer( 'File does not have a <group> structure. Collecting all <process> to execute in parallel')
+        _debug( 'File does not have a <group> structure. Collecting all <process> to execute in parallel')
+        cmd, log_dir = processgroup_2_cmd( doc, global_ele, store_dir )
+        for _c in cmd:
+            _printer( '    '+_c)
+        _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
+        return [(cmd, log_dir)], None
+    else:
+        for group_i, group in enumerate(all_groups):
+            _printer( '  group#%3d, id=%s' %(  group_i, group.attrib['id'].strip() ) )
+            cmd, log_dir = processgroup_2_cmd( group, global_ele, store_dir )
+            for _c in cmd:
+                _printer( '    '+_c)
+            if group.attrib['id'].strip() in proc_tree.keys():
+                _error( 'Repeated id. Groups need to have unique IDs. Please rectify the XML')
+                quit()
+            proc_tree[ group.attrib['id'].strip() ] = (cmd, log_dir)
+
+
+    _printer( tcol.OKGREEN+'<group>s OK!'+tcol.ENDC )
+
+    #
+    # Read <execution>
+    try:
+        _printer( tcol.HEADER+'Reading <execution>s'+tcol.ENDC )
+        execution_tag = doc.find( 'execution' )
+        all_lines = execution_tag.findall( 'line' )
+        _printer( 'Total execution lines:'+ str( len( all_lines ) ) )
+    except:
+        _error( 'Fail! Cannot find <execution> tag (required)')
+        quit()
+
+    # Check if everything can be executed
+    status = True
+    for line_i, line in enumerate(all_lines):
+        # _printer( '%3d. %s' %(line_i, line.text.strip()) )
+        if line.text.strip() not in proc_tree.keys():
+            status = status and False
+            _error( 'You are asking me to execute group=`%s`, however I cannot find the defination of this group' %(line.text) )
+
+
+    if status is False:
+        _error( 'Fail!')
+        quit()
+    # _printer( tcol.OKGREEN+'OK!'+tcol.ENDC )
+
+    X = []
+    for line_i, line in enumerate(all_lines):
+        _printer( '%3d. %s' %(line_i, line.text.strip()) )
+        X.append( proc_tree[line.text.strip() ] )
+
+    #
+    # Check repeat in execution
+    try:
+        rt = execution_tag.attrib['repeat']
+    except:
+        return X, None
+
+
+    try:
+        repeat_count = execution_tag.attrib['times']
+        if _isnum( repeat_count ):
+            repeat_count = float(repeat_count)
+        else:
+            repeat_count = -1
+    except:
+        repeat_count = -1 # Infinite times
+
+    rt = rt.split('.')
+    time_set = ['days', 'weeks', 'months', 'year', 'seconds', 'minutes', 'hours']
+    assert( len(rt) == 2 )
+    assert( _isnum(rt[0].strip()) )
+    assert( rt[1].strip() in time_set )
+
+    if rt[1].strip() == 'days':
+        rt_sec = timedelta( days=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'weeks':
+        rt_sec = timedelta( weeks=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'months':
+        rt_sec = timedelta( months=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'years':
+        rt_sec = timedelta( year=float(rt[0]) ).total_seconds()
+
+    if rt[1].strip() == 'seconds':
+        rt_sec = timedelta( seconds=float(rt[0]) ).total_seconds()
+        if rt[1].strip() == 'minutes':
+            rt_sec = timedelta( hours=float(rt[0]) ).total_seconds()
+    if rt[1].strip() == 'hours':
+        rt_sec = timedelta( hours=float(rt[0]) ).total_seconds()
+
+    _printer( tcol.HEADER+'Repeat execution every %s, ie. %d seconds' %(' '.join(rt), rt_sec )+tcol.ENDC  )
+    _printer( tcol.OKGREEN+'Config file OK!'+tcol.ENDC )
+
+
+    # Get storage directory from <global>
+    if store_dir is None:
+        # Store DIR
+        try:
+            store_dir = p.find( 'store_dir' ).text.strip()
+        except:
+            store_dir = global_ele.find( 'store_dir' ).text.strip()
+
+
+
+
+    return X, (rt_sec, repeat_count), store_dir
+
+
+
+
 
 
 def _proc_print( pid, msg ):
     print '[PID=%5d] %s' %(pid, msg)
 
 def exec_task( cmd, log_dir ):
-
+    global global_logserver
     p = multiprocessing.current_process()
     startT = datetime.now()
     log_file = log_dir+'%s.log' %( str(p.pid) )
+    log_server = global_logserver #"localhost:9595"
 
 
     _proc_print( p.pid, 'Start at %s' %(str(startT)) )
@@ -296,9 +456,10 @@ def exec_task( cmd, log_dir ):
     _proc_print( p.pid, 'log : %s' %(log_file) )
 
 
-
-    process = subprocess.Popen( cmd+' --logfile=%s' %(log_file), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-    # process = subprocess.Popen( 'sleep 5s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    if args.simulate:
+        process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    else:
+        process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -349,6 +510,10 @@ def exec_task( cmd, log_dir ):
 parser = argparse.ArgumentParser()
 parser.add_argument( '-f', '--config_file', required=True, help='Specify XML config file' )
 parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='Overide the store_dir in config with specified. If not specified, then one specified in config will be used.' )
+parser.add_argument( '-k', '--keep_raw', default=False, action='store_true', help='Remove the storage directory (raw files) after every execution, unless this flag is specified' )
+parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running commands' )
+parser.add_argument( '-s', '--simulate', default=False, action='store_true', help='Just simulate the commands (sleep 1) instead of read commands' )
+parser.add_argument( '--logserver', required=True, help='Specify Logserver. Eg. localhost:9595. Setup a forking server like\n\t$socat TCP4-LISTEN:9595,fork STDOUT' )
 args = parser.parse_args()
 
 
@@ -358,27 +523,101 @@ DEBUG_LEVEL = 0
 # fname = 'config/recent_quotes.config.xml'
 fname = args.config_file
 
-_printer( 'Open Config : %s' %(fname) )
-_printer( 'Store directory : %s' %(args.store_dir) )
-
-cmd_list, log_dir = config_to_cmd( fname, args.store_dir )
-#TODO : Also return proc_level list. This will let me put the entire config together.
-# Basically all the <process>...</process> with same proc_level can be executed together.
-# The process with proc_level as `i` can be excecuted only after all the proceses
-# with proc_level in {0,1,...,i-1} are complete
-jobs = []
-for cmd in cmd_list:
-    _printer( cmd )
-    d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
-    jobs.append( d )
-    # d.start()
-
-if raw_input( 'Confirm (y/n): ' ) != 'y':
-    sys.stderr.write( 'Quit()\n' )
+_printer( tcol.BOLD+'Open Config     : %s' %(fname)+tcol.ENDC )
+_printer( tcol.BOLD+'Store directory : %s' %(args.store_dir)+tcol.ENDC )
+_printer( tcol.BOLD+'Log Server      : %s' %(args.logserver)+tcol.ENDC )
+global_logserver = args.logserver
+# Check server
+try:
+    _host = args.logserver.split(':')[0]
+    _port = int(args.logserver.split(':')[1])
+    fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+    fp_logserver.connect( (_host,_port) )
+    fp_logserver.sendall( 'Hand Shake Success! ')
+    fp_logserver.close()
+    _printer( tcol.OKGREEN+'%s OK!' %(global_logserver)+tcol.ENDC )
+except:
+    print tcol.FAIL, 'Cannot connect to logserver', tcol.ENDC
+    print 'Start a forked logserver like:'
+    print '\t$ socat TCP4-LISTEN:9595,fork STDOUT'
     quit()
 
-for j in jobs:
-    j.start()
 
-for j in jobs:
-    j.join()
+
+X, _repeat_info, _data_store_dir = consolidated_config_to_cmd( fname, args.store_dir )
+
+repeat_in_sec=0
+repeat_count=1
+if _repeat_info is not None:
+    repeat_in_sec, repeat_count = _repeat_info
+_i = 0
+
+print 'Repeat for %d times' %(repeat_count)
+# for _i in range( 10 ):
+
+# code.interact( local=locals() )
+# quit()
+while True:
+    _i += 1
+    if _i > repeat_count and repeat_count > 0:
+        break
+    _printer( '\n[Run#%d of %d]' %(_i, repeat_count) )
+
+
+    startTime_run = time.time()
+    for cmd_list, log_dir in X:
+        # x: cmd_list, log_dir
+        # print log_dir
+        jobs = []
+        startTime = time.time()
+        _printer( tcol.HEADER+'---'+tcol.ENDC )
+        for cmd in cmd_list:
+            _printer( cmd )
+            d = multiprocessing.Process( target=exec_task, args=(cmd, log_dir) )
+            jobs.append( d )
+
+
+        if args.interactive:
+            if raw_input( 'Confirm (y/n): ' ) != 'y':
+                sys.stderr.write( 'Quit()\n' )
+                quit()
+
+        for j in jobs:
+            j.start()
+
+        for j in jobs:
+            j.join()
+
+        done_in = time.time() - startTime
+        _printer( tcol.OKBLUE+'<Line> Done in %4.2fs' %( done_in )+tcol.ENDC )
+
+
+    run_done_in = time.time() - startTime_run
+    sleep_for = repeat_in_sec - run_done_in
+    _printer( tcol.OKBLUE+'<Execution> complete in %4.2fs. Sleep for %ds' %(run_done_in, sleep_for)+tcol.ENDC )
+
+
+
+    # Remove Raw Files
+    if args.keep_raw == False and args.simulate == False:
+        assert( _data_store_dir is not None and _data_store_dir != "" )
+        remove_command =  'rm -rf %s/*' %(_data_store_dir)
+        print tcol.WARNING,remove_command, tcol.ENDC
+
+        if args.interactive:
+            if raw_input( 'Confirm (y/n): ' ) != 'y':
+                sys.stderr.write( 'Not Deleting.\nQuit()\n' )
+                quit()
+
+        os.system( remove_command )
+
+
+    # Sleep
+    if sleep_for > 0 and args.simulate == False:
+        _printer( 'Sleeping....zZzz..'+str(datetime.now()) )
+        time.sleep( sleep_for )
+
+
+
+
+quit()

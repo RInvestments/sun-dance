@@ -133,7 +133,7 @@ class SourceQuotesQuandl:
 
         if xchange not in ['TYO', 'BSE']:
             self._error( 'This is available only for TYO and BSE. You provided invalid ticker')
-            return None
+            return False
 
         if n>=1000:
             start_date = None
@@ -157,7 +157,7 @@ class SourceQuotesQuandl:
             url = self._make_quandl_BSE_url( symbol, xchange, start_date=start_date, end_date=end_date )
         else:
             self._error( 'This is available only for TYO and BSE. You provided invalid ticker')
-            return None
+            return False
 
         self._debug( 'URL : '+url )
         file_to_save_raw = self.priv_dir+'/quotes_raw.json'
@@ -173,15 +173,18 @@ class SourceQuotesQuandl:
             self.__parse_quandl_bse( file_to_save_raw, file_to_save_parsed )
         else:
             self._error( 'This is available only for TYO and BSE. You provided invalid ticker')
-            return None
+            return False
 
 
-        # Remove raw
-        if rm_raw is True:
-            os.remove(file_to_save_raw)
+        # Remove raw.
+        # It is ok to uncomment it. But the disadvantage of it is that. If you need
+        # to restart the process. EVerything is downloaded again. Since
+        # memory is cheap and not an issue, its keep the raw files
+        # if rm_raw is True:
+            # os.remove(file_to_save_raw)
 
         self._report_time( 'Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
-        return
+        return True
 
 
 
@@ -242,7 +245,7 @@ class SourceQuotesQuandl:
 
         if skip_if_exist and os.path.isfile(fname):
             self._debug( 'File already exists....SKIP')
-            return
+            return True
         else:
             self._debug( 'File does not exist... continue')
 

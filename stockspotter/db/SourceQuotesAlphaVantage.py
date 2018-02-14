@@ -129,24 +129,52 @@ class SourceQuotesAlphaVantage:
             outputsize = 'compact'
 
         if xchange in ['HK', 'NSE', 'NYSE', 'NASDAQ', 'AMEX' ]:
-            # Step-1
-            url = self.make_alphavantage_url( symbol, xchange, outputsize )
-            file_to_save_raw = self.priv_dir+'/quotes_raw.json'
-            self._download_and_save(url, file_to_save_raw, skip_if_exist )
+            status = False
+            attempt = 0
+            sleep_s = 1.0
+            while attempt < 5: #if download/parse fails reattempt
+                self._printer( 'Attempt-%d' %(attempt) )
 
-            # Step-2
-            file_to_save_parsed = self.priv_dir+'/quotes.json'
-            self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
+                # Step-1
+                url = self.make_alphavantage_url( symbol, xchange, outputsize )
+                file_to_save_raw = self.priv_dir+'/quotes_raw.json'
+                status1 = self._download_and_save(url, file_to_save_raw, skip_if_exist )
+
+                # Step-2
+                file_to_save_parsed = self.priv_dir+'/quotes.json'
+                status2 = self.__parse_alphavantage( file_to_save_raw, file_to_save_parsed )
+
+                status = status1 and status2
+
+                # parsing was successful quit
+                if status is True:
+                    self._printer( 'successful')
+                    break
+
+                attempt += 1
+                # sleep before attempting again
+                self._printer( 'failed. retry after sleeping for %4.2fs' %(sleep_s))
+                time.sleep(sleep_s )
+                sleep_s += .5 #next time wait a little more.
+
+
 
             # Step-3
-            if rm_raw is True:
-                os.remove(file_to_save_raw)
+            # It is ok to uncomment it. But the disadvantage of it is that. If you need
+            # to restart the process. EVerything is downloaded again. Since
+            # memory is cheap and not an issue, its keep the raw files
+            # if rm_raw is True:
+                # os.remove(file_to_save_raw)
+
+
         else:
             self._error( 'Invalid exchange: '+xchange)
+            return False
 
 
 
         self._report_time( 'Quote Downloaded in %2.4f sec' %(time.time()-startTime) )
+        return True
 
 
 
@@ -199,7 +227,7 @@ class SourceQuotesAlphaVantage:
 
         if skip_if_exist and os.path.isfile(fname):
             self._debug( 'File already exists....SKIP')
-            return
+            return True
         else:
             self._debug( 'File does not exist... continue')
 
@@ -230,13 +258,14 @@ class SourceQuotesAlphaVantage:
             data_raw = json.loads( open(input_raw_file_name).read(), object_pairs_hook=OrderedDict )
         except:
             self._error( "No json" )
-            return
+            return False
 
         if os.path.isfile(input_raw_file_name):
             self._debug( 'File exists, continue parsing it')
         else:
             self._debug( 'Raw downloaded file does not exist, it was probably not downloaded...!')
             self._error( 'Raw downloaded file does not exist, it was probably not downloaded...!')
+            return False
 
         output = collections.OrderedDict()
 
@@ -246,6 +275,16 @@ class SourceQuotesAlphaVantage:
             output['meta']['ticker'] = data_raw['Meta Data']['2. Symbol']
         except KeyError:
             self._error( 'Cannot parse. Probably alphavantage gave an error' )
+            # Remove raw file
+            try:
+                os.remove( input_raw_file_name )
+                self._debug( 'Removing raw file: %s' %(input_raw_file_name))
+                self._error( 'Removing raw file: %s' %(input_raw_file_name))
+                return False
+            except:
+                self._debug( 'Cannout remove raw file: %s' %(input_raw_file_name))
+                self._error( 'Cannout remove raw file: %s' %(input_raw_file_name))
+                return False
             return
 
 
@@ -280,3 +319,4 @@ class SourceQuotesAlphaVantage:
         with open( output_json_file_name, "w" ) as handle:
             json_string = json.dumps( output, indent=2 )
             handle.write( json_string )
+        return True

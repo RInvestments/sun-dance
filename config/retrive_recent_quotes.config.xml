@@ -10,7 +10,7 @@
   <process>
     <type>retriver</type>
     <task>quotes_recent</task>
-    <exchange>xhkex,xnse</exchange>
+    <exchange>xhkex</exchange>
     <proc_level>0</proc_level>
   </process>
 
@@ -18,7 +18,7 @@
   <process>
     <type>retriver</type>
     <task>quotes_recent</task>
-    <exchange>xbse</exchange>
+    <exchange>xnse,xbse</exchange>
     <proc_level>0</proc_level>
   </process>
 
