@@ -97,19 +97,49 @@
     <process>
       <type>parser</type>
       <task>wsj</task>
-      <exchange>xhkex,xsse,xszse</exchange>
+      <exchange>xhkex</exchange>
     </process>
 
     <process>
       <type>parser</type>
       <task>wsj</task>
-      <exchange>xnse,xbse</exchange>
+      <exchange>xsse</exchange>
     </process>
 
     <process>
       <type>parser</type>
       <task>wsj</task>
-      <exchange>xnyse,xnasdaq,xamex</exchange>
+      <exchange>xszse</exchange>
+    </process>
+
+    <process>
+      <type>parser</type>
+      <task>wsj</task>
+      <exchange>xnse</exchange>
+    </process>
+
+    <process>
+      <type>parser</type>
+      <task>wsj</task>
+      <exchange>xbse</exchange>
+    </process>
+
+    <process>
+      <type>parser</type>
+      <task>wsj</task>
+      <exchange>xnyse</exchange>
+    </process>
+
+    <process>
+      <type>parser</type>
+      <task>wsj</task>
+      <exchange>xnasdaq</exchange>
+    </process>
+
+    <process>
+      <type>parser</type>
+      <task>wsj</task>
+      <exchange>xamex</exchange>
     </process>
 
     <process>
@@ -122,22 +152,52 @@
   <group id="wsj_inserter">
     <process>
       <type>inserter</type>
-      <exchange>xhkex,xsse,xszse</exchange>
+      <exchange>xhkex</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
     </process>
 
     <process>
       <type>inserter</type>
-      <exchange>xnse,xbse</exchange>
+      <exchange>xsse</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
+    </process>
+    <process>
+      <type>inserter</type>
+      <exchange>xszse</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
     </process>
 
     <process>
       <type>inserter</type>
-      <exchange>xnyse,xnasdaq,xamex</exchange>
+      <exchange>xnse</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
+    </process>
+    <process>
+      <type>inserter</type>
+      <exchange>xbse</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
+    </process>
+
+    <process>
+      <type>inserter</type>
+      <exchange>xnyse</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
+    </process>
+    <process>
+      <type>inserter</type>
+      <exchange>xnasdaq</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
+    </process>
+    <process>
+      <type>inserter</type>
+      <exchange>xamex</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
     </process>
 
     <process>
       <type>inserter</type>
       <exchange>xtyo</exchange>
+      <args>--mongodb mongodb://localhost:27017</args>
     </process>
   </group>
 

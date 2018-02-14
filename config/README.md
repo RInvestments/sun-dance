@@ -1,16 +1,21 @@
 # How to write process-config files
 These are the process-config files. Intended to be used with `sundance_multi.py` script.
 This script essentially is a wrapper for the underlying cli.
-Documentation for writing it is as follows. 
+Documentation for writing it is as follows.
 
-Recently, I am moving towards `sundance_multi.py` (from sundance.py). It is nearly the same format 
+Recently, I am moving towards `sundance_multi.py` (from sundance.py). It is nearly the same format
 as the earlier file. But with this you are able to specify multiple type of processes
-and joins along with repeat durations. The documentation for consolidated format is as follows: 
+and joins along with repeat durations. The documentation for consolidated format is described
+in detail at the end of this document. You need to specify a) **global** variables,
+b) **execution** which contains **lines** which actually specify execution group, c) **group**
+which specify the **process** that need to run in parallel. See examples.
 
-Just two of the config files are actually relavant:
+
+Just three of the config files are actually relavant:
 
 - retrive-parse-insert.config.xml
 - retrive-parse-insert-recent-quotes.config.xml
+- retrive-parse-insert-15yr-quotes.config.xml
 
 ## Example / Documentation
 ```
@@ -52,13 +57,3 @@ Just two of the config files are actually relavant:
 
 
 ```
-
-
-
-## Sequence in which, these configs are expected to be run (old way - deprecated)
-- python sundance.py -f retrive_wsj.config.xml
-- python sundance.py -f parse_wsj.config.xml
-- python sundance.py -f delete_raw_wsj.config.xml
-- python sundance.py -f insert_wsj.config.xml
-- python sundance.py -f retrive_recent_quotes.config.xml
-- python sundance.py -f insert_quotes.config.xml

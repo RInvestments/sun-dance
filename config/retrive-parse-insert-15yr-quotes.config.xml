@@ -67,35 +67,35 @@
   <group id="recent_quotes_retriver">
     <process>
       <type>retriver</type>
-      <task>quotes_recent</task>
+      <task>quotes_full</task>
       <exchange>xhkex</exchange>
     </process>
 
 
     <process>
       <type>retriver</type>
-      <task>quotes_recent</task>
+      <task>quotes_full</task>
       <exchange>xnse,xbse</exchange>
     </process>
 
 
     <process>
       <type>retriver</type>
-      <task>quotes_recent</task>
+      <task>quotes_full</task>
       <exchange>xnyse</exchange>
     </process>
 
 
     <process>
       <type>retriver</type>
-      <task>quotes_recent</task>
+      <task>quotes_full</task>
       <exchange>xnasdaq</exchange>
     </process>
 
 
     <process>
       <type>retriver</type>
-      <task>quotes_recent</task>
+      <task>quotes_full</task>
       <exchange>xamex,xtyo</exchange>
     </process>
 

@@ -85,6 +85,9 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
     for p in group.findall( 'process' ):
         # _debug( '---', 2 )
 
+
+        # Each of the `if ` produces, `cmd`
+
         if p.find( 'type' ).text.strip() == 'retriver':
 
             if store_dir is None:
@@ -126,7 +129,7 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
 
             cmd = 'python data_retriver.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
             _debug( cmd, 2 )
-            cmd_list.append( cmd )
+            # cmd_list.append( cmd )
 
 
 
@@ -170,7 +173,7 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
 
             cmd = 'python data_parser.py -sd %s -ld %s %s %s -v %d' %(store_dir, list_db, task_arg, exchange_arg, verbosity )
             _debug( cmd , 2)
-            cmd_list.append( cmd )
+            # cmd_list.append( cmd )
 
 
 
@@ -207,7 +210,7 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
 
             cmd = 'python data_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2)
-            cmd_list.append( cmd )
+            # cmd_list.append( cmd )
 
 
         if p.find( 'type' ).text.strip() == 'quote_inserter':
@@ -244,7 +247,7 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
 
             cmd = 'python daily_quote_inserter.py -db %s -ld %s %s -v %d' %(store_dir, list_db, exchange_arg, verbosity )
             _debug( cmd, 2 )
-            cmd_list.append( cmd )
+            # cmd_list.append( cmd )
 
         if p.find( 'type' ).text.strip() == 'aastocks_inserter':
             if store_dir is None:
@@ -270,10 +273,20 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
 
             cmd = 'python aastocks_inserter.py -db %s -ld %s -v %d' %(store_dir, list_db, verbosity )
             _debug( cmd, 2 )
-            cmd_list.append( cmd )
+            # cmd_list.append( cmd )
 
 
 
+        # Look for additional command line args, ie. <args>...</args>.
+        # It will be added to the command as it is.
+        try:
+            additional_args = p.find( 'args' ).text.strip()
+            cmd += ' '+additional_args+' '
+        except AttributeError:
+            additional_args = None
+
+
+        cmd_list.append( cmd )
 
     # Log dir
     if store_dir is None:
@@ -459,7 +472,16 @@ def exec_task( cmd, log_dir ):
     if args.simulate:
         process = subprocess.Popen( 'sleep 1s', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
     else:
-        process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        final_cmd = cmd
+        if log_file is not None:
+            final_cmd += ' --logfile=%s ' %(log_file)
+
+
+        if log_server is not None:
+            final_cmd += ' --logserver %s' %(log_server)
+
+        # process = subprocess.Popen( cmd+' --logfile=%s --logserver %s' %(log_file,log_server), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        process = subprocess.Popen( final_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
 
     stdout_queue = Queue.Queue()
     stdout_reader = AsynchronousFileReader( process.stdout, stdout_queue )
@@ -513,7 +535,7 @@ parser.add_argument( '-sd', '--store_dir', required=False, default=None, help='O
 parser.add_argument( '-k', '--keep_raw', default=False, action='store_true', help='Remove the storage directory (raw files) after every execution, unless this flag is specified' )
 parser.add_argument( '-i', '--interactive', default=False, action='store_true', help='Ask for confirmation before running commands' )
 parser.add_argument( '-s', '--simulate', default=False, action='store_true', help='Just simulate the commands (sleep 1) instead of read commands' )
-parser.add_argument( '--logserver', required=True, help='Specify Logserver. Eg. localhost:9595. Setup a forking server like\n\t$socat TCP4-LISTEN:9595,fork STDOUT' )
+parser.add_argument( '--logserver', required=False, default=None, help='Specify Logserver. Eg. localhost:9595. Setup a forking server like\n\t$socat TCP4-LISTEN:9595,fork STDOUT' )
 args = parser.parse_args()
 
 
@@ -529,13 +551,14 @@ _printer( tcol.BOLD+'Log Server      : %s' %(args.logserver)+tcol.ENDC )
 global_logserver = args.logserver
 # Check server
 try:
-    _host = args.logserver.split(':')[0]
-    _port = int(args.logserver.split(':')[1])
-    fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
-    fp_logserver.connect( (_host,_port) )
-    fp_logserver.sendall( 'Hand Shake Success! ')
-    fp_logserver.close()
-    _printer( tcol.OKGREEN+'%s OK!' %(global_logserver)+tcol.ENDC )
+    if args.logserver is not None:
+        _host = args.logserver.split(':')[0]
+        _port = int(args.logserver.split(':')[1])
+        fp_logserver = socket.socket( socket.AF_INET, socket.SOCK_STREAM )
+        fp_logserver.connect( (_host,_port) )
+        fp_logserver.sendall( 'Hand Shake Success! ')
+        fp_logserver.close()
+        _printer( tcol.OKGREEN+'%s OK!' %(global_logserver)+tcol.ENDC )
 except:
     print tcol.FAIL, 'Cannot connect to logserver', tcol.ENDC
     print 'Start a forked logserver like:'
