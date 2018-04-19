@@ -114,46 +114,47 @@
     <process>
       <type>quote_inserter</type>
       <exchange>xhkex</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
+
     </process>
 
     <process>
       <type>quote_inserter</type>
       <exchange>xnse</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
 
     <process>
       <type>quote_inserter</type>
       <exchange>xbse</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
 
 
     <process>
       <type>quote_inserter</type>
       <exchange>xnyse</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
 
 
     <process>
       <type>quote_inserter</type>
       <exchange>xnasdaq</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
 
 
     <process>
       <type>quote_inserter</type>
       <exchange>xamex</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
 
     <process>
       <type>quote_inserter</type>
       <exchange>xtyo</exchange>
-      <args>--mongodb mongodb://localhost:27017</args>
+      <args>--mongodb ${MONGODB_URL}</args>
     </process>
   <!--
     <process>

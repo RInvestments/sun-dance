@@ -69,6 +69,44 @@ class AsynchronousFileReader(threading.Thread):
         '''Check whether there is no more content to expect.'''
         return not self.is_alive() and self._queue.empty()
 
+
+
+def interpret_env_variables( input_string ):
+    """ given a string for example '--mongodb ${MONGO_DB}'. look up this environment
+    variable (bash) and replace it with the value. If you cannot see a control
+    sequence like ${}, return the input as it is.
+    """
+
+    out_string = ""
+    c = 0
+
+    env_var_start_idx = [i for i in range(len(input_string)) if input_string.startswith('${', i)]
+    for s in env_var_start_idx:
+
+        e = s+input_string[s:].find( '}')
+        _debug( '---' , 3 )
+        _debug( 'start=%d; end=%d' %( s, e ), 3 )
+
+        env_var_name = input_string[s+2:e]
+
+        try:
+            env_var_value = os.environ[ env_var_name ]
+        except:
+            _error( 'Requested enviroment variable \'%s\' cannot be found. \nQuitting' %(env_var_name) )
+            quit()
+
+        _debug( '%s: %s' %( env_var_name, env_var_value ) )
+        out_string = out_string + input_string[c:s] + env_var_value
+        c = e+1
+
+    out_string = out_string + input_string[c:]
+
+
+    _debug( 'return string : %s' %(out_string) )
+    return out_string
+
+
+
 def processgroup_2_cmd( group, global_ele, store_dir=None ):
     """
         This function expects the XML sub-tree.
@@ -281,6 +319,8 @@ def processgroup_2_cmd( group, global_ele, store_dir=None ):
         # It will be added to the command as it is.
         try:
             additional_args = p.find( 'args' ).text.strip()
+            additional_args = interpret_env_variables( additional_args )
+
             cmd += ' '+additional_args+' '
         except AttributeError:
             additional_args = None
